@@ -20,6 +20,7 @@ DATA_FILE    = SCRIPT_DIR.parent / 'data' / 'pages.json'
 TEMPLATE_DIR = SCRIPT_DIR.parent / 'template'
 
 PROD_MODE  = '--prod' in sys.argv
+GA_ID      = 'G-E01B51HMZL' if PROD_MODE else 'G-ZP7L32M9GB'
 OUTPUT_DIR = REPO_ROOT / 'docs' if PROD_MODE else REPO_ROOT / 'docs' / 'dev'
 NL_DIR     = OUTPUT_DIR / 'nl'
 EASY_DIR   = OUTPUT_DIR / 'easy'
@@ -40,7 +41,7 @@ def load_template(name):
 
 # ── Substitution ────────────────────────────────────────────────────────────
 def sub(template, replacements):
-    result = template
+    result = template.replace('<!-- GA_ID -->', GA_ID)
     for key, value in replacements.items():
         result = result.replace(f'<!-- {key} -->', str(value))
     return result
@@ -158,7 +159,8 @@ def generate_admin(pages_with_status):
         return (load_template(template_name)
                 .replace('<!-- PAGES_JSON -->',   pages_json)
                 .replace('<!-- GENERATED_AT -->', generated_at)
-                .replace('<!-- PAGE_COUNT -->',   page_count))
+                .replace('<!-- PAGE_COUNT -->',   page_count)
+                .replace('<!-- GA_ID -->',        GA_ID))
 
     (ADMIN_DIR / 'index.html').write_text(render('admin.html'),      encoding='utf-8')
     (ADMIN_DIR / 'pages-edit.html').write_text(render('pages-edit.html'), encoding='utf-8')
