@@ -101,7 +101,25 @@
     .vol-badge.v2 { background: #5a3e6e; }
     .vol-badge.v3 { background: #2e6e5a; }
 
-    .tick  { color: #2a7a3a; font-weight: bold; }
+    .tick {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.1em;
+      height: 1.1em;
+      border-radius: 50%;
+      background: #5aaa6e;
+      font-size: inherit;
+    }
+    .tick::after {
+      content: '';
+      display: block;
+      width: 0.5em;
+      height: 0.3em;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translate(0, -0.06em);
+    }
     .cross { color: #bbb; }
 
     /* ── Edit row ───────────────────────────────────── */
@@ -248,6 +266,7 @@
           <th data-col="live"    >Live</th>
           <th data-col="has_easy">Easy Read</th>
           <th data-col="has_audio">Audio</th>
+          <th data-col="h_wall">H Wall</th>
           <th class="no-sort">Links</th>
           <th class="no-sort">Edit</th>
         </tr>
@@ -290,9 +309,9 @@
       if (searchQ) parts.push(`Search: "${searchQ}"`);
       const header  = `Fleet Street Heritage – ${view.length} of ${pages.length} items\n${parts.join(' | ')}`;
       const yn      = v => v ? 'yes' : 'no';
-      const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio'];
+      const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio', 'H Wall'];
       const data    = view.map(p => [String(p.num), p.title, p.slug, String(p.volume),
-                        yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio)]);
+                        yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio), yn(p.h_wall)]);
       const widths  = hdrs.map((h, ci) => Math.max(h.length, ...data.map(r => r[ci].length)));
       const fmt     = row => row.map((v, ci) =>
         ci < row.length - 1 ? (v + ',').padEnd(widths[ci] + 2) : v).join('');
@@ -328,7 +347,7 @@
       document.getElementById('total-count').textContent = pages.length;
     }
 
-    function tick(v)  { return v ? '<span class="tick"  aria-label="yes">✓</span>'
+    function tick(v)  { return v ? '<span class="tick"  aria-label="yes"></span>'
                                  : '<span class="cross" aria-label="no">–</span>'; }
     function volBadge(v) {
       return `<span class="vol-badge v${v}">${v}</span>`;
@@ -416,6 +435,8 @@
               aria-label="Live" onchange="toggleLive(${i}, this.checked)"></td>
         <td>${tick(p.has_easy)}</td>
         <td>${tick(p.has_audio)}</td>
+        <td><input type="checkbox" ${p.h_wall !== false ? 'checked' : ''}
+              aria-label="Heritage Wall" onchange="toggleHWall(${i}, this.checked)"></td>
         <td class="links">
           <a href="${nl}"   target="_blank">NL</a>
           <a href="${qr}"   target="_blank">QR</a>
@@ -443,6 +464,7 @@
         <td><input type="checkbox" id="e-live" ${p.live !== false ? 'checked' : ''}></td>
         <td>${tick(p.has_easy)}</td>
         <td>${tick(p.has_audio)}</td>
+        <td><input type="checkbox" id="e-h_wall" ${p.h_wall !== false ? 'checked' : ''}></td>
         <td></td>
         <td class="actions">
           <button class="btn btn-save"   onclick="saveEdit(${i})">Save</button>
@@ -455,7 +477,13 @@
     function toggleLive(i, val) {
       pages[i].live = val;
       markDirty();
-      // re-render just this row to update dimming without losing scroll
+      const tr = document.querySelector(`tr[data-i="${i}"]`);
+      if (tr) tr.outerHTML = viewRow(pages[i], i);
+    }
+
+    function toggleHWall(i, val) {
+      pages[i].h_wall = val;
+      markDirty();
       const tr = document.querySelector(`tr[data-i="${i}"]`);
       if (tr) tr.outerHTML = viewRow(pages[i], i);
     }
@@ -481,7 +509,8 @@
 
       // If num changed, has_pdf status is unknown until next regeneration
       const has_pdf = (num === String(pages[i].num)) ? pages[i].has_pdf : false;
-      pages[i] = { ...pages[i], num, title, slug, volume, live, has_pdf };
+      const h_wall  = document.getElementById('e-h_wall').checked;
+      pages[i] = { ...pages[i], num, title, slug, volume, live, has_pdf, h_wall };
       editingIdx = null;
       markDirty();
       render();

@@ -94,7 +94,25 @@
     .vol-badge.v2 { background: #5a3e6e; }
     .vol-badge.v3 { background: #2e6e5a; }
 
-    .tick  { color: #2a7a3a; font-weight: bold; }
+    .tick {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.1em;
+      height: 1.1em;
+      border-radius: 50%;
+      background: #5aaa6e;
+      font-size: inherit;
+    }
+    .tick::after {
+      content: '';
+      display: block;
+      width: 0.5em;
+      height: 0.3em;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translate(0, -0.06em);
+    }
     .cross { color: #bbb; }
 
     .no-results { text-align: center; padding: 2rem; color: #888; }
@@ -142,7 +160,7 @@
 <body>
 
   <h1>Fleet Street Heritage – Page Listing</h1>
-  <p class="meta">Generated 2026-04-03 19:48 UTC &nbsp;·&nbsp; 97 pages
+  <p class="meta">Generated 2026-04-03 21:12 UTC &nbsp;·&nbsp; 97 pages
     &nbsp;·&nbsp; <a href="pages-edit.html">Edit pages →</a></p>
 
   <div id="sanity-panel" class="sanity-panel ok" aria-live="polite"></div>
@@ -182,6 +200,7 @@
           <th data-col="live">Live</th>
           <th data-col="has_easy">Easy Read</th>
           <th data-col="has_audio">Audio</th>
+          <th data-col="h_wall">H Wall</th>
           <th>Links</th>
         </tr>
       </thead>
@@ -198,6 +217,7 @@
     "title": "Points of Interest / Map",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -208,6 +228,7 @@
     "title": "List of Newspapers and Dates",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -218,6 +239,7 @@
     "title": "Fleet Street Heritage Sundial",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -228,6 +250,7 @@
     "title": "Fleet Street Heritage Walk 1",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -238,6 +261,7 @@
     "title": "Fleet Street Heritage Walk 2",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -248,6 +272,7 @@
     "title": "Freedom of the Press",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -258,6 +283,7 @@
     "title": "Fleet Street at the Reformation 1538–40",
     "volume": 1,
     "live": false,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -268,6 +294,7 @@
     "title": "Fleet Street Architecture – Introduction",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -278,6 +305,7 @@
     "title": "Fleet Street Architecture – South Side from Temple Bar",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -288,6 +316,7 @@
     "title": "Fleet Street Architecture – South Side to Ludgate Circus",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -298,6 +327,7 @@
     "title": "Fleet Street Architecture – North Side from Ludgate Circus",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -308,6 +338,7 @@
     "title": "Fleet Street Architecture – North Side to Temple Bar",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -318,6 +349,7 @@
     "title": "Legend of Sweeney Todd",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -328,6 +360,7 @@
     "title": "The River Fleet",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -338,6 +371,7 @@
     "title": "Newspaper Stamp Tax",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -348,6 +382,7 @@
     "title": "Fleet Street in the 1500s",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -358,6 +393,7 @@
     "title": "Fleet Street in the 1600s",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -368,6 +404,7 @@
     "title": "Fleet Street in the 1700s",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -378,6 +415,7 @@
     "title": "Fleet Street in the 1800s",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -388,6 +426,7 @@
     "title": "Fleet Street in 1847 – North",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -398,6 +437,7 @@
     "title": "Fleet Street in 1847 – South",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -408,6 +448,7 @@
     "title": "The Great Fire, 1666",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -418,6 +459,7 @@
     "title": "Monuments of Fleet Street",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -428,6 +470,7 @@
     "title": "St George and the Dragon",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -438,6 +481,7 @@
     "title": "17 Fleet Street (Prince Henry's Room)",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -448,6 +492,7 @@
     "title": "62 Fleet Street",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -458,6 +503,7 @@
     "title": "63 & 28 Stonecutter Street",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -468,6 +514,7 @@
     "title": "85 Fleet Street – The Reuters Building",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -478,6 +525,7 @@
     "title": "Bouverie Street",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -488,6 +536,7 @@
     "title": "The Great Conduit",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -498,6 +547,7 @@
     "title": "Pedestrian Courts of Fleet Street",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -508,6 +558,7 @@
     "title": "Magpie Alley",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -518,6 +569,7 @@
     "title": "Ashentree Court",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -528,6 +580,7 @@
     "title": "Alsatia",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -538,6 +591,7 @@
     "title": "Salisbury Square",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -548,6 +602,7 @@
     "title": "Crane Court",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -558,6 +613,7 @@
     "title": "St Dunstan-in-the-West",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -568,6 +624,7 @@
     "title": "St. Bride's Church",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -578,6 +635,7 @@
     "title": "Temple Church",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -588,6 +646,7 @@
     "title": "St. Bride's Crypt Exhibition",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -598,6 +657,7 @@
     "title": "Ye Olde Cheshire Cheese",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -608,6 +668,7 @@
     "title": "Temple Bar",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -618,6 +679,7 @@
     "title": "Middle Temple",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -628,6 +690,7 @@
     "title": "Inner Temple",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -638,6 +701,7 @@
     "title": "Knights Templar",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -648,6 +712,7 @@
     "title": "Bridewell Palace",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -658,6 +723,7 @@
     "title": "Cliffords Inn",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -668,6 +734,7 @@
     "title": "Royal Society in Fleet Street",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -678,6 +745,7 @@
     "title": "The Law Society",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -688,6 +756,7 @@
     "title": "Stationers Company",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -698,6 +767,7 @@
     "title": "Gresham College",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -708,6 +778,7 @@
     "title": "Child and Co",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -718,6 +789,7 @@
     "title": "Hoare's Bank",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -728,6 +800,7 @@
     "title": "St. Bride Foundation",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -738,6 +811,7 @@
     "title": "Wynken de Worde",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -748,6 +822,7 @@
     "title": "The Pastons",
     "volume": 1,
     "live": true,
+    "h_wall": false,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -758,6 +833,7 @@
     "title": "Thomas Tompion / Clockmaking",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -768,6 +844,7 @@
     "title": "Caslon / Typefounders",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -778,6 +855,7 @@
     "title": "Dr. Johnson",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -788,6 +866,7 @@
     "title": "James Boswell",
     "volume": 1,
     "live": true,
+    "h_wall": false,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -798,6 +877,7 @@
     "title": "Brass Crosby",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -808,6 +888,7 @@
     "title": "William Hazlitt",
     "volume": 1,
     "live": true,
+    "h_wall": false,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -818,6 +899,7 @@
     "title": "Cobbett, Paine & Fleet Street",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -828,6 +910,7 @@
     "title": "Henry 'Orator' Hunt",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -838,6 +921,7 @@
     "title": "Richard Carlile",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -848,6 +932,7 @@
     "title": "Henry Hetherington",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -858,6 +943,7 @@
     "title": "John Wilkes",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -868,6 +954,7 @@
     "title": "Virginia Woolf",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -878,6 +965,7 @@
     "title": "Eddy Shah",
     "volume": 1,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -888,6 +976,7 @@
     "title": "Pall Mall Gazette",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -898,6 +987,7 @@
     "title": "Daily Herald",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -908,6 +998,7 @@
     "title": "The Republican",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -918,6 +1009,7 @@
     "title": "Daily Courant",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -928,6 +1020,7 @@
     "title": "Morning Post",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -938,6 +1031,7 @@
     "title": "Lloyd's Weekly",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -948,6 +1042,7 @@
     "title": "News of the World",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -958,6 +1053,7 @@
     "title": "Daily News",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -968,6 +1064,7 @@
     "title": "Daily Chronicle",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -978,6 +1075,7 @@
     "title": "News Chronicle",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -988,6 +1086,7 @@
     "title": "Black Dwarf",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -998,6 +1097,7 @@
     "title": "Punch",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1008,6 +1108,7 @@
     "title": "Reynolds Newspaper",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1018,6 +1119,7 @@
     "title": "The Star",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1028,6 +1130,7 @@
     "title": "Poor Man's Guardian",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1038,6 +1141,7 @@
     "title": "Manchester Guardian",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1048,6 +1152,7 @@
     "title": "Picture Post",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1058,6 +1163,7 @@
     "title": "Children's Newspaper",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1068,6 +1174,7 @@
     "title": "The Eagle",
     "volume": 2,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1078,6 +1185,7 @@
     "title": "The Telegraph",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1088,6 +1196,7 @@
     "title": "Sunday Times",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1098,6 +1207,7 @@
     "title": "The Times",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1108,6 +1218,7 @@
     "title": "The Sun",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1118,6 +1229,7 @@
     "title": "Financial Times",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1128,6 +1240,7 @@
     "title": "The Guardian",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1138,6 +1251,7 @@
     "title": "Daily Mail",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1148,6 +1262,7 @@
     "title": "The Independent",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1158,6 +1273,7 @@
     "title": "Reuters",
     "volume": 3,
     "live": true,
+    "h_wall": true,
     "has_pdf": true,
     "has_easy": false,
     "has_audio": false
@@ -1176,7 +1292,7 @@
     }
 
     function tick(v) {
-      return v ? '<span class="tick"  aria-label="yes">✓</span>'
+      return v ? '<span class="tick"  aria-label="yes"></span>'
                : '<span class="cross" aria-label="no">–</span>';
     }
 
@@ -1191,9 +1307,9 @@
       if (searchQ) parts.push(`Search: "${searchQ}"`);
       const header  = `Fleet Street Heritage – ${rows.length} of ${PAGES.length} items\n${parts.join(' | ')}`;
       const yn      = v => v ? 'yes' : 'no';
-      const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio'];
+      const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio', 'H Wall'];
       const data    = rows.map(p => [String(p.num), p.title, p.slug, String(p.volume),
-                        yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio)]);
+                        yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio), yn(p.h_wall)]);
       const widths  = hdrs.map((h, ci) => Math.max(h.length, ...data.map(r => r[ci].length)));
       const fmt     = row => row.map((v, ci) =>
         ci < row.length - 1 ? (v + ',').padEnd(widths[ci] + 2) : v).join('');
@@ -1250,6 +1366,7 @@
           <td>${tick(p.live !== false)}</td>
           <td>${tick(p.has_easy)}</td>
           <td>${tick(p.has_audio)}</td>
+          <td>${tick(p.h_wall)}</td>
           <td class="links">
             <a href="${nl}"  target="_blank">NL</a>
             <a href="${qr}"  target="_blank">QR</a>

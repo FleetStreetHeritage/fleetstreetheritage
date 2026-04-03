@@ -94,7 +94,25 @@
     .vol-badge.v2 { background: #5a3e6e; }
     .vol-badge.v3 { background: #2e6e5a; }
 
-    .tick  { color: #2a7a3a; font-weight: bold; }
+    .tick {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.1em;
+      height: 1.1em;
+      border-radius: 50%;
+      background: #5aaa6e;
+      font-size: inherit;
+    }
+    .tick::after {
+      content: '';
+      display: block;
+      width: 0.5em;
+      height: 0.3em;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translate(0, -0.06em);
+    }
     .cross { color: #bbb; }
 
     .no-results { text-align: center; padding: 2rem; color: #888; }
@@ -182,6 +200,7 @@
           <th data-col="live">Live</th>
           <th data-col="has_easy">Easy Read</th>
           <th data-col="has_audio">Audio</th>
+          <th data-col="h_wall">H Wall</th>
           <th>Links</th>
         </tr>
       </thead>
@@ -205,7 +224,7 @@
     }
 
     function tick(v) {
-      return v ? '<span class="tick"  aria-label="yes">✓</span>'
+      return v ? '<span class="tick"  aria-label="yes"></span>'
                : '<span class="cross" aria-label="no">–</span>';
     }
 
@@ -220,9 +239,9 @@
       if (searchQ) parts.push(`Search: "${searchQ}"`);
       const header  = `Fleet Street Heritage – ${rows.length} of ${PAGES.length} items\n${parts.join(' | ')}`;
       const yn      = v => v ? 'yes' : 'no';
-      const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio'];
+      const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio', 'H Wall'];
       const data    = rows.map(p => [String(p.num), p.title, p.slug, String(p.volume),
-                        yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio)]);
+                        yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio), yn(p.h_wall)]);
       const widths  = hdrs.map((h, ci) => Math.max(h.length, ...data.map(r => r[ci].length)));
       const fmt     = row => row.map((v, ci) =>
         ci < row.length - 1 ? (v + ',').padEnd(widths[ci] + 2) : v).join('');
@@ -279,6 +298,7 @@
           <td>${tick(p.live !== false)}</td>
           <td>${tick(p.has_easy)}</td>
           <td>${tick(p.has_audio)}</td>
+          <td>${tick(p.h_wall)}</td>
           <td class="links">
             <a href="${nl}"  target="_blank">NL</a>
             <a href="${qr}"  target="_blank">QR</a>
