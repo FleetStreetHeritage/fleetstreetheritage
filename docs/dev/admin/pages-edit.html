@@ -163,12 +163,28 @@
     .unsaved-badge.visible { display: inline-block; }
 
     .no-results { text-align: center; padding: 2rem; color: #888; }
+
+    /* ── Sanity panel ────────────────────────────────── */
+    .sanity-panel {
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    .sanity-panel.ok   { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1e5c2a; }
+    .sanity-panel.warn { background: #fff3e0; border: 1px solid #ffcc80; color: #6d3a00; }
+    .sanity-panel ul   { margin-top: 0.35rem; padding-left: 1.3rem; }
+    .sanity-panel li   { margin-bottom: 0.15rem; }
+    .sanity-panel .crit { color: #c00; font-weight: bold; }
   </style>
 </head>
 <body>
 
   <h1>Fleet Street Heritage – Page Listing</h1>
-  <p class="meta">Generated 2026-04-03 14:20 UTC &nbsp;·&nbsp; <span id="total-count">97</span> pages</p>
+  <p class="meta">Generated 2026-04-03 15:09 UTC &nbsp;·&nbsp; <span id="total-count">97</span> pages</p>
+
+  <div id="sanity-panel" class="sanity-panel ok" aria-live="polite"></div>
 
   <div class="controls">
     <input type="search" id="search" placeholder="Search title or slug…" aria-label="Search pages">
@@ -218,6 +234,7 @@
     "title": "Points of Interest / Map",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -227,6 +244,7 @@
     "title": "List of Newspapers and Dates",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -236,6 +254,7 @@
     "title": "Fleet Street Heritage Sundial",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -245,6 +264,7 @@
     "title": "Fleet Street Heritage Walk 1",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -254,6 +274,7 @@
     "title": "Fleet Street Heritage Walk 2",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -263,6 +284,7 @@
     "title": "Freedom of the Press",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -272,6 +294,7 @@
     "title": "Fleet Street at the Reformation 1538–40",
     "volume": 1,
     "live": false,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -281,6 +304,7 @@
     "title": "Fleet Street Architecture – Introduction",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -290,6 +314,7 @@
     "title": "Fleet Street Architecture – South Side from Temple Bar",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -299,6 +324,7 @@
     "title": "Fleet Street Architecture – South Side to Ludgate Circus",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -308,6 +334,7 @@
     "title": "Fleet Street Architecture – North Side from Ludgate Circus",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -317,6 +344,7 @@
     "title": "Fleet Street Architecture – North Side to Temple Bar",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -326,6 +354,7 @@
     "title": "Legend of Sweeney Todd",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -335,6 +364,7 @@
     "title": "The River Fleet",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -344,6 +374,7 @@
     "title": "Newspaper Stamp Tax",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -353,6 +384,7 @@
     "title": "Fleet Street in the 1500s",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -362,6 +394,7 @@
     "title": "Fleet Street in the 1600s",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -371,6 +404,7 @@
     "title": "Fleet Street in the 1700s",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -380,6 +414,7 @@
     "title": "Fleet Street in the 1800s",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -389,6 +424,7 @@
     "title": "Fleet Street in 1847 – North",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -398,6 +434,7 @@
     "title": "Fleet Street in 1847 – South",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -407,6 +444,7 @@
     "title": "The Great Fire, 1666",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -416,6 +454,7 @@
     "title": "Monuments of Fleet Street",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -425,6 +464,7 @@
     "title": "St George and the Dragon",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -434,6 +474,7 @@
     "title": "17 Fleet Street (Prince Henry's Room)",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -443,6 +484,7 @@
     "title": "62 Fleet Street",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -452,6 +494,7 @@
     "title": "63 & 28 Stonecutter Street",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -461,6 +504,7 @@
     "title": "85 Fleet Street – The Reuters Building",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -470,6 +514,7 @@
     "title": "Bouverie Street",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -479,6 +524,7 @@
     "title": "The Great Conduit",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -488,6 +534,7 @@
     "title": "Pedestrian Courts of Fleet Street",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -497,6 +544,7 @@
     "title": "Magpie Alley",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -506,6 +554,7 @@
     "title": "Ashentree Court",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -515,6 +564,7 @@
     "title": "Alsatia",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -524,6 +574,7 @@
     "title": "Salisbury Square",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -533,6 +584,7 @@
     "title": "Crane Court",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -542,6 +594,7 @@
     "title": "St Dunstan-in-the-West",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -551,6 +604,7 @@
     "title": "St. Bride's Church",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -560,6 +614,7 @@
     "title": "Temple Church",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -569,6 +624,7 @@
     "title": "St. Bride's Crypt Exhibition",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -578,6 +634,7 @@
     "title": "Ye Olde Cheshire Cheese",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -587,6 +644,7 @@
     "title": "Temple Bar",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -596,6 +654,7 @@
     "title": "Middle Temple",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -605,6 +664,7 @@
     "title": "Inner Temple",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -614,6 +674,7 @@
     "title": "Knights Templar",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -623,6 +684,7 @@
     "title": "Bridewell Palace",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -632,6 +694,7 @@
     "title": "Cliffords Inn",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -641,6 +704,7 @@
     "title": "Royal Society in Fleet Street",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -650,6 +714,7 @@
     "title": "The Law Society",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -659,6 +724,7 @@
     "title": "Stationers Company",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -668,6 +734,7 @@
     "title": "Gresham College",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -677,6 +744,7 @@
     "title": "Child and Co",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -686,6 +754,7 @@
     "title": "Hoare's Bank",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -695,6 +764,7 @@
     "title": "St. Bride Foundation",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -704,6 +774,7 @@
     "title": "Wynken de Worde",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -713,6 +784,7 @@
     "title": "The Pastons",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -722,6 +794,7 @@
     "title": "Thomas Tompion / Clockmaking",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -731,6 +804,7 @@
     "title": "Caslon / Typefounders",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -740,6 +814,7 @@
     "title": "Dr. Johnson",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -749,6 +824,7 @@
     "title": "James Boswell",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -758,6 +834,7 @@
     "title": "Brass Crosby",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -767,6 +844,7 @@
     "title": "William Hazlitt",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -776,6 +854,7 @@
     "title": "Cobbett, Paine & Fleet Street",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -785,6 +864,7 @@
     "title": "Henry 'Orator' Hunt",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -794,6 +874,7 @@
     "title": "Richard Carlile",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -803,6 +884,7 @@
     "title": "Henry Hetherington",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -812,6 +894,7 @@
     "title": "John Wilkes",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -821,6 +904,7 @@
     "title": "Virginia Woolf",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -830,6 +914,7 @@
     "title": "Eddy Shah",
     "volume": 1,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -839,6 +924,7 @@
     "title": "Pall Mall Gazette",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -848,6 +934,7 @@
     "title": "Daily Herald",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -857,6 +944,7 @@
     "title": "The Republican",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -866,6 +954,7 @@
     "title": "Daily Courant",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -875,6 +964,7 @@
     "title": "Morning Post",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -884,6 +974,7 @@
     "title": "Lloyd's Weekly",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -893,6 +984,7 @@
     "title": "News of the World",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -902,6 +994,7 @@
     "title": "Daily News",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -911,6 +1004,7 @@
     "title": "Daily Chronicle",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -920,6 +1014,7 @@
     "title": "News Chronicle",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -929,6 +1024,7 @@
     "title": "Black Dwarf",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -938,6 +1034,7 @@
     "title": "Punch",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -947,6 +1044,7 @@
     "title": "Reynolds Newspaper",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -956,6 +1054,7 @@
     "title": "The Star",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -965,6 +1064,7 @@
     "title": "Poor Man's Guardian",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -974,6 +1074,7 @@
     "title": "Manchester Guardian",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -983,6 +1084,7 @@
     "title": "Picture Post",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -992,6 +1094,7 @@
     "title": "Children's Newspaper",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1001,6 +1104,7 @@
     "title": "The Eagle",
     "volume": 2,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1010,6 +1114,7 @@
     "title": "The Telegraph",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1019,6 +1124,7 @@
     "title": "Sunday Times",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1028,6 +1134,7 @@
     "title": "The Times",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1037,6 +1144,7 @@
     "title": "The Sun",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1046,6 +1154,7 @@
     "title": "Financial Times",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1055,6 +1164,7 @@
     "title": "The Guardian",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1064,6 +1174,7 @@
     "title": "Daily Mail",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1073,6 +1184,7 @@
     "title": "The Independent",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   },
@@ -1082,6 +1194,7 @@
     "title": "Reuters",
     "volume": 3,
     "live": true,
+    "has_pdf": true,
     "has_easy": false,
     "has_audio": false
   }
@@ -1146,6 +1259,40 @@
 
       document.getElementById('count').textContent = `${view.length} of ${pages.length} pages`;
       document.getElementById('no-results').hidden = view.length > 0;
+      runSanityChecks();
+    }
+
+    // ── Sanity checks ──────────────────────────────────
+    function runSanityChecks() {
+      const checks = [
+        { label: 'missing PDF',   crit: p => p.live !== false, test: p => !p.has_pdf },
+        { label: 'empty title',   crit: () => true,            test: p => !String(p.title||'').trim() },
+        { label: 'empty slug',    crit: () => true,            test: p => !String(p.slug||'').trim() },
+        { label: 'missing number',crit: () => true,            test: p => !String(p.num||'').trim() },
+      ];
+
+      const pageIssues = [];
+      pages.forEach(p => {
+        const failing = checks.filter(c => c.test(p)).map(c => ({ label: c.label, crit: c.crit(p) }));
+        if (failing.length) pageIssues.push({ page: p, failing });
+      });
+
+      const panel = document.getElementById('sanity-panel');
+      if (pageIssues.length === 0) {
+        panel.className = 'sanity-panel ok';
+        panel.innerHTML = '✓ All pages pass sanity checks.';
+        return;
+      }
+
+      const total = pageIssues.reduce((n, pi) => n + pi.failing.length, 0);
+      const items = pageIssues.map(({ page, failing }) => {
+        const id   = page.num && page.title ? `${esc(page.num)} – ${esc(page.title)}` : `(num: ${esc(page.num||'?')})`;
+        const tags = failing.map(f => f.crit ? `<span class="crit">${f.label}</span>` : f.label).join(', ');
+        return `<li>${id}: ${tags}</li>`;
+      }).join('');
+
+      panel.className = 'sanity-panel warn';
+      panel.innerHTML = `<strong>⚠ ${total} issue${total !== 1 ? 's' : ''} on ${pageIssues.length} page${pageIssues.length !== 1 ? 's' : ''}:</strong><ul>${items}</ul>`;
     }
 
     function viewRow(p, i) {
@@ -1252,7 +1399,7 @@
     document.getElementById('btn-add').addEventListener('click', () => {
       const i = pages.length;
       pages.push({ num: '', title: '', slug: '', volume: 1, live: true,
-                   has_easy: false, has_audio: false, _new: true });
+                   has_pdf: false, has_easy: false, has_audio: false, _new: true });
       editingIdx = i;
       // Temporarily clear filters so the new row is visible
       filterVol = 'all';
@@ -1268,7 +1415,7 @@
     // ── Export ─────────────────────────────────────────────
     document.getElementById('btn-export').addEventListener('click', () => {
       // Strip computed/internal fields before export
-      const clean = pages.map(({ has_easy, has_audio, _new, ...rest }) => rest);
+      const clean = pages.map(({ has_pdf, has_easy, has_audio, _new, ...rest }) => rest);
       const out = JSON.stringify({ pages: clean }, null, 2);
       const blob = new Blob([out], { type: 'application/json' });
       const a = document.createElement('a');
@@ -1293,9 +1440,9 @@
           if (!data.pages || !Array.isArray(data.pages)) throw new Error('Invalid format');
           // Preserve has_easy / has_audio from current data where num matches
           const statusMap = {};
-          pages.forEach(p => { statusMap[p.num] = { has_easy: p.has_easy, has_audio: p.has_audio }; });
+          pages.forEach(p => { statusMap[p.num] = { has_pdf: p.has_pdf, has_easy: p.has_easy, has_audio: p.has_audio }; });
           pages = data.pages.map(p => ({
-            has_easy: false, has_audio: false,
+            has_pdf: false, has_easy: false, has_audio: false,
             ...statusMap[p.num],
             ...p,
           }));

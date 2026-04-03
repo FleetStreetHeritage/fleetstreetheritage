@@ -179,10 +179,11 @@ def main():
         prev_page = pages[i - 1] if i > 0 else None
         next_page = pages[i + 1] if i < len(pages) - 1 else None
 
+        has_pdf   = (PDFS_DIR  / f"{page['num']}.pdf").exists()
         has_easy  = (PDFS_DIR  / f"E_{page['num']}.pdf").exists()
         has_audio = (AUDIO_DIR / f"{page['num']}.mp3").exists()
 
-        pages_with_status.append({**page, 'has_easy': has_easy, 'has_audio': has_audio})
+        pages_with_status.append({**page, 'has_pdf': has_pdf, 'has_easy': has_easy, 'has_audio': has_audio})
 
         generate_nl(page, prev_page, next_page, has_easy, has_audio)
         counts['nl'] += 1
@@ -198,10 +199,25 @@ def main():
     generate_index(pages)
     generate_admin(pages_with_status)
 
+    missing_pdfs = [p for p in pages_with_status if not p['has_pdf']]
+    if missing_pdfs:
+        print(f"  ⚠  {len(missing_pdfs)} page(s) missing main PDF:")
+        for p in missing_pdfs:
+            print(f"     {p['num']} – {p['title']}")
+
     mode = 'PRODUCTION' if PROD_MODE else 'STAGING'
-    print(f"[{mode}] Generated index + {counts['nl']} NL pages, "
-          f"{counts['easy']} Easy Read pages, "
-          f"{counts['qr']} QR redirects → {OUTPUT_DIR}")
+    print(f"==============")
+    print(f"generate.py in [{mode}] mode:")
+    print(f"++++++++++++++")
+    print(f"Generated products as follows:")
+    print(f"  {OUTPUT_DIR}/index.html")
+    print(f"  {NL_DIR}/   ×{counts['nl']} NL pages")
+    if counts['easy']:
+        print(f"  {EASY_DIR}/   ×{counts['easy']} Easy Read pages")
+    print(f"  {QR_DIR}/   ×{counts['qr']} QR redirects (staging/prod)")
+    print(f"  {LIVE_QR_DIR}/   ×{counts['qr']} live QR redirects → {'prod' if PROD_MODE else 'staging'} paths")
+    print(f"  {ADMIN_DIR}/index.html  +  pages-edit.html")
+    print(f"==============")
 
 
 if __name__ == '__main__':

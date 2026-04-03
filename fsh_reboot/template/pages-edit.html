@@ -163,12 +163,28 @@
     .unsaved-badge.visible { display: inline-block; }
 
     .no-results { text-align: center; padding: 2rem; color: #888; }
+
+    /* ── Sanity panel ────────────────────────────────── */
+    .sanity-panel {
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    .sanity-panel.ok   { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1e5c2a; }
+    .sanity-panel.warn { background: #fff3e0; border: 1px solid #ffcc80; color: #6d3a00; }
+    .sanity-panel ul   { margin-top: 0.35rem; padding-left: 1.3rem; }
+    .sanity-panel li   { margin-bottom: 0.15rem; }
+    .sanity-panel .crit { color: #c00; font-weight: bold; }
   </style>
 </head>
 <body>
 
   <h1>Fleet Street Heritage – Page Listing</h1>
   <p class="meta">Generated <!-- GENERATED_AT --> &nbsp;·&nbsp; <span id="total-count"><!-- PAGE_COUNT --></span> pages</p>
+
+  <div id="sanity-panel" class="sanity-panel ok" aria-live="polite"></div>
 
   <div class="controls">
     <input type="search" id="search" placeholder="Search title or slug…" aria-label="Search pages">
@@ -272,6 +288,40 @@
 
       document.getElementById('count').textContent = `${view.length} of ${pages.length} pages`;
       document.getElementById('no-results').hidden = view.length > 0;
+      runSanityChecks();
+    }
+
+    // ── Sanity checks ──────────────────────────────────
+    function runSanityChecks() {
+      const checks = [
+        { label: 'missing PDF',   crit: p => p.live !== false, test: p => !p.has_pdf },
+        { label: 'empty title',   crit: () => true,            test: p => !String(p.title||'').trim() },
+        { label: 'empty slug',    crit: () => true,            test: p => !String(p.slug||'').trim() },
+        { label: 'missing number',crit: () => true,            test: p => !String(p.num||'').trim() },
+      ];
+
+      const pageIssues = [];
+      pages.forEach(p => {
+        const failing = checks.filter(c => c.test(p)).map(c => ({ label: c.label, crit: c.crit(p) }));
+        if (failing.length) pageIssues.push({ page: p, failing });
+      });
+
+      const panel = document.getElementById('sanity-panel');
+      if (pageIssues.length === 0) {
+        panel.className = 'sanity-panel ok';
+        panel.innerHTML = '✓ All pages pass sanity checks.';
+        return;
+      }
+
+      const total = pageIssues.reduce((n, pi) => n + pi.failing.length, 0);
+      const items = pageIssues.map(({ page, failing }) => {
+        const id   = page.num && page.title ? `${esc(page.num)} – ${esc(page.title)}` : `(num: ${esc(page.num||'?')})`;
+        const tags = failing.map(f => f.crit ? `<span class="crit">${f.label}</span>` : f.label).join(', ');
+        return `<li>${id}: ${tags}</li>`;
+      }).join('');
+
+      panel.className = 'sanity-panel warn';
+      panel.innerHTML = `<strong>⚠ ${total} issue${total !== 1 ? 's' : ''} on ${pageIssues.length} page${pageIssues.length !== 1 ? 's' : ''}:</strong><ul>${items}</ul>`;
     }
 
     function viewRow(p, i) {
@@ -351,7 +401,9 @@
         return;
       }
 
-      pages[i] = { ...pages[i], num, title, slug, volume, live };
+      // If num changed, has_pdf status is unknown until next regeneration
+      const has_pdf = (num === String(pages[i].num)) ? pages[i].has_pdf : false;
+      pages[i] = { ...pages[i], num, title, slug, volume, live, has_pdf };
       editingIdx = null;
       markDirty();
       render();
@@ -378,7 +430,7 @@
     document.getElementById('btn-add').addEventListener('click', () => {
       const i = pages.length;
       pages.push({ num: '', title: '', slug: '', volume: 1, live: true,
-                   has_easy: false, has_audio: false, _new: true });
+                   has_pdf: false, has_easy: false, has_audio: false, _new: true });
       editingIdx = i;
       // Temporarily clear filters so the new row is visible
       filterVol = 'all';
@@ -394,7 +446,7 @@
     // ── Export ─────────────────────────────────────────────
     document.getElementById('btn-export').addEventListener('click', () => {
       // Strip computed/internal fields before export
-      const clean = pages.map(({ has_easy, has_audio, _new, ...rest }) => rest);
+      const clean = pages.map(({ has_pdf, has_easy, has_audio, _new, ...rest }) => rest);
       const out = JSON.stringify({ pages: clean }, null, 2);
       const blob = new Blob([out], { type: 'application/json' });
       const a = document.createElement('a');
@@ -419,9 +471,9 @@
           if (!data.pages || !Array.isArray(data.pages)) throw new Error('Invalid format');
           // Preserve has_easy / has_audio from current data where num matches
           const statusMap = {};
-          pages.forEach(p => { statusMap[p.num] = { has_easy: p.has_easy, has_audio: p.has_audio }; });
+          pages.forEach(p => { statusMap[p.num] = { has_pdf: p.has_pdf, has_easy: p.has_easy, has_audio: p.has_audio }; });
           pages = data.pages.map(p => ({
-            has_easy: false, has_audio: false,
+            has_pdf: false, has_easy: false, has_audio: false,
             ...statusMap[p.num],
             ...p,
           }));

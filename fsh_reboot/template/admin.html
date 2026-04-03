@@ -91,6 +91,20 @@
     .cross { color: #bbb; }
 
     .no-results { text-align: center; padding: 2rem; color: #888; }
+
+    /* ── Sanity panel ────────────────────────────────── */
+    .sanity-panel {
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    .sanity-panel.ok   { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1e5c2a; }
+    .sanity-panel.warn { background: #fff3e0; border: 1px solid #ffcc80; color: #6d3a00; }
+    .sanity-panel ul   { margin-top: 0.35rem; padding-left: 1.3rem; }
+    .sanity-panel li   { margin-bottom: 0.15rem; }
+    .sanity-panel .crit { color: #c00; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -98,6 +112,8 @@
   <h1>Fleet Street Heritage – Page Listing</h1>
   <p class="meta">Generated <!-- GENERATED_AT --> &nbsp;·&nbsp; <!-- PAGE_COUNT --> pages
     &nbsp;·&nbsp; <a href="pages-edit.html">Edit pages →</a></p>
+
+  <div id="sanity-panel" class="sanity-panel ok" aria-live="polite"></div>
 
   <div class="controls">
     <input type="search" id="search" placeholder="Search title or slug…" aria-label="Search pages">
@@ -232,7 +248,41 @@
       render();
     });
 
+    // ── Sanity checks ──────────────────────────────────
+    function runSanityChecks() {
+      const checks = [
+        { label: 'missing PDF',   crit: p => p.live !== false, test: p => !p.has_pdf },
+        { label: 'empty title',   crit: () => true,            test: p => !String(p.title||'').trim() },
+        { label: 'empty slug',    crit: () => true,            test: p => !String(p.slug||'').trim() },
+        { label: 'missing number',crit: () => true,            test: p => !String(p.num||'').trim() },
+      ];
+
+      const pageIssues = [];
+      PAGES.forEach(p => {
+        const failing = checks.filter(c => c.test(p)).map(c => ({ label: c.label, crit: c.crit(p) }));
+        if (failing.length) pageIssues.push({ page: p, failing });
+      });
+
+      const panel = document.getElementById('sanity-panel');
+      if (pageIssues.length === 0) {
+        panel.className = 'sanity-panel ok';
+        panel.innerHTML = '✓ All pages pass sanity checks.';
+        return;
+      }
+
+      const total = pageIssues.reduce((n, pi) => n + pi.failing.length, 0);
+      const items = pageIssues.map(({ page, failing }) => {
+        const id    = page.num && page.title ? `${esc(page.num)} – ${esc(page.title)}` : `(num: ${esc(page.num||'?')})`;
+        const tags  = failing.map(f => f.crit ? `<span class="crit">${f.label}</span>` : f.label).join(', ');
+        return `<li>${id}: ${tags}</li>`;
+      }).join('');
+
+      panel.className = 'sanity-panel warn';
+      panel.innerHTML = `<strong>⚠ ${total} issue${total !== 1 ? 's' : ''} on ${pageIssues.length} page${pageIssues.length !== 1 ? 's' : ''}:</strong><ul>${items}</ul>`;
+    }
+
     render();
+    runSanityChecks();
   </script>
 
 </body>
