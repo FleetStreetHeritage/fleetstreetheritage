@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting – The Heritage of Fleet Street</title>
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL');
+  </script>
+</head>
+<body>
+
+  <p>Loading<span aria-hidden="true">…</span>
+     <noscript>Please <a id="fallback">click here</a> to continue.</noscript>
+  </p>
+
+  <script>
+    // ── Per-page config ────────────────────────────────────
+    const NL_URL   = '../dev/nl/sunday-times.html';     // e.g. 'dr-johnson.html'
+    const EASY_URL = '';   // e.g. 'easy-dr-johnson.html'  ('' if none)
+    const PAGE_ID  = 'sunday-times';
+    const PAGE_NUM = '302';
+
+    // ── Read URL params ────────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    const src    = params.get('src') || '';
+    const vParam = params.get('v')   || '';
+    const fParam = parseInt(params.get('f') ?? '0', 10);
+
+    // ── Resolve view ───────────────────────────────────────
+    const STORAGE_KEY = 'fsh_view';
+
+    function resolveView() {
+      const stored = localStorage.getItem(STORAGE_KEY) || '';
+
+      if (fParam === 2 && vParam) {
+        localStorage.setItem(STORAGE_KEY, vParam);
+        return vParam;
+      }
+      if (fParam === 1 && vParam) return vParam;
+      // f=0
+      return stored || vParam || 'nl';
+    }
+
+    const view = resolveView();
+    const hasEasy = EASY_URL !== '';
+
+    // ── Build destination URL ──────────────────────────────
+    const base = (view === 'easy' && hasEasy) ? EASY_URL : NL_URL;
+    const dest = new URL(base, window.location.href);
+    if (src) dest.searchParams.set('src', src);
+
+    // ── Fire GA event before redirect ─────────────────────
+    gtag('event', 'qr_scan', {
+      page_id:    PAGE_ID,
+      page_num:   PAGE_NUM,
+      src_param:  src,
+      view_param: vParam,
+      force:      fParam,
+      routed_to:  view
+    });
+
+    // Fallback link for noscript / slow GA
+    document.querySelector('#fallback') && (document.querySelector('#fallback').href = dest.toString());
+
+    // Short delay so GA event has time to send, then redirect
+    setTimeout(() => window.location.replace(dest.toString()), 300);
+  </script>
+
+</body>
+</html>

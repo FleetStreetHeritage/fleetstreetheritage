@@ -28,6 +28,12 @@ PDFS_DIR   = OUTPUT_DIR / 'pdfs'
 AUDIO_DIR  = OUTPUT_DIR / 'audio'
 ADMIN_DIR  = OUTPUT_DIR / 'admin'
 
+# Live QR codes always go to docs/qr/ regardless of mode.
+# In staging they point into docs/dev/; in prod they point into docs/ root.
+LIVE_QR_DIR   = REPO_ROOT / 'docs' / 'qr'
+LIVE_NL_BASE  = '../nl/'   if PROD_MODE else '../dev/nl/'
+LIVE_EASY_BASE = '../easy/' if PROD_MODE else '../dev/easy/'
+
 # ── Template loading ────────────────────────────────────────────────────────
 def load_template(name):
     return (TEMPLATE_DIR / name).read_text(encoding='utf-8')
@@ -129,6 +135,17 @@ def generate_index(pages):
     (OUTPUT_DIR / 'index.html').write_text(html, encoding='utf-8')
 
 
+# ── Live QR codes (docs/qr/) ────────────────────────────────────────────────
+def generate_live_qr(page, has_easy):
+    html = sub(load_template('qr-redirect.html'), {
+        'PAGE_ID':  page['slug'],
+        'PAGE_NUM': page['num'],
+        'NL_URL':   f"{LIVE_NL_BASE}{page['slug']}.html",
+        'EASY_URL': f"{LIVE_EASY_BASE}{page['slug']}.html" if has_easy else '',
+    })
+    (LIVE_QR_DIR / f"{page['num']}.html").write_text(html, encoding='utf-8')
+
+
 # ── Admin page ──────────────────────────────────────────────────────────────
 def generate_admin(pages_with_status):
     ADMIN_DIR.mkdir(parents=True, exist_ok=True)
@@ -152,7 +169,7 @@ def main():
     with open(DATA_FILE, encoding='utf-8') as f:
         pages = json.load(f)['pages']
 
-    for d in (OUTPUT_DIR, NL_DIR, EASY_DIR, QR_DIR, ADMIN_DIR):
+    for d in (OUTPUT_DIR, NL_DIR, EASY_DIR, QR_DIR, ADMIN_DIR, LIVE_QR_DIR):
         d.mkdir(parents=True, exist_ok=True)
 
     counts = {'nl': 0, 'easy': 0, 'qr': 0}
@@ -175,6 +192,7 @@ def main():
             counts['easy'] += 1
 
         generate_qr(page, has_easy)
+        generate_live_qr(page, has_easy)
         counts['qr'] += 1
 
     generate_index(pages)
