@@ -19,7 +19,7 @@ Supported markdown:
 import re
 from pathlib import Path
 
-CONTENT_DIR = Path(__file__).parent.parent.parent / 'docs' / 'dev' / 'content'
+CONTENT_DIR = Path(__file__).parent.parent / 'content'
 
 
 # ── Markdown parser ───────────────────────────────────────────────────────────

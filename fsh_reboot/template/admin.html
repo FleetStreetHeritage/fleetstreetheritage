@@ -99,6 +99,31 @@
 
     .no-results { text-align: center; padding: 2rem; color: #888; }
 
+    /* ── Text output ─────────────────────────────────── */
+    #text-out-wrap { margin-bottom: 1rem; }
+    .text-out-inner { display: flex; flex-direction: column; gap: 0.4rem; }
+    .text-out-inner textarea {
+      width: 100%;
+      font-family: monospace;
+      font-size: 0.78rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      resize: vertical;
+      color: #222;
+    }
+    .text-out-inner button {
+      align-self: flex-start;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.78rem;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .text-out-inner button:hover { background: #e8e8e8; }
+
     /* ── Sanity panel ────────────────────────────────── */
     .sanity-panel {
       padding: 0.5rem 0.8rem;
@@ -136,6 +161,14 @@
       <button data-live="0">Hidden only</button>
     </div>
     <span class="count" id="count"></span>
+    <button class="filter-group button" id="btn-text-out" onclick="toggleTextOut()">Text list</button>
+  </div>
+
+  <div id="text-out-wrap" hidden>
+    <div class="text-out-inner">
+      <textarea id="text-out" readonly rows="10"></textarea>
+      <button onclick="copyTextOut()">Copy to clipboard</button>
+    </div>
   </div>
 
   <div class="table-wrap">
@@ -160,11 +193,12 @@
   <script>
     const PAGES = <!-- PAGES_JSON -->;
 
-    let sortCol  = 'num';
-    let sortDir  = 1;
+    let sortCol    = 'num';
+    let sortDir    = 1;
     let filterVol  = 'all';
     let filterLive = 'all';
-    let searchQ  = '';
+    let searchQ    = '';
+    let rows       = [];
 
     function esc(s) {
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -175,8 +209,44 @@
                : '<span class="cross" aria-label="no">–</span>';
     }
 
+    const SORT_LABELS = { num: '#', title: 'Title', slug: 'Slug', volume: 'Volume',
+                          live: 'Live', has_easy: 'Easy Read', has_audio: 'Audio' };
+
+    function buildText(rows) {
+      const dir     = sortDir === 1 ? '↑' : '↓';
+      const volDesc = filterVol  === 'all' ? 'All volumes' : 'Vol ' + filterVol;
+      const livDesc = filterLive === 'all' ? 'Live + hidden' : filterLive === '1' ? 'Live only' : 'Hidden only';
+      const parts   = [`Sorted by: ${SORT_LABELS[sortCol] || sortCol} ${dir}`, volDesc, livDesc];
+      if (searchQ) parts.push(`Search: "${searchQ}"`);
+      const header  = `Fleet Street Heritage – ${rows.length} of ${PAGES.length} items\n${parts.join(' | ')}`;
+      const yn      = v => v ? 'yes' : 'no';
+      const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio'];
+      const data    = rows.map(p => [String(p.num), p.title, p.slug, String(p.volume),
+                        yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio)]);
+      const widths  = hdrs.map((h, ci) => Math.max(h.length, ...data.map(r => r[ci].length)));
+      const fmt     = row => row.map((v, ci) =>
+        ci < row.length - 1 ? (v + ',').padEnd(widths[ci] + 2) : v).join('');
+      return `${header}\n\n${fmt(hdrs)}\n${data.map(fmt).join('\n')}`;
+    }
+
+    function toggleTextOut() {
+      const wrap = document.getElementById('text-out-wrap');
+      const btn  = document.getElementById('btn-text-out');
+      wrap.hidden = !wrap.hidden;
+      btn.classList.toggle('active', !wrap.hidden);
+    }
+
+    function copyTextOut() {
+      const ta  = document.getElementById('text-out');
+      const btn = event.target;
+      navigator.clipboard.writeText(ta.value).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy to clipboard', 1500);
+      }).catch(() => { ta.select(); document.execCommand('copy'); });
+    }
+
     function render() {
-      let rows = PAGES.filter(p => {
+      rows = PAGES.filter(p => {
         if (filterVol !== 'all' && String(p.volume) !== filterVol) return false;
         if (filterLive === '1' && p.live === false) return false;
         if (filterLive === '0' && p.live !== false) return false;
@@ -217,8 +287,9 @@
         </tr>`;
       }).join('');
 
-      document.getElementById('count').textContent = `${rows.length} of ${PAGES.length} pages`;
+      document.getElementById('count').textContent = `showing ${rows.length} of ${PAGES.length} items`;
       document.getElementById('no-results').hidden = rows.length > 0;
+      document.getElementById('text-out').value = buildText(rows);
     }
 
     document.querySelectorAll('thead th[data-col]').forEach(th => {
