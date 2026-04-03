@@ -182,6 +182,9 @@
         Easy Read
       </button>
 
+      <!-- Zoom toggle -->
+      <button id="zoom-toggle" aria-label="Zoom in on PDF">Zoom in</button>
+
       <!-- Prev / Next -->
       <a id="nav-prev" href="fleet-street-in-the-1700s.html" aria-label="Previous page">&#8592; Prev</a>
       <a id="nav-next" href="fleet-street-in-1847-north.html" aria-label="Next page">Next &#8594;</a>
@@ -296,6 +299,21 @@
         window.location.href = dest.toString();
       });
     }
+
+    // ── Zoom toggle ────────────────────────────────────────
+    (function () {
+      const frame = document.getElementById('pdf-frame');
+      const btn   = document.getElementById('zoom-toggle');
+      const base  = '../pdfs/157.pdf';
+      let   fit   = true;
+
+      btn.addEventListener('click', () => {
+        fit = !fit;
+        frame.src = base + (fit ? '#zoom=fitH' : '#zoom=150');
+        btn.textContent = fit ? 'Zoom in' : 'Fit width';
+        btn.setAttribute('aria-label', fit ? 'Zoom in on PDF' : 'Fit PDF to screen width');
+      });
+    })();
 
     // ── GA page view with content group + source ───────────
     gtag('event', 'page_view', {

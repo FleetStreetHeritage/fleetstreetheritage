@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>150 qr redirect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Analytics (replace with your GA4 Measurement ID) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    const customSuffix = ".html"; // Change this if you want a different suffix
+
+    // Get the current script URL
+    const currentPath = window.location.pathname;
+    const filename = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+    const baseName = filename.replace("_qr.html", "");
+
+    const targetUrl = `${window.location.origin}/${baseName}${customSuffix}`;
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL'); // Replace with your GA4 Measurement ID
+
+    // Redirect after a brief delay to let GA load
+    setTimeout(() => {
+      window.location.href = targetUrl;
+    }, 500);
+  </script>
+</head>
+<body>
+  <p>Redirecting... If you're not redirected, <a id="fallback-link" href="#">click here</a>.</p>
+  <script>
+    document.getElementById("fallback-link").href = targetUrl;
+  </script>
+</body>
+</html>

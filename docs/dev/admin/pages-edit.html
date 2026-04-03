@@ -182,7 +182,7 @@
 <body>
 
   <h1>Fleet Street Heritage – Page Listing</h1>
-  <p class="meta">Generated 2026-04-03 15:09 UTC &nbsp;·&nbsp; <span id="total-count">97</span> pages</p>
+  <p class="meta">Generated 2026-04-03 15:46 UTC &nbsp;·&nbsp; <span id="total-count">97</span> pages</p>
 
   <div id="sanity-panel" class="sanity-panel ok" aria-live="polite"></div>
 
@@ -1372,7 +1372,9 @@
         return;
       }
 
-      pages[i] = { ...pages[i], num, title, slug, volume, live };
+      // If num changed, has_pdf status is unknown until next regeneration
+      const has_pdf = (num === String(pages[i].num)) ? pages[i].has_pdf : false;
+      pages[i] = { ...pages[i], num, title, slug, volume, live, has_pdf };
       editingIdx = null;
       markDirty();
       render();
