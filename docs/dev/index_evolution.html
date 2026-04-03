@@ -175,15 +175,13 @@
     .intro-col p { margin-bottom: 0.6rem; }
 
     .intro-col a {
-      color: inherit;
+      color: var(--fsh-yellow);
       text-decoration: underline;
       text-underline-offset: 2px;
-      text-decoration-color: rgba(255,255,255,0.4);
     }
     .intro-col a:hover,
     .intro-col a:focus {
-      color: var(--fsh-yellow);
-      text-decoration-color: var(--fsh-yellow);
+      text-decoration-color: transparent;
     }
 
     .col-heading {
@@ -207,7 +205,6 @@
     .col-list {
       list-style: none;
       margin-top: 0.5rem;
-      color: var(--fsh-yellow);
       font-size: 0.85rem;
     }
 
@@ -229,7 +226,13 @@
       margin-bottom: 1.5rem;
     }
 
-    .book-banner a { color: var(--fsh-yellow); }
+    .book-banner a {
+      color: var(--fsh-yellow);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .book-banner a:hover,
+    .book-banner a:focus { text-decoration-color: transparent; }
 
     /* ── Footer ──────────────────────────────────────────── */
     footer {

@@ -13,6 +13,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent))
+
 # ── Paths ──────────────────────────────────────────────────────────────────
 SCRIPT_DIR   = Path(__file__).parent
 REPO_ROOT    = SCRIPT_DIR.parent.parent
@@ -108,20 +110,17 @@ VOLUME_LABELS = {
     3: 'Volume III – Biographies of Current Newspapers',
 }
 
-def generate_index(pages):
-    # Group pages by volume, preserving nav order
+def build_volume_sections(pages):
     volumes = {}
     for page in pages:
-        v = page['volume']
-        volumes.setdefault(v, []).append(page)
-
-    sections_html = []
+        volumes.setdefault(page['volume'], []).append(page)
+    sections = []
     for v in sorted(volumes):
         items = ''.join(
             f'      <li><a href="nl/{p["slug"]}.html">{p["title"]}</a></li>\n'
             for p in volumes[v] if p.get('live', True)
         )
-        sections_html.append(
+        sections.append(
             f'      <section class="volume" aria-labelledby="vol-{v}-heading">\n'
             f'        <h2 class="volume-heading" id="vol-{v}-heading">{VOLUME_LABELS[v]}</h2>\n'
             f'        <ul class="page-grid">\n'
@@ -129,11 +128,28 @@ def generate_index(pages):
             f'        </ul>\n'
             f'      </section>\n'
         )
+    return '\n'.join(sections)
 
+
+def generate_index(pages):
     html = (load_template('index.html')
-            .replace('<!-- GA_ID -->',        GA_ID)
-            .replace('<!-- VOLUME_SECTIONS -->', '\n'.join(sections_html)))
+            .replace('<!-- GA_ID -->',           GA_ID)
+            .replace('<!-- VOLUME_SECTIONS -->', build_volume_sections(pages)))
     (OUTPUT_DIR / 'index.html').write_text(html, encoding='utf-8')
+
+
+def generate_index_evolution(pages):
+    import content
+    blocks = content.get_blocks()
+    html = (load_template('index_evolution.html')
+            .replace('<!-- GA_ID -->',           GA_ID)
+            .replace('<!-- HERO_BLOCK -->',      blocks['hero_block'])
+            .replace('<!-- BANNER_BLOCK -->',    blocks['banner_block'])
+            .replace('<!-- COL_1 -->',           blocks['col1'])
+            .replace('<!-- COL_2 -->',           blocks['col2'])
+            .replace('<!-- COL_3 -->',           blocks['col3'])
+            .replace('<!-- VOLUME_SECTIONS -->', build_volume_sections(pages)))
+    (OUTPUT_DIR / 'index_evolution.html').write_text(html, encoding='utf-8')
 
 
 # ── Live QR codes (docs/qr/) ────────────────────────────────────────────────
@@ -199,6 +215,7 @@ def main():
         counts['qr'] += 1
 
     generate_index(pages)
+    generate_index_evolution(pages)
     generate_admin(pages_with_status)
 
     missing_pdfs = [p for p in pages_with_status if not p['has_pdf']]
@@ -213,6 +230,7 @@ def main():
     print(f"++++++++++++++")
     print(f"Generated products as follows:")
     print(f"  {OUTPUT_DIR}/index.html")
+    print(f"  {OUTPUT_DIR}/index_evolution.html")
     print(f"  {NL_DIR}/   ×{counts['nl']} NL pages")
     if counts['easy']:
         print(f"  {EASY_DIR}/   ×{counts['easy']} Easy Read pages")
