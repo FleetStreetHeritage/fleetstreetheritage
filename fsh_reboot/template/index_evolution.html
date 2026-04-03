@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Heritage of Fleet Street</title>
+  <meta name="description" content="Over 90 information panels on the history, people, places and newspapers of Fleet Street, London.">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<!-- GA_ID -->"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<!-- GA_ID -->');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fsh-blue:   #254760;
+      --fsh-yellow: #FFFF66;
+      --fsh-white:  #ffffff;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      min-height: 100dvh;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+      background: var(--fsh-blue);
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+      padding: 1.5rem 1rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    header p.subtitle {
+      font-size: 0.9rem;
+      color: var(--fsh-yellow);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Skip link ───────────────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* ── Main content ────────────────────────────────────── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* ── Volume sections ─────────────────────────────────── */
+    .volume {
+      margin-bottom: 2.5rem;
+    }
+
+    .volume-heading {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--fsh-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Page grid ───────────────────────────────────────── */
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.4rem 1.2rem;
+      list-style: none;
+    }
+
+    .page-grid li a {
+      color: var(--fsh-white);
+      text-decoration: none;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      display: block;
+      padding: 0.15rem 0;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .page-grid li a:hover,
+    .page-grid li a:focus {
+      color: var(--fsh-yellow);
+      border-bottom-color: var(--fsh-yellow);
+      outline: none;
+    }
+
+    .page-grid li a:focus-visible {
+      outline: 2px solid var(--fsh-yellow);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    /* ── Intro sections ──────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 1.5rem 1rem 0;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero .col-title {
+      font-size: clamp(1.2rem, 3.5vw, 1.9rem);
+      font-weight: bold;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--fsh-white);
+      margin-bottom: 0.2rem;
+    }
+
+    .hero .col-heading {
+      font-size: 0.95rem;
+      font-weight: normal;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--fsh-yellow);
+      margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 700px;
+      margin: 0 auto 0.5rem;
+    }
+
+    .hero .col-img {
+      max-width: 100%;
+      margin-top: 1rem;
+      background: #fff;
+      padding: 0.5rem;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 640px) {
+      .intro-grid { grid-template-columns: 1fr; }
+    }
+
+    .intro-col { font-size: 0.9rem; line-height: 1.6; }
+
+    .intro-col p { margin-bottom: 0.6rem; }
+
+    .intro-col a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: rgba(255,255,255,0.4);
+    }
+    .intro-col a:hover,
+    .intro-col a:focus {
+      color: var(--fsh-yellow);
+      text-decoration-color: var(--fsh-yellow);
+    }
+
+    .col-heading {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--fsh-yellow);
+      margin-bottom: 0.5rem;
+    }
+
+    .col-title {
+      font-size: 3.5rem;
+      font-weight: bold;
+      line-height: 1;
+      color: var(--fsh-yellow);
+      text-transform: none;
+      letter-spacing: 0;
+      margin-bottom: 0.25rem;
+    }
+
+    .col-list {
+      list-style: none;
+      margin-top: 0.5rem;
+      color: var(--fsh-yellow);
+      font-size: 0.85rem;
+    }
+
+    .col-img {
+      display: block;
+      width: 100%;
+      max-width: 220px;
+      height: auto;
+      margin-bottom: 0.75rem;
+    }
+
+    .book-banner {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .book-banner a { color: var(--fsh-yellow); }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+      padding: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#page-list">Skip to page list</a>
+
+  <header role="banner">
+    <h1>The Heritage of Fleet Street</h1>
+    <p class="subtitle">www.fleetstreetheritage.co.uk</p>
+  </header>
+
+<!-- HERO_BLOCK -->
+
+  <main>
+
+    <div class="intro-grid">
+
+      <div class="intro-col"><!-- COL_1 --></div>
+
+      <div class="intro-col" style="text-align:center"><!-- COL_2 --></div>
+
+      <div class="intro-col"><!-- COL_3 --></div>
+
+    </div>
+
+<!-- BANNER_BLOCK -->
+
+    <div id="page-list">
+
+<!-- VOLUME_SECTIONS -->
+
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; Fleet Street Heritage</p>
+  </footer>
+
+  <script>
+    // If user has an easy-read preference, all page links will route through
+    // the NL wrapper which automatically redirects to easy-read.
+    // No special logic needed here.
+    gtag('event', 'page_view', { page_id: 'index' });
+  </script>
+
+</body>
+</html>
