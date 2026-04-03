@@ -130,9 +130,9 @@ def generate_index(pages):
             f'      </section>\n'
         )
 
-    html = load_template('index.html').replace(
-        '<!-- VOLUME_SECTIONS -->', '\n'.join(sections_html)
-    )
+    html = (load_template('index.html')
+            .replace('<!-- GA_ID -->',        GA_ID)
+            .replace('<!-- VOLUME_SECTIONS -->', '\n'.join(sections_html)))
     (OUTPUT_DIR / 'index.html').write_text(html, encoding='utf-8')
 
 
