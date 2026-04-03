@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Heritage of Fleet Street</title>
+  <meta name="description" content="Over 90 information panels on the history, people, places and newspapers of Fleet Street, London.">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fsh-blue:   #254760;
+      --fsh-yellow: #FFFF66;
+      --fsh-white:  #ffffff;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      min-height: 100dvh;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+      background: var(--fsh-blue);
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+      padding: 1.5rem 1rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    header p.subtitle {
+      font-size: 0.9rem;
+      color: var(--fsh-yellow);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Skip link ───────────────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* ── Main content ────────────────────────────────────── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* ── Volume sections ─────────────────────────────────── */
+    .volume {
+      margin-bottom: 2.5rem;
+    }
+
+    .volume-heading {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--fsh-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Page grid ───────────────────────────────────────── */
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.4rem 1.2rem;
+      list-style: none;
+    }
+
+    .page-grid li a {
+      color: var(--fsh-white);
+      text-decoration: none;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      display: block;
+      padding: 0.15rem 0;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .page-grid li a:hover,
+    .page-grid li a:focus {
+      color: var(--fsh-yellow);
+      border-bottom-color: var(--fsh-yellow);
+      outline: none;
+    }
+
+    .page-grid li a:focus-visible {
+      outline: 2px solid var(--fsh-yellow);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+      padding: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#page-list">Skip to page list</a>
+
+  <header role="banner">
+    <h1>The Heritage of Fleet Street</h1>
+    <p class="subtitle">www.fleetstreetheritage.co.uk</p>
+  </header>
+
+  <main>
+    <div id="page-list">
+
+      <section class="volume" aria-labelledby="vol-1-heading">
+        <h2 class="volume-heading" id="vol-1-heading">Volume I – People, Places, Monuments & History</h2>
+        <ul class="page-grid">
+      <li><a href="nl/points-of-interest-map.html">Points of Interest / Map</a></li>
+      <li><a href="nl/list-of-newspapers-and-dates.html">List of Newspapers and Dates</a></li>
+      <li><a href="nl/fleet-street-heritage-sundial.html">Fleet Street Heritage Sundial</a></li>
+      <li><a href="nl/fleet-street-heritage-walk-1.html">Fleet Street Heritage Walk 1</a></li>
+      <li><a href="nl/fleet-street-heritage-walk-2.html">Fleet Street Heritage Walk 2</a></li>
+      <li><a href="nl/freedom-of-the-press.html">Freedom of the Press</a></li>
+      <li><a href="nl/fleet-street-architecture-introduction.html">Fleet Street Architecture – Introduction</a></li>
+      <li><a href="nl/fleet-street-architecture-south-from-temple-bar.html">Fleet Street Architecture – South Side from Temple Bar</a></li>
+      <li><a href="nl/fleet-street-architecture-south-to-ludgate.html">Fleet Street Architecture – South Side to Ludgate Circus</a></li>
+      <li><a href="nl/fleet-street-architecture-north-from-ludgate.html">Fleet Street Architecture – North Side from Ludgate Circus</a></li>
+      <li><a href="nl/fleet-street-architecture-north-to-temple-bar.html">Fleet Street Architecture – North Side to Temple Bar</a></li>
+      <li><a href="nl/legend-of-sweeney-todd.html">Legend of Sweeney Todd</a></li>
+      <li><a href="nl/the-river-fleet.html">The River Fleet</a></li>
+      <li><a href="nl/newspaper-stamp-tax.html">Newspaper Stamp Tax</a></li>
+      <li><a href="nl/fleet-street-in-the-1500s.html">Fleet Street in the 1500s</a></li>
+      <li><a href="nl/fleet-street-in-the-1600s.html">Fleet Street in the 1600s</a></li>
+      <li><a href="nl/fleet-street-in-the-1700s.html">Fleet Street in the 1700s</a></li>
+      <li><a href="nl/fleet-street-in-the-1800s.html">Fleet Street in the 1800s</a></li>
+      <li><a href="nl/fleet-street-in-1847-north.html">Fleet Street in 1847 – North</a></li>
+      <li><a href="nl/fleet-street-in-1847-south.html">Fleet Street in 1847 – South</a></li>
+      <li><a href="nl/the-great-fire-1666.html">The Great Fire, 1666</a></li>
+      <li><a href="nl/monuments-of-fleet-street.html">Monuments of Fleet Street</a></li>
+      <li><a href="nl/st-george-and-the-dragon.html">St George and the Dragon</a></li>
+      <li><a href="nl/17-fleet-street-prince-henrys-room.html">17 Fleet Street (Prince Henry's Room)</a></li>
+      <li><a href="nl/62-fleet-street.html">62 Fleet Street</a></li>
+      <li><a href="nl/63-and-28-stonecutter-street.html">63 & 28 Stonecutter Street</a></li>
+      <li><a href="nl/85-fleet-street-the-reuters-building.html">85 Fleet Street – The Reuters Building</a></li>
+      <li><a href="nl/bouverie-street.html">Bouverie Street</a></li>
+      <li><a href="nl/the-great-conduit.html">The Great Conduit</a></li>
+      <li><a href="nl/pedestrian-courts-of-fleet-street.html">Pedestrian Courts of Fleet Street</a></li>
+      <li><a href="nl/magpie-alley.html">Magpie Alley</a></li>
+      <li><a href="nl/ashentree-court.html">Ashentree Court</a></li>
+      <li><a href="nl/alsatia.html">Alsatia</a></li>
+      <li><a href="nl/salisbury-square.html">Salisbury Square</a></li>
+      <li><a href="nl/crane-court.html">Crane Court</a></li>
+      <li><a href="nl/st-dunstan-in-the-west.html">St Dunstan-in-the-West</a></li>
+      <li><a href="nl/st-brides-church.html">St. Bride's Church</a></li>
+      <li><a href="nl/temple-church.html">Temple Church</a></li>
+      <li><a href="nl/st-brides-crypt-exhibition.html">St. Bride's Crypt Exhibition</a></li>
+      <li><a href="nl/ye-olde-cheshire-cheese.html">Ye Olde Cheshire Cheese</a></li>
+      <li><a href="nl/temple-bar.html">Temple Bar</a></li>
+      <li><a href="nl/middle-temple.html">Middle Temple</a></li>
+      <li><a href="nl/inner-temple.html">Inner Temple</a></li>
+      <li><a href="nl/knights-templar.html">Knights Templar</a></li>
+      <li><a href="nl/bridewell-palace.html">Bridewell Palace</a></li>
+      <li><a href="nl/cliffords-inn.html">Cliffords Inn</a></li>
+      <li><a href="nl/royal-society-in-fleet-street.html">Royal Society in Fleet Street</a></li>
+      <li><a href="nl/the-law-society.html">The Law Society</a></li>
+      <li><a href="nl/stationers-company.html">Stationers Company</a></li>
+      <li><a href="nl/gresham-college.html">Gresham College</a></li>
+      <li><a href="nl/child-and-co.html">Child and Co</a></li>
+      <li><a href="nl/hoares-bank.html">Hoare's Bank</a></li>
+      <li><a href="nl/st-brides-foundation.html">St. Bride Foundation</a></li>
+      <li><a href="nl/wynken-de-worde.html">Wynken de Worde</a></li>
+      <li><a href="nl/the-pastons.html">The Pastons</a></li>
+      <li><a href="nl/thomas-tompion-clockmaking.html">Thomas Tompion / Clockmaking</a></li>
+      <li><a href="nl/caslon-typefounders.html">Caslon / Typefounders</a></li>
+      <li><a href="nl/dr-johnson.html">Dr. Johnson</a></li>
+      <li><a href="nl/james-boswell.html">James Boswell</a></li>
+      <li><a href="nl/brass-crosby.html">Brass Crosby</a></li>
+      <li><a href="nl/william-hazlitt.html">William Hazlitt</a></li>
+      <li><a href="nl/cobbett-paine-and-fleet-street.html">Cobbett, Paine & Fleet Street</a></li>
+      <li><a href="nl/henry-orator-hunt.html">Henry 'Orator' Hunt</a></li>
+      <li><a href="nl/richard-carlile.html">Richard Carlile</a></li>
+      <li><a href="nl/henry-hetherington.html">Henry Hetherington</a></li>
+      <li><a href="nl/john-wilkes.html">John Wilkes</a></li>
+      <li><a href="nl/virginia-woolf.html">Virginia Woolf</a></li>
+      <li><a href="nl/eddy-shah.html">Eddy Shah</a></li>
+        </ul>
+      </section>
+
+      <section class="volume" aria-labelledby="vol-2-heading">
+        <h2 class="volume-heading" id="vol-2-heading">Volume II – Biographies of Past Newspapers</h2>
+        <ul class="page-grid">
+      <li><a href="nl/pall-mall-gazette.html">Pall Mall Gazette</a></li>
+      <li><a href="nl/daily-herald.html">Daily Herald</a></li>
+      <li><a href="nl/the-republican.html">The Republican</a></li>
+      <li><a href="nl/daily-courant.html">Daily Courant</a></li>
+      <li><a href="nl/morning-post.html">Morning Post</a></li>
+      <li><a href="nl/lloyds-weekly.html">Lloyd's Weekly</a></li>
+      <li><a href="nl/news-of-the-world.html">News of the World</a></li>
+      <li><a href="nl/daily-news.html">Daily News</a></li>
+      <li><a href="nl/daily-chronicle.html">Daily Chronicle</a></li>
+      <li><a href="nl/news-chronicle.html">News Chronicle</a></li>
+      <li><a href="nl/black-dwarf.html">Black Dwarf</a></li>
+      <li><a href="nl/punch.html">Punch</a></li>
+      <li><a href="nl/reynolds-newspaper.html">Reynolds Newspaper</a></li>
+      <li><a href="nl/the-star.html">The Star</a></li>
+      <li><a href="nl/poor-mans-guardian.html">Poor Man's Guardian</a></li>
+      <li><a href="nl/manchester-guardian.html">Manchester Guardian</a></li>
+      <li><a href="nl/picture-post.html">Picture Post</a></li>
+      <li><a href="nl/childrens-newspaper.html">Children's Newspaper</a></li>
+      <li><a href="nl/the-eagle.html">The Eagle</a></li>
+        </ul>
+      </section>
+
+      <section class="volume" aria-labelledby="vol-3-heading">
+        <h2 class="volume-heading" id="vol-3-heading">Volume III – Biographies of Current Newspapers</h2>
+        <ul class="page-grid">
+      <li><a href="nl/the-telegraph.html">The Telegraph</a></li>
+      <li><a href="nl/sunday-times.html">Sunday Times</a></li>
+      <li><a href="nl/the-times.html">The Times</a></li>
+      <li><a href="nl/the-sun.html">The Sun</a></li>
+      <li><a href="nl/financial-times.html">Financial Times</a></li>
+      <li><a href="nl/the-guardian.html">The Guardian</a></li>
+      <li><a href="nl/daily-mail.html">Daily Mail</a></li>
+      <li><a href="nl/the-independent.html">The Independent</a></li>
+      <li><a href="nl/reuters.html">Reuters</a></li>
+        </ul>
+      </section>
+
+
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; Fleet Street Heritage</p>
+  </footer>
+
+  <script>
+    // If user has an easy-read preference, all page links will route through
+    // the NL wrapper which automatically redirects to easy-read.
+    // No special logic needed here.
+    gtag('event', 'page_view', { page_id: 'index' });
+  </script>
+
+</body>
+</html>

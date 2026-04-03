@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knights Templar – The Heritage of Fleet Street</title>
+  <meta name="description" content="Knights Templar">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fsh-blue:   #254760;
+      --fsh-yellow: #FFFF66;
+      --fsh-white:  #ffffff;
+      --bar-full:   4rem;
+      --bar-compact: 2.75rem;
+      --transition: 0.3s ease;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    /* ── Header bar ─────────────────────────────────────── */
+    #fsh-bar {
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1rem;
+      height: var(--bar-full);
+      transition: height var(--transition);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    body.returning #fsh-bar {
+      height: var(--bar-compact);
+    }
+
+    #fsh-bar .site-title {
+      font-size: 1rem;
+      font-weight: bold;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    body.returning #fsh-bar .site-title {
+      font-size: 0.85rem;
+    }
+
+    #fsh-bar .page-title {
+      font-size: 0.9rem;
+      color: var(--fsh-yellow);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    body.returning #fsh-bar .page-title {
+      font-size: 0.8rem;
+    }
+
+    #fsh-bar nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    #fsh-bar a, #fsh-bar button {
+      color: var(--fsh-white);
+      text-decoration: none;
+      font-size: 0.8rem;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 3px;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    #fsh-bar a:hover, #fsh-bar button:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.7);
+    }
+
+    /* Easy Read toggle — yellow tint when active */
+    #view-toggle.easy {
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      border-color: var(--fsh-yellow);
+      font-weight: bold;
+    }
+
+    /* Audio controls */
+    #audio-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    audio {
+      height: 1.6rem;
+      max-width: 10rem;
+    }
+
+    /* Hidden audio/toggle when no asset available */
+    .unavailable { display: none !important; }
+
+    /* ── PDF frame ───────────────────────────────────────── */
+    #pdf-wrap {
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    #pdf-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* ── Skip link (accessibility) ───────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#pdf-frame">Skip to content</a>
+
+  <header id="fsh-bar" role="banner">
+
+    <span class="site-title" aria-label="The Heritage of Fleet Street">The Heritage of Fleet Street</span>
+
+    <span class="page-title" aria-current="page">Knights Templar</span>
+
+    <nav aria-label="Page controls">
+
+      <!-- Audio player — hidden if no audio file for this page -->
+      <div id="audio-wrap" class="unavailable" aria-label="Audio narration">
+        <audio id="audio-player" controls preload="none" aria-label="Listen to narration">
+          <source src="../audio/141.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+      <!-- Easy Read toggle — hidden if no Easy Read version exists -->
+      <button id="view-toggle"
+              class="unavailable"
+              aria-label="Switch to Easy Read version"
+              aria-pressed="false">
+        Easy Read
+      </button>
+
+      <!-- Prev / Next -->
+      <a id="nav-prev" href="inner-temple.html" aria-label="Previous page">&#8592; Prev</a>
+      <a id="nav-next" href="bridewell-palace.html" aria-label="Next page">Next &#8594;</a>
+
+      <!-- Home -->
+      <a href="../index.html" aria-label="Return to home page">Home</a>
+
+    </nav>
+  </header>
+
+  <main id="pdf-wrap">
+    <iframe
+      id="pdf-frame"
+      src="../pdfs/141.pdf#zoom=fitH"
+      title="Knights Templar – information panel"
+      tabindex="0">
+      <p>Your browser cannot display this PDF.
+         <a href="../pdfs/141.pdf">Download it here</a>.</p>
+    </iframe>
+  </main>
+
+  <script>
+    // ── Config (set per page) ──────────────────────────────
+    const PAGE_ID   = 'knights-templar';        // e.g. 'dr-johnson'
+    const PAGE_NUM  = '141';        // e.g. '115'
+    const HAS_AUDIO = false;         // true | false
+    const HAS_EASY  = false;          // true | false
+    const EASY_URL  = '../easy/knights-templar.html';        // e.g. 'easy-dr-johnson.html'
+    const NL_URL    = 'knights-templar.html';          // e.g. 'dr-johnson.html'
+    const AUDIO_SRC = '../audio/141.mp3';
+
+    // ── View preference ────────────────────────────────────
+    const STORAGE_KEY = 'fsh_view';
+    const params      = new URLSearchParams(window.location.search);
+    const src         = params.get('src') || '';
+    const vParam      = params.get('v')   || '';
+    const fParam      = parseInt(params.get('f') ?? '0', 10);
+
+    function getStoredView() {
+      return localStorage.getItem(STORAGE_KEY) || '';
+    }
+
+    function resolveView() {
+      const stored = getStoredView();
+      if (fParam === 2 && vParam) {
+        localStorage.setItem(STORAGE_KEY, vParam);
+        return vParam;
+      }
+      if (fParam === 1 && vParam) return vParam;
+      // f=0: stored wins, v is fallback
+      return stored || vParam || 'nl';
+    }
+
+    const targetView = resolveView();
+
+    // If this is the NL page but user should see Easy Read, redirect
+    if (targetView === 'easy' && HAS_EASY) {
+      const dest = new URL(EASY_URL, window.location.href);
+      if (src) dest.searchParams.set('src', src);
+      window.location.replace(dest.toString());
+    }
+
+    // ── Returning visitor detection ────────────────────────
+    const VISITED_KEY = 'fsh_visited';
+    if (localStorage.getItem(VISITED_KEY)) {
+      document.body.classList.add('returning');
+    } else {
+      localStorage.setItem(VISITED_KEY, '1');
+    }
+
+    // ── Audio ──────────────────────────────────────────────
+    if (HAS_AUDIO) {
+      const wrap = document.getElementById('audio-wrap');
+      wrap.classList.remove('unavailable');
+
+      document.getElementById('audio-player').addEventListener('play', () => {
+        gtag('event', 'audio_play', {
+          page_id: PAGE_ID,
+          page_num: PAGE_NUM,
+          src_param: src
+        });
+      });
+    }
+
+    // ── Easy Read toggle ───────────────────────────────────
+    if (HAS_EASY) {
+      const btn = document.getElementById('view-toggle');
+      btn.classList.remove('unavailable');
+
+      // Reflect current view in button state
+      if (targetView === 'easy') {
+        btn.textContent    = 'Natural Language';
+        btn.setAttribute('aria-label', 'Switch to Natural Language version');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.classList.add('easy');
+      }
+
+      btn.addEventListener('click', () => {
+        // Toggle and save preference (f=2 behaviour on manual switch)
+        const next = (targetView === 'easy') ? 'nl' : 'easy';
+        localStorage.setItem(STORAGE_KEY, next);
+
+        gtag('event', 'view_switch', {
+          from: targetView,
+          to: next,
+          page_id: PAGE_ID,
+          src_param: src
+        });
+
+        const dest = new URL(next === 'easy' ? EASY_URL : NL_URL, window.location.href);
+        if (src) dest.searchParams.set('src', src);
+        window.location.href = dest.toString();
+      });
+    }
+
+    // ── GA page view with content group + source ───────────
+    gtag('event', 'page_view', {
+      page_id:       PAGE_ID,
+      page_num:      PAGE_NUM,
+      content_group: PAGE_NUM.substring(0, 1) + 'xx',
+      view:          targetView,
+      src_param:     src
+    });
+  </script>
+
+</body>
+</html>

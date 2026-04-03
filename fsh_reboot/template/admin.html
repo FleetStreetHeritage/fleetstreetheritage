@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FSH Admin – Page Listing</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.875rem;
+      background: #f4f4f4;
+      color: #222;
+      padding: 1.5rem;
+    }
+
+    h1 { font-size: 1.2rem; margin-bottom: 0.25rem; }
+    .meta { font-size: 0.75rem; color: #666; margin-bottom: 1.25rem; }
+    .meta a { color: #254760; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .controls input[type="search"] {
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      width: 220px;
+    }
+
+    .filter-group { display: flex; gap: 0.3rem; }
+
+    .filter-group button {
+      padding: 0.25rem 0.65rem;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .filter-group button.active { background: #254760; color: #fff; border-color: #254760; }
+
+    .count { margin-left: auto; font-size: 0.78rem; color: #666; }
+
+    .table-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+    thead th {
+      background: #254760;
+      color: #fff;
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      white-space: nowrap;
+      user-select: none;
+      cursor: pointer;
+    }
+    thead th:hover { background: #1d3750; }
+    thead th.sort-asc::after  { content: ' ▲'; font-size: 0.7em; }
+    thead th.sort-desc::after { content: ' ▼'; font-size: 0.7em; }
+
+    tbody tr { border-bottom: 1px solid #eee; }
+    tbody tr:hover { background: #f0f5f9; }
+    tbody tr.not-live td { opacity: 0.45; }
+
+    td { padding: 0.45rem 0.75rem; vertical-align: middle; }
+    td.num  { font-variant-numeric: tabular-nums; width: 3.5rem; }
+    td.slug { font-family: monospace; font-size: 0.78rem; color: #555; }
+
+    td.links a {
+      color: #254760; text-decoration: none;
+      margin-right: 0.4rem; font-size: 0.78rem;
+      border-bottom: 1px dotted #254760;
+    }
+    td.links a:hover { color: #c00; border-bottom-color: #c00; }
+
+    .vol-badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 3px;
+      font-size: 0.75rem; font-weight: bold; background: #254760; color: #fff; }
+    .vol-badge.v2 { background: #5a3e6e; }
+    .vol-badge.v3 { background: #2e6e5a; }
+
+    .tick  { color: #2a7a3a; font-weight: bold; }
+    .cross { color: #bbb; }
+
+    .no-results { text-align: center; padding: 2rem; color: #888; }
+  </style>
+</head>
+<body>
+
+  <h1>Fleet Street Heritage – Page Listing</h1>
+  <p class="meta">Generated <!-- GENERATED_AT --> &nbsp;·&nbsp; <!-- PAGE_COUNT --> pages
+    &nbsp;·&nbsp; <a href="pages-edit.html">Edit pages →</a></p>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search title or slug…" aria-label="Search pages">
+    <div class="filter-group" role="group" aria-label="Filter by volume">
+      <button class="active" data-vol="all">All</button>
+      <button data-vol="1">Vol I</button>
+      <button data-vol="2">Vol II</button>
+      <button data-vol="3">Vol III</button>
+    </div>
+    <div class="filter-group" role="group" aria-label="Filter by live status">
+      <button class="active" data-live="all">Live + hidden</button>
+      <button data-live="1">Live only</button>
+      <button data-live="0">Hidden only</button>
+    </div>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="pages-table" aria-label="Page listing">
+      <thead>
+        <tr>
+          <th data-col="num"       class="sort-asc">#</th>
+          <th data-col="title">Title</th>
+          <th data-col="slug">Slug</th>
+          <th data-col="volume">Vol</th>
+          <th data-col="live">Live</th>
+          <th data-col="has_easy">Easy Read</th>
+          <th data-col="has_audio">Audio</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <p class="no-results" id="no-results" hidden>No pages match.</p>
+  </div>
+
+  <script>
+    const PAGES = <!-- PAGES_JSON -->;
+
+    let sortCol  = 'num';
+    let sortDir  = 1;
+    let filterVol  = 'all';
+    let filterLive = 'all';
+    let searchQ  = '';
+
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function tick(v) {
+      return v ? '<span class="tick"  aria-label="yes">✓</span>'
+               : '<span class="cross" aria-label="no">–</span>';
+    }
+
+    function render() {
+      let rows = PAGES.filter(p => {
+        if (filterVol !== 'all' && String(p.volume) !== filterVol) return false;
+        if (filterLive === '1' && p.live === false) return false;
+        if (filterLive === '0' && p.live !== false) return false;
+        if (searchQ) {
+          const q = searchQ.toLowerCase();
+          if (!p.title.toLowerCase().includes(q) && !p.slug.includes(q)) return false;
+        }
+        return true;
+      });
+
+      rows.sort((a, b) => {
+        let av = a[sortCol], bv = b[sortCol];
+        if (typeof av === 'boolean') av = av ? 1 : 0;
+        if (typeof bv === 'boolean') bv = bv ? 1 : 0;
+        if (typeof av === 'number') return (av - bv) * sortDir;
+        return String(av).localeCompare(String(bv)) * sortDir;
+      });
+
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = rows.map(p => {
+        const nl   = `../nl/${p.slug}.html`;
+        const qr   = `../qr/${p.num}.html`;
+        const easy = `../easy/${p.slug}.html`;
+        const rowClass = p.live === false ? ' class="not-live"' : '';
+        return `<tr${rowClass}>
+          <td class="num">${esc(p.num)}</td>
+          <td>${esc(p.title)}</td>
+          <td class="slug">${esc(p.slug)}</td>
+          <td><span class="vol-badge v${p.volume}">${p.volume}</span></td>
+          <td>${tick(p.live !== false)}</td>
+          <td>${tick(p.has_easy)}</td>
+          <td>${tick(p.has_audio)}</td>
+          <td class="links">
+            <a href="${nl}"  target="_blank">NL</a>
+            <a href="${qr}"  target="_blank">QR</a>
+            ${p.has_easy ? `<a href="${easy}" target="_blank">Easy</a>` : ''}
+          </td>
+        </tr>`;
+      }).join('');
+
+      document.getElementById('count').textContent = `${rows.length} of ${PAGES.length} pages`;
+      document.getElementById('no-results').hidden = rows.length > 0;
+    }
+
+    document.querySelectorAll('thead th[data-col]').forEach(th => {
+      th.addEventListener('click', () => {
+        sortDir = (sortCol === th.dataset.col) ? sortDir * -1 : 1;
+        sortCol = th.dataset.col;
+        document.querySelectorAll('thead th').forEach(t =>
+          t.classList.remove('sort-asc','sort-desc'));
+        th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+        render();
+      });
+    });
+
+    document.querySelectorAll('.filter-group button[data-vol]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterVol = btn.dataset.vol;
+        btn.closest('.filter-group').querySelectorAll('button')
+          .forEach(b => b.classList.toggle('active', b === btn));
+        render();
+      });
+    });
+
+    document.querySelectorAll('.filter-group button[data-live]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterLive = btn.dataset.live;
+        btn.closest('.filter-group').querySelectorAll('button')
+          .forEach(b => b.classList.toggle('active', b === btn));
+        render();
+      });
+    });
+
+    document.getElementById('search').addEventListener('input', e => {
+      searchQ = e.target.value.trim();
+      render();
+    });
+
+    render();
+  </script>
+
+</body>
+</html>

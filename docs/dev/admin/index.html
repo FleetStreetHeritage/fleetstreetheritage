@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FSH Admin – Page Listing</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.875rem;
+      background: #f4f4f4;
+      color: #222;
+      padding: 1.5rem;
+    }
+
+    h1 { font-size: 1.2rem; margin-bottom: 0.25rem; }
+    .meta { font-size: 0.75rem; color: #666; margin-bottom: 1.25rem; }
+    .meta a { color: #254760; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .controls input[type="search"] {
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      width: 220px;
+    }
+
+    .filter-group { display: flex; gap: 0.3rem; }
+
+    .filter-group button {
+      padding: 0.25rem 0.65rem;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .filter-group button.active { background: #254760; color: #fff; border-color: #254760; }
+
+    .count { margin-left: auto; font-size: 0.78rem; color: #666; }
+
+    .table-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+    thead th {
+      background: #254760;
+      color: #fff;
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      white-space: nowrap;
+      user-select: none;
+      cursor: pointer;
+    }
+    thead th:hover { background: #1d3750; }
+    thead th.sort-asc::after  { content: ' ▲'; font-size: 0.7em; }
+    thead th.sort-desc::after { content: ' ▼'; font-size: 0.7em; }
+
+    tbody tr { border-bottom: 1px solid #eee; }
+    tbody tr:hover { background: #f0f5f9; }
+    tbody tr.not-live td { opacity: 0.45; }
+
+    td { padding: 0.45rem 0.75rem; vertical-align: middle; }
+    td.num  { font-variant-numeric: tabular-nums; width: 3.5rem; }
+    td.slug { font-family: monospace; font-size: 0.78rem; color: #555; }
+
+    td.links a {
+      color: #254760; text-decoration: none;
+      margin-right: 0.4rem; font-size: 0.78rem;
+      border-bottom: 1px dotted #254760;
+    }
+    td.links a:hover { color: #c00; border-bottom-color: #c00; }
+
+    .vol-badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 3px;
+      font-size: 0.75rem; font-weight: bold; background: #254760; color: #fff; }
+    .vol-badge.v2 { background: #5a3e6e; }
+    .vol-badge.v3 { background: #2e6e5a; }
+
+    .tick  { color: #2a7a3a; font-weight: bold; }
+    .cross { color: #bbb; }
+
+    .no-results { text-align: center; padding: 2rem; color: #888; }
+  </style>
+</head>
+<body>
+
+  <h1>Fleet Street Heritage – Page Listing</h1>
+  <p class="meta">Generated 2026-04-03 14:01 UTC &nbsp;·&nbsp; 96 pages
+    &nbsp;·&nbsp; <a href="pages-edit.html">Edit pages →</a></p>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search title or slug…" aria-label="Search pages">
+    <div class="filter-group" role="group" aria-label="Filter by volume">
+      <button class="active" data-vol="all">All</button>
+      <button data-vol="1">Vol I</button>
+      <button data-vol="2">Vol II</button>
+      <button data-vol="3">Vol III</button>
+    </div>
+    <div class="filter-group" role="group" aria-label="Filter by live status">
+      <button class="active" data-live="all">Live + hidden</button>
+      <button data-live="1">Live only</button>
+      <button data-live="0">Hidden only</button>
+    </div>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="pages-table" aria-label="Page listing">
+      <thead>
+        <tr>
+          <th data-col="num"       class="sort-asc">#</th>
+          <th data-col="title">Title</th>
+          <th data-col="slug">Slug</th>
+          <th data-col="volume">Vol</th>
+          <th data-col="live">Live</th>
+          <th data-col="has_easy">Easy Read</th>
+          <th data-col="has_audio">Audio</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <p class="no-results" id="no-results" hidden>No pages match.</p>
+  </div>
+
+  <script>
+    const PAGES = [
+  {
+    "num": "102",
+    "slug": "points-of-interest-map",
+    "title": "Points of Interest / Map",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "103",
+    "slug": "list-of-newspapers-and-dates",
+    "title": "List of Newspapers and Dates",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "108",
+    "slug": "fleet-street-heritage-sundial",
+    "title": "Fleet Street Heritage Sundial",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "134",
+    "slug": "fleet-street-heritage-walk-1",
+    "title": "Fleet Street Heritage Walk 1",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "130",
+    "slug": "fleet-street-heritage-walk-2",
+    "title": "Fleet Street Heritage Walk 2",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "116",
+    "slug": "freedom-of-the-press",
+    "title": "Freedom of the Press",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "145",
+    "slug": "fleet-street-architecture-introduction",
+    "title": "Fleet Street Architecture – Introduction",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "146",
+    "slug": "fleet-street-architecture-south-from-temple-bar",
+    "title": "Fleet Street Architecture – South Side from Temple Bar",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "147",
+    "slug": "fleet-street-architecture-south-to-ludgate",
+    "title": "Fleet Street Architecture – South Side to Ludgate Circus",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "148",
+    "slug": "fleet-street-architecture-north-from-ludgate",
+    "title": "Fleet Street Architecture – North Side from Ludgate Circus",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "149",
+    "slug": "fleet-street-architecture-north-to-temple-bar",
+    "title": "Fleet Street Architecture – North Side to Temple Bar",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "136",
+    "slug": "legend-of-sweeney-todd",
+    "title": "Legend of Sweeney Todd",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "127",
+    "slug": "the-river-fleet",
+    "title": "The River Fleet",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "122",
+    "slug": "newspaper-stamp-tax",
+    "title": "Newspaper Stamp Tax",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "101",
+    "slug": "fleet-street-in-the-1500s",
+    "title": "Fleet Street in the 1500s",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "123",
+    "slug": "fleet-street-in-the-1600s",
+    "title": "Fleet Street in the 1600s",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "143",
+    "slug": "fleet-street-in-the-1700s",
+    "title": "Fleet Street in the 1700s",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "157",
+    "slug": "fleet-street-in-the-1800s",
+    "title": "Fleet Street in the 1800s",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "168",
+    "slug": "fleet-street-in-1847-north",
+    "title": "Fleet Street in 1847 – North",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "167",
+    "slug": "fleet-street-in-1847-south",
+    "title": "Fleet Street in 1847 – South",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "118",
+    "slug": "the-great-fire-1666",
+    "title": "The Great Fire, 1666",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "124",
+    "slug": "monuments-of-fleet-street",
+    "title": "Monuments of Fleet Street",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "156",
+    "slug": "st-george-and-the-dragon",
+    "title": "St George and the Dragon",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "137",
+    "slug": "17-fleet-street-prince-henrys-room",
+    "title": "17 Fleet Street (Prince Henry's Room)",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "104",
+    "slug": "62-fleet-street",
+    "title": "62 Fleet Street",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "121",
+    "slug": "63-and-28-stonecutter-street",
+    "title": "63 & 28 Stonecutter Street",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "120",
+    "slug": "85-fleet-street-the-reuters-building",
+    "title": "85 Fleet Street – The Reuters Building",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "138",
+    "slug": "bouverie-street",
+    "title": "Bouverie Street",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "165",
+    "slug": "the-great-conduit",
+    "title": "The Great Conduit",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "140",
+    "slug": "pedestrian-courts-of-fleet-street",
+    "title": "Pedestrian Courts of Fleet Street",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "106",
+    "slug": "magpie-alley",
+    "title": "Magpie Alley",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "111",
+    "slug": "ashentree-court",
+    "title": "Ashentree Court",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "142",
+    "slug": "alsatia",
+    "title": "Alsatia",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "150",
+    "slug": "salisbury-square",
+    "title": "Salisbury Square",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "113",
+    "slug": "crane-court",
+    "title": "Crane Court",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "114",
+    "slug": "st-dunstan-in-the-west",
+    "title": "St Dunstan-in-the-West",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "129",
+    "slug": "st-brides-church",
+    "title": "St. Bride's Church",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "151",
+    "slug": "temple-church",
+    "title": "Temple Church",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "135",
+    "slug": "st-brides-crypt-exhibition",
+    "title": "St. Bride's Crypt Exhibition",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "109",
+    "slug": "ye-olde-cheshire-cheese",
+    "title": "Ye Olde Cheshire Cheese",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "112",
+    "slug": "temple-bar",
+    "title": "Temple Bar",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "131",
+    "slug": "middle-temple",
+    "title": "Middle Temple",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "155",
+    "slug": "inner-temple",
+    "title": "Inner Temple",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "141",
+    "slug": "knights-templar",
+    "title": "Knights Templar",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "158",
+    "slug": "bridewell-palace",
+    "title": "Bridewell Palace",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "107",
+    "slug": "cliffords-inn",
+    "title": "Cliffords Inn",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "126",
+    "slug": "royal-society-in-fleet-street",
+    "title": "Royal Society in Fleet Street",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "164",
+    "slug": "the-law-society",
+    "title": "The Law Society",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "132",
+    "slug": "stationers-company",
+    "title": "Stationers Company",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "166",
+    "slug": "gresham-college",
+    "title": "Gresham College",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "139",
+    "slug": "child-and-co",
+    "title": "Child and Co",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "152",
+    "slug": "hoares-bank",
+    "title": "Hoare's Bank",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "125",
+    "slug": "st-brides-foundation",
+    "title": "St. Bride Foundation",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "128",
+    "slug": "wynken-de-worde",
+    "title": "Wynken de Worde",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "169",
+    "slug": "the-pastons",
+    "title": "The Pastons",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "133",
+    "slug": "thomas-tompion-clockmaking",
+    "title": "Thomas Tompion / Clockmaking",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "105",
+    "slug": "caslon-typefounders",
+    "title": "Caslon / Typefounders",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "115",
+    "slug": "dr-johnson",
+    "title": "Dr. Johnson",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "161",
+    "slug": "james-boswell",
+    "title": "James Boswell",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "159",
+    "slug": "brass-crosby",
+    "title": "Brass Crosby",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "163",
+    "slug": "william-hazlitt",
+    "title": "William Hazlitt",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "119",
+    "slug": "cobbett-paine-and-fleet-street",
+    "title": "Cobbett, Paine & Fleet Street",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "153",
+    "slug": "henry-orator-hunt",
+    "title": "Henry 'Orator' Hunt",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "110",
+    "slug": "richard-carlile",
+    "title": "Richard Carlile",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "144",
+    "slug": "henry-hetherington",
+    "title": "Henry Hetherington",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "154",
+    "slug": "john-wilkes",
+    "title": "John Wilkes",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "160",
+    "slug": "virginia-woolf",
+    "title": "Virginia Woolf",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "162",
+    "slug": "eddy-shah",
+    "title": "Eddy Shah",
+    "volume": 1,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "201",
+    "slug": "pall-mall-gazette",
+    "title": "Pall Mall Gazette",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "202",
+    "slug": "daily-herald",
+    "title": "Daily Herald",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "203",
+    "slug": "the-republican",
+    "title": "The Republican",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "204",
+    "slug": "daily-courant",
+    "title": "Daily Courant",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "205",
+    "slug": "morning-post",
+    "title": "Morning Post",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "207",
+    "slug": "lloyds-weekly",
+    "title": "Lloyd's Weekly",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "206",
+    "slug": "news-of-the-world",
+    "title": "News of the World",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "209",
+    "slug": "daily-news",
+    "title": "Daily News",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "208",
+    "slug": "daily-chronicle",
+    "title": "Daily Chronicle",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "213",
+    "slug": "news-chronicle",
+    "title": "News Chronicle",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "211",
+    "slug": "black-dwarf",
+    "title": "Black Dwarf",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "218",
+    "slug": "punch",
+    "title": "Punch",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "210",
+    "slug": "reynolds-newspaper",
+    "title": "Reynolds Newspaper",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "214",
+    "slug": "the-star",
+    "title": "The Star",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "215",
+    "slug": "poor-mans-guardian",
+    "title": "Poor Man's Guardian",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "216",
+    "slug": "manchester-guardian",
+    "title": "Manchester Guardian",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "212",
+    "slug": "picture-post",
+    "title": "Picture Post",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "217",
+    "slug": "childrens-newspaper",
+    "title": "Children's Newspaper",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "219",
+    "slug": "the-eagle",
+    "title": "The Eagle",
+    "volume": 2,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "301",
+    "slug": "the-telegraph",
+    "title": "The Telegraph",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "302",
+    "slug": "sunday-times",
+    "title": "Sunday Times",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "303",
+    "slug": "the-times",
+    "title": "The Times",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "304",
+    "slug": "the-sun",
+    "title": "The Sun",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "305",
+    "slug": "financial-times",
+    "title": "Financial Times",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "309",
+    "slug": "the-guardian",
+    "title": "The Guardian",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "306",
+    "slug": "daily-mail",
+    "title": "Daily Mail",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "308",
+    "slug": "the-independent",
+    "title": "The Independent",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "307",
+    "slug": "reuters",
+    "title": "Reuters",
+    "volume": 3,
+    "live": true,
+    "has_easy": false,
+    "has_audio": false
+  }
+];
+
+    let sortCol  = 'num';
+    let sortDir  = 1;
+    let filterVol  = 'all';
+    let filterLive = 'all';
+    let searchQ  = '';
+
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function tick(v) {
+      return v ? '<span class="tick"  aria-label="yes">✓</span>'
+               : '<span class="cross" aria-label="no">–</span>';
+    }
+
+    function render() {
+      let rows = PAGES.filter(p => {
+        if (filterVol !== 'all' && String(p.volume) !== filterVol) return false;
+        if (filterLive === '1' && p.live === false) return false;
+        if (filterLive === '0' && p.live !== false) return false;
+        if (searchQ) {
+          const q = searchQ.toLowerCase();
+          if (!p.title.toLowerCase().includes(q) && !p.slug.includes(q)) return false;
+        }
+        return true;
+      });
+
+      rows.sort((a, b) => {
+        let av = a[sortCol], bv = b[sortCol];
+        if (typeof av === 'boolean') av = av ? 1 : 0;
+        if (typeof bv === 'boolean') bv = bv ? 1 : 0;
+        if (typeof av === 'number') return (av - bv) * sortDir;
+        return String(av).localeCompare(String(bv)) * sortDir;
+      });
+
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = rows.map(p => {
+        const nl   = `../nl/${p.slug}.html`;
+        const qr   = `../qr/${p.num}.html`;
+        const easy = `../easy/${p.slug}.html`;
+        const rowClass = p.live === false ? ' class="not-live"' : '';
+        return `<tr${rowClass}>
+          <td class="num">${esc(p.num)}</td>
+          <td>${esc(p.title)}</td>
+          <td class="slug">${esc(p.slug)}</td>
+          <td><span class="vol-badge v${p.volume}">${p.volume}</span></td>
+          <td>${tick(p.live !== false)}</td>
+          <td>${tick(p.has_easy)}</td>
+          <td>${tick(p.has_audio)}</td>
+          <td class="links">
+            <a href="${nl}"  target="_blank">NL</a>
+            <a href="${qr}"  target="_blank">QR</a>
+            ${p.has_easy ? `<a href="${easy}" target="_blank">Easy</a>` : ''}
+          </td>
+        </tr>`;
+      }).join('');
+
+      document.getElementById('count').textContent = `${rows.length} of ${PAGES.length} pages`;
+      document.getElementById('no-results').hidden = rows.length > 0;
+    }
+
+    document.querySelectorAll('thead th[data-col]').forEach(th => {
+      th.addEventListener('click', () => {
+        sortDir = (sortCol === th.dataset.col) ? sortDir * -1 : 1;
+        sortCol = th.dataset.col;
+        document.querySelectorAll('thead th').forEach(t =>
+          t.classList.remove('sort-asc','sort-desc'));
+        th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+        render();
+      });
+    });
+
+    document.querySelectorAll('.filter-group button[data-vol]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterVol = btn.dataset.vol;
+        btn.closest('.filter-group').querySelectorAll('button')
+          .forEach(b => b.classList.toggle('active', b === btn));
+        render();
+      });
+    });
+
+    document.querySelectorAll('.filter-group button[data-live]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterLive = btn.dataset.live;
+        btn.closest('.filter-group').querySelectorAll('button')
+          .forEach(b => b.classList.toggle('active', b === btn));
+        render();
+      });
+    });
+
+    document.getElementById('search').addEventListener('input', e => {
+      searchQ = e.target.value.trim();
+      render();
+    });
+
+    render();
+  </script>
+
+</body>
+</html>

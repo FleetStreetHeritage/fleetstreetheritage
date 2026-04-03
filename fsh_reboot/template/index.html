@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Heritage of Fleet Street</title>
+  <meta name="description" content="Over 90 information panels on the history, people, places and newspapers of Fleet Street, London.">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fsh-blue:   #254760;
+      --fsh-yellow: #FFFF66;
+      --fsh-white:  #ffffff;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      min-height: 100dvh;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+      background: var(--fsh-blue);
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+      padding: 1.5rem 1rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    header p.subtitle {
+      font-size: 0.9rem;
+      color: var(--fsh-yellow);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Skip link ───────────────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* ── Main content ────────────────────────────────────── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* ── Volume sections ─────────────────────────────────── */
+    .volume {
+      margin-bottom: 2.5rem;
+    }
+
+    .volume-heading {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--fsh-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Page grid ───────────────────────────────────────── */
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.4rem 1.2rem;
+      list-style: none;
+    }
+
+    .page-grid li a {
+      color: var(--fsh-white);
+      text-decoration: none;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      display: block;
+      padding: 0.15rem 0;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .page-grid li a:hover,
+    .page-grid li a:focus {
+      color: var(--fsh-yellow);
+      border-bottom-color: var(--fsh-yellow);
+      outline: none;
+    }
+
+    .page-grid li a:focus-visible {
+      outline: 2px solid var(--fsh-yellow);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+      padding: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#page-list">Skip to page list</a>
+
+  <header role="banner">
+    <h1>The Heritage of Fleet Street</h1>
+    <p class="subtitle">www.fleetstreetheritage.co.uk</p>
+  </header>
+
+  <main>
+    <div id="page-list">
+
+<!-- VOLUME_SECTIONS -->
+
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; Fleet Street Heritage</p>
+  </footer>
+
+  <script>
+    // If user has an easy-read preference, all page links will route through
+    // the NL wrapper which automatically redirects to easy-read.
+    // No special logic needed here.
+    gtag('event', 'page_view', { page_id: 'index' });
+  </script>
+
+</body>
+</html>

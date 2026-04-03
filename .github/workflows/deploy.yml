@@ -1,0 +1,55 @@
+name: Generate & Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'fsh_reboot/data/pages.json'
+      - 'fsh_reboot/template/**'
+      - 'fsh_reboot/scripts/**'
+      - 'docs/dev/pdfs/**'
+      - 'docs/dev/audio/**'
+
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deployment at a time
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate staging pages
+        run: python fsh_reboot/scripts/generate.py
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
