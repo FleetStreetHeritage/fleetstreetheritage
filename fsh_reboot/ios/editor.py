@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 7
+# build 8
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -26,7 +26,6 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 import content as cnt
 md_to_html = cnt.md_to_html
 
-# ── Content files ─────────────────────────────────────────────────────────────
 FILES  = ['hero',  'banner', 'col1',  'col2',  'col3']
 LABELS = ['Hero',  'Banner', 'Col 1', 'Col 2', 'Col 3']
 
@@ -40,12 +39,10 @@ def validate_text(filename, text):
     errors = []
     for m in re.finditer(r'!\[([^\]]*)\]\(([^)]+)\)', text):
         src = m.group(2)
-        if src.startswith('http'):
-            continue
-        if not (IMAGES_DIR / Path(src).name).exists():
+        if not src.startswith('http') and not (IMAGES_DIR / Path(src).name).exists():
             errors.append(f'Image not found: {src}')
     if text.count('[') != text.count(']'):
-        errors.append(f'Unbalanced brackets')
+        errors.append('Unbalanced brackets')
     if len(re.findall(r'\]\(', text)) != len(re.findall(r'\]\([^)]*\)', text)):
         errors.append('Unclosed link parenthesis')
     return errors
@@ -131,12 +128,13 @@ class FSHEditor(ui.View):
 
     def __init__(self):
         self.current_idx    = 0
-        self.original_texts = {}   # texts as last saved to disk
-        self.texts          = {}   # current in-editor texts
-        self.needs_commit   = False
+        self.original_texts = {}  # texts as last saved to disk
+        self.texts          = {}  # current in-editor texts
+        self.pending_commit = set()  # saved but not yet committed
         self.show_original  = False
         self._preview_timer = None
         self._touch_start   = None
+        self._kb_height     = 0
 
         self._load_all_files()
         self._build_ui()
@@ -158,38 +156,32 @@ class FSHEditor(ui.View):
         name = name or self.current_file
         return self.texts[name] != self.original_texts[name]
 
+    def _sync_editor(self):
+        """Sync editor content into texts dict."""
+        self.texts[self.current_file] = self.editor.text or ''
+
     def _save_all(self):
         for name in FILES:
             if self._is_dirty(name):
-                path = CONTENT_DIR / f'{name}.md'
-                path.write_text(self.texts[name], encoding='utf-8')
+                (CONTENT_DIR / f'{name}.md').write_text(self.texts[name], encoding='utf-8')
                 self.original_texts[name] = self.texts[name]
-        self.needs_commit = True
-        self._update_buttons()
+                self.pending_commit.add(name)
         self._update_seg_labels()
+        self._update_buttons()
 
     # ── UI construction ───────────────────────────────────────────────────────
 
     def _build_ui(self):
         self.background_color = '#1a3450'
 
-        # Segmented control
+        # Segmented control — lighter background so labels are readable
         self.seg = ui.SegmentedControl()
         self.seg.segments = LABELS[:]
         self.seg.selected_index = 0
         self.seg.tint_color = FSH_YELLOW
+        self.seg.background_color = '#3a6a8a'
         self.seg.action = self._on_segment
         self.add_subview(self.seg)
-
-        # Original toggle button (sits above editor)
-        self.btn_orig = ui.Button()
-        self.btn_orig.title = 'Original'
-        self.btn_orig.font = ('Helvetica Neue', 12)
-        self.btn_orig.background_color = '#0f2030'
-        self.btn_orig.tint_color = '#888'
-        self.btn_orig.corner_radius = 4
-        self.btn_orig.action = self._on_toggle_original
-        self.add_subview(self.btn_orig)
 
         # Preview
         self.preview = ui.WebView()
@@ -213,18 +205,16 @@ class FSHEditor(ui.View):
         self.val_bar.hidden = True
         self.add_subview(self.val_bar)
 
-        # Toolbar: Save | Revert | Preview page | Commit
+        # Toolbar buttons — ⇄ toggle | Revert | Save | Preview | Commit
         btn_specs = [
-            ('Save',         self._on_save,    FSH_BLUE,  '#fff'),
-            ('Revert',       self._on_revert,  '#5a2020', '#fff'),
-            ('Preview page', self._on_preview, FSH_BLUE,  FSH_YELLOW),
-            ('Commit',       self._on_commit,  '#1a6e32', '#fff'),
+            ('⇄',            self._on_toggle_original, '#2a4a60', '#888'),
+            ('Revert',       self._on_revert,           '#5a2020', '#fff'),
+            ('Save',         self._on_save,             FSH_BLUE,  '#fff'),
+            ('Preview page', self._on_preview,          FSH_BLUE,  FSH_YELLOW),
+            ('Commit',       self._on_commit,           '#1a6e32', '#fff'),
         ]
-        self.btn_save   = None
-        self.btn_revert = None
-        self.btn_commit = None
         self.buttons = []
-        for i, (label, action, bg, fg) in enumerate(btn_specs):
+        for label, action, bg, fg in btn_specs:
             b = ui.Button()
             b.title = label
             b.background_color = bg
@@ -233,9 +223,11 @@ class FSHEditor(ui.View):
             b.action = action
             self.add_subview(b)
             self.buttons.append(b)
-            if label == 'Save':    self.btn_save   = b
-            if label == 'Revert':  self.btn_revert = b
-            if label == 'Commit':  self.btn_commit = b
+
+        self.btn_toggle = self.buttons[0]
+        self.btn_revert = self.buttons[1]
+        self.btn_save   = self.buttons[2]
+        self.btn_commit = self.buttons[4]
 
         self._load_current()
         self._update_buttons()
@@ -246,71 +238,86 @@ class FSHEditor(ui.View):
         pad    = 8
         seg_h  = 36
         btn_h  = 40
-        orig_h = 28
         val_h  = 0
+        kb     = self._kb_height
 
         self.seg.frame = (pad, pad, w - pad*2, seg_h)
 
-        # Validation bar
+        # Validation bar sits just above toolbar
         if self.val_bar.text and not self.val_bar.hidden:
             val_h = 44
-        self.val_bar.frame = (0, h - btn_h - pad - val_h, w, val_h)
+        toolbar_y = h - kb - btn_h - pad
+        self.val_bar.frame = (0, toolbar_y - val_h, w, val_h)
 
         # Toolbar
         n     = len(self.buttons)
         btn_w = (w - pad * (n + 1)) / n
         for i, b in enumerate(self.buttons):
-            b.frame = (pad + i * (btn_w + pad), h - btn_h - pad, btn_w, btn_h)
+            b.frame = (pad + i * (btn_w + pad), toolbar_y, btn_w, btn_h)
 
-        # Content area
+        # Content area (between seg and toolbar)
         content_y = pad + seg_h + pad
-        content_h = h - content_y - btn_h - val_h - pad*2
+        content_h = toolbar_y - val_h - pad - content_y
 
         landscape = (w > h) and (self.current_file != 'hero')
 
         if landscape:
             half = (w - pad * 3) / 2
-            preview_x, preview_y = pad, content_y
-            preview_w, preview_h = half, content_h
-            orig_x = pad*2 + half
-            editor_x, editor_y = pad*2 + half, content_y + orig_h + pad
-            editor_w = half
-            editor_h = content_h - orig_h - pad
+            self.preview.frame = (pad,          content_y, half, content_h)
+            self.editor.frame  = (pad*2 + half, content_y, half, content_h)
         else:
-            half = (content_h - orig_h - pad*2) / 2
-            preview_x, preview_y = pad, content_y
-            preview_w, preview_h = w - pad*2, half
-            orig_x = pad
-            editor_x = pad
-            editor_y = content_y + half + orig_h + pad*2
-            editor_w = w - pad*2
-            editor_h = half
+            half = (content_h - pad) / 2
+            self.preview.frame = (pad, content_y,              w - pad*2, half)
+            self.editor.frame  = (pad, content_y + half + pad, w - pad*2, half)
 
-        self.preview.frame  = (preview_x, preview_y, preview_w, preview_h)
-        self.btn_orig.frame = (orig_x, preview_y + preview_h + pad, 90, orig_h)
-        self.editor.frame   = (editor_x, editor_y, editor_w, editor_h)
+    # ── Keyboard avoidance ────────────────────────────────────────────────────
+
+    def keyboard_frame_will_change(self, frame):
+        # frame is (x, y, w, h) in screen coords; y < screen height means visible
+        screen_h = self.height
+        kb_top   = frame[1]
+        self._kb_height = max(0, screen_h - kb_top)
+        self.layout()
 
     # ── Segment labels ────────────────────────────────────────────────────────
 
     def _update_seg_labels(self):
-        self.seg.segments = [
-            f'{LABELS[i]} ●' if self._is_dirty(FILES[i]) else LABELS[i]
-            for i in range(len(FILES))
-        ]
+        labels = []
+        for i, name in enumerate(FILES):
+            label = LABELS[i]
+            if self._is_dirty(name):
+                label += ' ●'          # unsaved change
+            elif name in self.pending_commit:
+                label += ' ○'          # saved, awaiting commit
+            labels.append(label)
+        self.seg.segments = labels
+        # restore selected index (reassigning segments resets it)
+        self.seg.selected_index = self.current_idx
 
     # ── Button states ─────────────────────────────────────────────────────────
 
     def _update_buttons(self):
         dirty = self._is_dirty()
-        self.btn_save.alpha   = 1.0 if dirty else 0.35
-        self.btn_save.enabled = dirty
-        self.btn_revert.alpha   = 1.0 if dirty else 0.35
+        has_pending = bool(self.pending_commit)
+
+        # Toggle: active (yellow) only when dirty and currently showing original
+        self.btn_toggle.enabled = dirty
+        self.btn_toggle.tint_color = FSH_YELLOW if (dirty and self.show_original) else \
+                                     '#ccc'      if dirty else '#555'
+        self.btn_toggle.alpha = 1.0 if dirty else 0.4
+
+        # Revert: only when dirty
         self.btn_revert.enabled = dirty
-        self.btn_commit.alpha   = 1.0 if self.needs_commit else 0.35
-        self.btn_commit.enabled = self.needs_commit
-        # Original toggle: only meaningful when dirty
-        self.btn_orig.tint_color = FSH_YELLOW if (dirty and self.show_original) else \
-                                   '#aaa'      if dirty else '#444'
+        self.btn_revert.alpha   = 1.0 if dirty else 0.35
+
+        # Save: only when any file dirty
+        any_dirty = any(self._is_dirty(n) for n in FILES)
+        self.btn_save.enabled = any_dirty
+        self.btn_save.alpha   = 1.0 if any_dirty else 0.35
+
+        # Commit: only when there is something saved to commit
+        self.btn_commit.enabled = has_pending
+        self.btn_commit.alpha   = 1.0 if has_pending else 0.35
 
     # ── Content switching ─────────────────────────────────────────────────────
 
@@ -319,7 +326,7 @@ class FSHEditor(ui.View):
         self.editor.text = self.texts[self.current_file]
 
     def _on_segment(self, sender):
-        self.texts[self.current_file] = self.editor.text
+        self._sync_editor()
         self.current_idx = sender.selected_index
         self._load_current()
         self.layout()
@@ -328,8 +335,7 @@ class FSHEditor(ui.View):
         self._update_buttons()
 
     def _navigate(self, delta):
-        """Move to adjacent file — called by swipe."""
-        self.texts[self.current_file] = self.editor.text
+        self._sync_editor()
         self.current_idx = (self.current_idx + delta) % len(FILES)
         self.seg.selected_index = self.current_idx
         self._load_current()
@@ -338,7 +344,7 @@ class FSHEditor(ui.View):
         self._show_validation()
         self._update_buttons()
 
-    # ── Swipe to navigate ─────────────────────────────────────────────────────
+    # ── Swipe ─────────────────────────────────────────────────────────────────
 
     def touch_began(self, touch):
         self._touch_start = touch.location
@@ -355,6 +361,7 @@ class FSHEditor(ui.View):
     # ── Original toggle ───────────────────────────────────────────────────────
 
     def _on_toggle_original(self, sender):
+        self._sync_editor()
         if not self._is_dirty():
             return
         self.show_original = not self.show_original
@@ -376,7 +383,7 @@ class FSHEditor(ui.View):
         self._preview_timer.start()
 
     def _on_preview(self, sender):
-        self.texts[self.current_file] = self.editor.text
+        self._sync_editor()
         pv = ui.WebView()
         pv.scales_page_to_fit = True
         pv.load_html(full_page_html(self.texts))
@@ -400,7 +407,7 @@ class FSHEditor(ui.View):
     def _on_save(self, sender):
         if not self.btn_save.enabled:
             return
-        self.texts[self.current_file] = self.editor.text
+        self._sync_editor()
         self._save_all()
 
     # ── Revert ────────────────────────────────────────────────────────────────
@@ -421,7 +428,7 @@ class FSHEditor(ui.View):
     def _on_commit(self, sender):
         if not self.btn_commit.enabled:
             return
-        self.texts[self.current_file] = self.editor.text
+        self._sync_editor()
         all_errors = validate_all(self.texts)
         if all_errors:
             import console
@@ -429,12 +436,15 @@ class FSHEditor(ui.View):
             console.alert('Validation failed', '\n'.join(lines), 'OK', hide_cancel_button=True)
             return
         self._save_all()
+        self.pending_commit.clear()
+        self._update_seg_labels()
+        self._update_buttons()
         webbrowser.open(f'working-copy://commit?repo={REPO_ROOT.name}')
 
     # ── TextView delegate ─────────────────────────────────────────────────────
 
     def textview_did_change(self, textview):
-        self.texts[self.current_file] = textview.text
+        self.texts[self.current_file] = textview.text or ''
         self._update_seg_labels()
         self._update_buttons()
         self._schedule_preview()
