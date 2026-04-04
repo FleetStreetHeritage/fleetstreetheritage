@@ -11,9 +11,9 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5.4.0
         with:
           python-version: '3.12'
 
@@ -23,23 +23,24 @@ jobs:
 
       - name: Publish draft → content (if PUBLISH flag present)
         run: |
-          if [ -f fsh_reboot/content_draft/PUBLISH ]; then
+          if [ -f fsh_reboot/editor/content_draft/PUBLISH ]; then
             echo "PUBLISH flag found — promoting content_draft to content"
-            cp fsh_reboot/content_draft/*.md fsh_reboot/content/
-            rm fsh_reboot/content_draft/PUBLISH
+            cp fsh_reboot/editor/content_draft/*.md fsh_reboot/content/
+            rm fsh_reboot/editor/content_draft/PUBLISH
             cd fsh_reboot/scripts && python generate.py
           else
             echo "No PUBLISH flag — draft commit only"
           fi
 
-      - name: Commit content changes
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add fsh_reboot/content/ fsh_reboot/content_draft/
-          if git diff --cached --quiet; then
-            echo "Nothing to commit"
-          else
-            git commit -m "chore: promote content_draft to content [skip ci]"
-            git push
-          fi
+      # Commit step disabled until repo write permissions are enabled in Settings → Actions → General
+      # - name: Commit content changes
+      #   run: |
+      #     git config user.name  "github-actions[bot]"
+      #     git config user.email "github-actions[bot]@users.noreply.github.com"
+      #     git add fsh_reboot/content/ fsh_reboot/editor/content_draft/
+      #     if git diff --cached --quiet; then
+      #       echo "Nothing to commit"
+      #     else
+      #       git commit -m "chore: promote content_draft to content [skip ci]"
+      #       git push
+      #     fi
