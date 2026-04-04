@@ -9,6 +9,7 @@ Usage:
 """
 
 import json
+import shutil
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -20,6 +21,10 @@ SCRIPT_DIR   = Path(__file__).parent
 REPO_ROOT    = SCRIPT_DIR.parent.parent
 DATA_FILE    = SCRIPT_DIR.parent / 'data' / 'pages.json'
 TEMPLATE_DIR = SCRIPT_DIR.parent / 'template'
+CONTENT_DIR  = SCRIPT_DIR.parent / 'content'
+DRAFT_DIR    = SCRIPT_DIR.parent / 'content_draft'
+
+CONTENT_FILES = ['hero.md', 'banner.md', 'col1.md', 'col2.md', 'col3.md']
 
 PROD_MODE  = '--prod' in sys.argv
 GA_ID      = 'G-E01B51HMZL' if PROD_MODE else 'G-ZP7L32M9GB'
@@ -152,6 +157,32 @@ def generate_index_evolution(pages):
     (OUTPUT_DIR / 'index_evolution.html').write_text(html, encoding='utf-8')
 
 
+def seed_draft():
+    """Ensure content_draft/ exists and seed any missing files from content/."""
+    DRAFT_DIR.mkdir(exist_ok=True)
+    for filename in CONTENT_FILES:
+        draft_file = DRAFT_DIR / filename
+        if not draft_file.exists():
+            src = CONTENT_DIR / filename
+            if src.exists():
+                shutil.copy2(src, draft_file)
+
+
+def generate_index_draft(pages):
+    """Generate index_draft.html from content_draft/ source files."""
+    import content
+    blocks = content.get_blocks(content_dir=DRAFT_DIR)
+    html = (load_template('index_evolution.html')
+            .replace('<!-- GA_ID -->',           GA_ID)
+            .replace('<!-- HERO_BLOCK -->',      blocks['hero_block'])
+            .replace('<!-- BANNER_BLOCK -->',    blocks['banner_block'])
+            .replace('<!-- COL_1 -->',           blocks['col1'])
+            .replace('<!-- COL_2 -->',           blocks['col2'])
+            .replace('<!-- COL_3 -->',           blocks['col3'])
+            .replace('<!-- VOLUME_SECTIONS -->', build_volume_sections(pages)))
+    (OUTPUT_DIR / 'index_draft.html').write_text(html, encoding='utf-8')
+
+
 # ── Live QR codes (docs/qr/) ────────────────────────────────────────────────
 def generate_live_qr(page, has_easy):
     html = sub(load_template('qr-redirect.html'), {
@@ -214,8 +245,10 @@ def main():
         generate_live_qr(page, has_easy)
         counts['qr'] += 1
 
+    seed_draft()
     generate_index(pages)
     generate_index_evolution(pages)
+    generate_index_draft(pages)
     generate_admin(pages_with_status)
 
     missing_pdfs = [p for p in pages_with_status if not p['has_pdf']]
@@ -231,6 +264,7 @@ def main():
     print(f"Generated products as follows:")
     print(f"  {OUTPUT_DIR}/index.html")
     print(f"  {OUTPUT_DIR}/index_evolution.html")
+    print(f"  {OUTPUT_DIR}/index_draft.html  (from content_draft/)")
     print(f"  {NL_DIR}/   ×{counts['nl']} NL pages")
     if counts['easy']:
         print(f"  {EASY_DIR}/   ×{counts['easy']} Easy Read pages")

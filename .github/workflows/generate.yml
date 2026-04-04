@@ -1,0 +1,45 @@
+name: Generate site
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate staging output (always)
+        working-directory: fsh_reboot/scripts
+        run: python generate.py
+
+      - name: Publish draft → content (if PUBLISH flag present)
+        run: |
+          if [ -f fsh_reboot/content_draft/PUBLISH ]; then
+            echo "PUBLISH flag found — promoting content_draft to content"
+            cp fsh_reboot/content_draft/*.md fsh_reboot/content/
+            rm fsh_reboot/content_draft/PUBLISH
+            cd fsh_reboot/scripts && python generate.py
+          else
+            echo "No PUBLISH flag — draft commit only"
+          fi
+
+      - name: Commit content changes
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add fsh_reboot/content/ fsh_reboot/content_draft/
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "chore: promote content_draft to content [skip ci]"
+            git push
+          fi

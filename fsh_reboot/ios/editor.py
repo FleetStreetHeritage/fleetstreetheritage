@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 8
+# build 9
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -17,7 +17,7 @@ from pathlib import Path
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).resolve().parent.parent.parent
-CONTENT_DIR = REPO_ROOT / 'fsh_reboot' / 'content'
+CONTENT_DIR = REPO_ROOT / 'fsh_reboot' / 'content_draft'
 TEMPLATE    = REPO_ROOT / 'fsh_reboot' / 'template' / 'index_evolution.html'
 IMAGES_DIR  = REPO_ROOT / 'docs' / 'dev' / 'images'
 SCRIPTS_DIR = REPO_ROOT / 'fsh_reboot' / 'scripts'
@@ -205,13 +205,14 @@ class FSHEditor(ui.View):
         self.val_bar.hidden = True
         self.add_subview(self.val_bar)
 
-        # Toolbar buttons — ⇄ toggle | Revert | Save | Preview | Commit
+        # Toolbar buttons — ⇄ toggle | Revert | Save | Preview | Commit | Publish
         btn_specs = [
             ('⇄',            self._on_toggle_original, '#2a4a60', '#888'),
             ('Revert',       self._on_revert,           '#5a2020', '#fff'),
             ('Save',         self._on_save,             FSH_BLUE,  '#fff'),
             ('Preview page', self._on_preview,          FSH_BLUE,  FSH_YELLOW),
             ('Commit',       self._on_commit,           '#1a6e32', '#fff'),
+            ('Publish',      self._on_publish,          '#7a4a00', FSH_YELLOW),
         ]
         self.buttons = []
         for label, action, bg, fg in btn_specs:
@@ -224,10 +225,11 @@ class FSHEditor(ui.View):
             self.add_subview(b)
             self.buttons.append(b)
 
-        self.btn_toggle = self.buttons[0]
-        self.btn_revert = self.buttons[1]
-        self.btn_save   = self.buttons[2]
-        self.btn_commit = self.buttons[4]
+        self.btn_toggle  = self.buttons[0]
+        self.btn_revert  = self.buttons[1]
+        self.btn_save    = self.buttons[2]
+        self.btn_commit  = self.buttons[4]
+        self.btn_publish = self.buttons[5]
 
         self._load_current()
         self._update_buttons()
@@ -318,6 +320,10 @@ class FSHEditor(ui.View):
         # Commit: only when there is something saved to commit
         self.btn_commit.enabled = has_pending
         self.btn_commit.alpha   = 1.0 if has_pending else 0.35
+
+        # Publish: same gate as commit — needs saved content to push
+        self.btn_publish.enabled = has_pending
+        self.btn_publish.alpha   = 1.0 if has_pending else 0.35
 
     # ── Content switching ─────────────────────────────────────────────────────
 
@@ -436,6 +442,26 @@ class FSHEditor(ui.View):
             console.alert('Validation failed', '\n'.join(lines), 'OK', hide_cancel_button=True)
             return
         self._save_all()
+        self.pending_commit.clear()
+        self._update_seg_labels()
+        self._update_buttons()
+        webbrowser.open(f'working-copy://commit?repo={REPO_ROOT.name}')
+
+    # ── Publish ───────────────────────────────────────────────────────────────
+
+    def _on_publish(self, sender):
+        if not self.btn_publish.enabled:
+            return
+        self._sync_editor()
+        all_errors = validate_all(self.texts)
+        if all_errors:
+            import console
+            lines = [f'{n}.md: ' + ', '.join(e) for n, e in all_errors.items()]
+            console.alert('Validation failed', '\n'.join(lines), 'OK', hide_cancel_button=True)
+            return
+        self._save_all()
+        # Write the PUBLISH flag — GitHub Action will promote draft → content on next push
+        (CONTENT_DIR / 'PUBLISH').write_text('', encoding='utf-8')
         self.pending_commit.clear()
         self._update_seg_labels()
         self._update_buttons()

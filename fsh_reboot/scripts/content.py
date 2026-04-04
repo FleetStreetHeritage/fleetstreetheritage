@@ -95,9 +95,9 @@ def md_to_html(md):
     return '\n'.join(parts)
 
 
-def _load(filename):
+def _load(filename, content_dir=None):
     """Read and parse one content file. Returns '' if absent or empty."""
-    path = CONTENT_DIR / filename
+    path = (content_dir or CONTENT_DIR) / filename
     if not path.exists():
         return ''
     text = path.read_text(encoding='utf-8').strip()
@@ -106,14 +106,16 @@ def _load(filename):
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
-def get_blocks():
-    """Return a dict of HTML strings for all content blocks."""
-    hero_inner   = _load('hero.md')
-    banner_inner = _load('banner.md')
+def get_blocks(content_dir=None):
+    """Return a dict of HTML strings for all content blocks.
+    Pass content_dir to read from an alternative directory (e.g. content_draft/).
+    """
+    hero_inner   = _load('hero.md',   content_dir)
+    banner_inner = _load('banner.md', content_dir)
     return {
         'hero_block':   f'<div class="hero">{hero_inner}</div>' if hero_inner else '',
         'banner_block': f'<div class="book-banner">{banner_inner}</div>' if banner_inner else '',
-        'col1':         _load('col1.md'),
-        'col2':         _load('col2.md'),
-        'col3':         _load('col3.md'),
+        'col1':         _load('col1.md', content_dir),
+        'col2':         _load('col2.md', content_dir),
+        'col3':         _load('col3.md', content_dir),
     }
