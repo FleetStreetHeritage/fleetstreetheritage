@@ -6,7 +6,7 @@ This guide explains how to update the website's homepage content using Working C
 
 ## What you're editing
 
-The homepage has five content blocks, each stored as a simple text file in the `content_draft` folder:
+The homepage has five content blocks, each stored as a simple text file in the `fsh_reboot/editor/content_draft` folder:
 
 - **hero.md** — the large banner at the top of the page
 - **col1.md** — left column
@@ -30,26 +30,25 @@ In Working Copy, open the **fleetstreetheritage** repository and tap **Pull** to
 
 1. In Working Copy, navigate to `fsh_reboot / editor / content_draft`
 2. Tap the file you want to edit (e.g. `col1.md`)
-3. Tap the **pencil icon** to edit
-4. Make your changes and tap **Done**
+3. Tap the **content icon** (the first of the three at the centre-bottom of the screen) to edit
+4. Make your changes, you will notice that a little while later the file icon will turn orange and show 'modified'
 
 ---
 
-## Step 3 — Commit your changes
+## Step 3 — Commit your changes to content_draft to preview the results
 
 When you're happy with your edits:
 
-1. Tap the **repository name** at the top to go back to the repo view
-2. Tap **Commit**
-3. Write a short note describing what you changed (e.g. *"Updated col1 intro text"*)
-4. Tap **Commit Changes**
-5. Tap **Push** to send your changes to GitHub
+1. Tap the **Commit button** (speech bubble) at the top to open a commit sheet 
+2. Tap the tick-boxes of each of the files you want to commit (or tap the **All** button if appropriate)
+3. Write a short note describing what you changed (e.g. *"Updated hero and col1 intro text"*)
+4. Making sure the **Push** switch is on, tap **Commit** to send your changes to GitHub
 
-Once pushed, GitHub will automatically run the generator and produce a preview page. Check the draft preview to see how your changes look before publishing.
+Once pushed, GitHub will automatically run the generator and produce a preview page. Check the [draft preview](index_draft.html) to see how your changes look before publishing.
 
 ---
 
-## Step 4 — Publish when ready
+## Step 4 — Tell Github to publish content_draft to the live site when ready
 
 When you've checked the draft preview and everything looks right:
 
@@ -59,7 +58,7 @@ When you've checked the draft preview and everything looks right:
 4. Leave it empty and tap **Done**
 5. Commit and push as in Step 3 (e.g. *"Publish content update"*)
 
-GitHub will detect the `PUBLISH` file, copy your draft content to the live site, and delete the file automatically. The live homepage will update shortly after.
+GitHub will detect the `PUBLISH` file when you commit, copy your draft content to the live site, and delete the `PUBLISH` file automatically, ready for the next edits to happen. The live homepage will update shortly after.
 
 ---
 

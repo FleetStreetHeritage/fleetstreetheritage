@@ -98,7 +98,7 @@
 
   
   <h1>FSH Editor</h1>
-  <p class="meta">Generated 2026-04-04 15:51 UTC &nbsp;·&nbsp; <a href="pages.html">Pages listing →</a></p>
+  <p class="meta">Generated 2026-04-04 16:15 UTC &nbsp;·&nbsp; <a href="pages.html">Pages listing →</a></p>
 
   <div class="nav-links">
     <a href="index_draft.html">View draft homepage →</a>
@@ -111,7 +111,7 @@
 <p>This guide explains how to update the website's homepage content using Working Copy on iOS.</p>
 <hr>
 <h2 class="col-heading">What you're editing</h2>
-<p>The homepage has five content blocks, each stored as a simple text file in the `content_draft` folder:</p>
+<p>The homepage has five content blocks, each stored as a simple text file in the `fsh_reboot/editor/content_draft` folder:</p>
 <ul class="col-list"><li><strong>hero.md</strong> — the large banner at the top of the page</li><li><strong>col1.md</strong> — left column</li><li><strong>col2.md</strong> — middle column</li><li><strong>col3.md</strong> — right column</li><li><strong>banner.md</strong> — the book banner</li></ul>
 <p>For formatting guidance (bold, links, headings etc.) see `MARKDOWN.md` in this folder.</p>
 <hr>
@@ -120,17 +120,17 @@
 <p>In Working Copy, open the <strong>fleetstreetheritage</strong> repository and tap <strong>Pull</strong> to fetch any recent changes.</p>
 <hr>
 <h2 class="col-heading">Step 2 — Edit a file</h2>
-<ol><li>In Working Copy, navigate to `fsh_reboot / editor / content_draft`</li><li>Tap the file you want to edit (e.g. `col1.md`)</li><li>Tap the <strong>pencil icon</strong> to edit</li><li>Make your changes and tap <strong>Done</strong></li></ol>
+<ol><li>In Working Copy, navigate to `fsh_reboot / editor / content_draft`</li><li>Tap the file you want to edit (e.g. `col1.md`)</li><li>Tap the <strong>content icon</strong> (the first of the three at the centre-bottom of the screen) to edit</li><li>Make your changes, you will notice that a little while later the file icon will turn orange and show 'modified'</li></ol>
 <hr>
-<h2 class="col-heading">Step 3 — Commit your changes</h2>
+<h2 class="col-heading">Step 3 — Commit your changes to content_draft to preview the results</h2>
 <p>When you're happy with your edits:</p>
-<ol><li>Tap the <strong>repository name</strong> at the top to go back to the repo view</li><li>Tap <strong>Commit</strong></li><li>Write a short note describing what you changed (e.g. <em>"Updated col1 intro text"</em>)</li><li>Tap <strong>Commit Changes</strong></li><li>Tap <strong>Push</strong> to send your changes to GitHub</li></ol>
-<p>Once pushed, GitHub will automatically run the generator and produce a preview page. Check the draft preview to see how your changes look before publishing.</p>
+<ol><li>Tap the <strong>Commit button</strong> (speech bubble) at the top to open a commit sheet </li><li>Tap the tick-boxes of each of the files you want to commit (or tap the <strong>All</strong> button if appropriate)</li><li>Write a short note describing what you changed (e.g. <em>"Updated hero and col1 intro text"</em>)</li><li>Making sure the <strong>Push</strong> switch is on, tap <strong>Commit</strong> to send your changes to GitHub</li></ol>
+<p>Once pushed, GitHub will automatically run the generator and produce a preview page. Check the <a href="index_draft.html">draft preview</a> to see how your changes look before publishing.</p>
 <hr>
-<h2 class="col-heading">Step 4 — Publish when ready</h2>
+<h2 class="col-heading">Step 4 — Tell Github to publish content_draft to the live site when ready</h2>
 <p>When you've checked the draft preview and everything looks right:</p>
 <ol><li>In Working Copy, navigate to `fsh_reboot / editor / content_draft`</li><li>Tap the <strong>+</strong> button to create a new file</li><li>Name it exactly: `PUBLISH` (all capitals, no extension)</li><li>Leave it empty and tap <strong>Done</strong></li><li>Commit and push as in Step 3 (e.g. <em>"Publish content update"</em>)</li></ol>
-<p>GitHub will detect the `PUBLISH` file, copy your draft content to the live site, and delete the file automatically. The live homepage will update shortly after.</p>
+<p>GitHub will detect the `PUBLISH` file when you commit, copy your draft content to the live site, and delete the `PUBLISH` file automatically, ready for the next edits to happen. The live homepage will update shortly after.</p>
 <hr>
 <h2 class="col-heading">Things to know</h2>
 <ul class="col-list"><li>You can commit and push as many times as you like while drafting — nothing goes live until you create the `PUBLISH` file</li><li>If you make a mistake after publishing, just edit the files again and publish again</li><li>The `PUBLISH` file disappears automatically after publishing — that's normal</li><li>Don't edit files in `fsh_reboot / content` directly — that folder is managed automatically</li></ul>
