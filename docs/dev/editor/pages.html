@@ -24,8 +24,8 @@
 
     h1 { font-size: 1.2rem; margin-bottom: 0.25rem; }
     .meta { font-size: 0.75rem; color: #666; margin-bottom: 1.25rem; }
+    .meta a { color: #254760; }
 
-    /* ── Controls ───────────────────────────────────── */
     .controls {
       display: flex;
       flex-wrap: wrap;
@@ -56,10 +56,10 @@
 
     .count { margin-left: auto; font-size: 0.78rem; color: #666; }
 
-    /* ── Table ──────────────────────────────────────── */
-    .table-wrap { overflow-x: auto; margin-bottom: 1.5rem; }
+    .table-wrap { overflow-x: auto; }
 
-    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
     thead th {
       background: #254760;
@@ -73,28 +73,21 @@
     thead th:hover { background: #1d3750; }
     thead th.sort-asc::after  { content: ' ▲'; font-size: 0.7em; }
     thead th.sort-desc::after { content: ' ▼'; font-size: 0.7em; }
-    thead th.no-sort { cursor: default; }
-    thead th.no-sort:hover { background: #254760; }
 
     tbody tr { border-bottom: 1px solid #eee; }
-    tbody tr:hover:not(.editing) { background: #f0f5f9; }
-    tbody tr.dim td:not(.actions) { opacity: 0.4; }
-    tbody tr.editing { background: #fffbe6; }
+    tbody tr:hover { background: #f0f5f9; }
+    tbody tr.not-live td { opacity: 0.45; }
 
     td { padding: 0.45rem 0.75rem; vertical-align: middle; }
     td.num  { font-variant-numeric: tabular-nums; width: 3.5rem; }
     td.slug { font-family: monospace; font-size: 0.78rem; color: #555; }
+
     td.links a {
-      color: #254760; text-decoration: none; margin-right: 0.4rem;
-      font-size: 0.78rem; border-bottom: 1px dotted #254760;
+      color: #254760; text-decoration: none;
+      margin-right: 0.4rem; font-size: 0.78rem;
+      border-bottom: 1px dotted #254760;
     }
     td.links a:hover { color: #c00; border-bottom-color: #c00; }
-
-    td.actions { white-space: nowrap; }
-    td.actions a { cursor: pointer; margin-right: 0.5rem; color: #254760;
-      font-size: 0.78rem; border-bottom: 1px dotted #254760; }
-    td.actions a:hover { color: #c00; }
-    td.actions a.del:hover { color: #c00; }
 
     .vol-badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 3px;
       font-size: 0.75rem; font-weight: bold; background: #254760; color: #fff; }
@@ -121,71 +114,6 @@
       transform: rotate(-45deg) translate(0, -0.06em);
     }
     .cross { color: #bbb; }
-
-    /* ── Edit row ───────────────────────────────────── */
-    tr.editing td { padding: 0.3rem 0.5rem; }
-
-    .edit-input {
-      width: 100%;
-      padding: 0.25rem 0.4rem;
-      border: 1px solid #aaa;
-      border-radius: 3px;
-      font-size: 0.82rem;
-      font-family: inherit;
-    }
-    .edit-input.mono { font-family: monospace; }
-
-    select.edit-input { width: auto; }
-
-    .btn {
-      padding: 0.25rem 0.6rem;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      margin-right: 0.3rem;
-    }
-    .btn-save   { background: #254760; color: #fff; }
-    .btn-cancel { background: #eee; color: #333; }
-    .btn-save:hover   { background: #1d3750; }
-    .btn-cancel:hover { background: #ddd; }
-
-    /* ── Bottom bar ─────────────────────────────────── */
-    .bottom-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      align-items: center;
-      padding-top: 0.5rem;
-      border-top: 1px solid #ddd;
-    }
-
-    .bottom-bar .btn-action {
-      padding: 0.4rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      border: 1px solid #aaa;
-      background: #fff;
-    }
-    .bottom-bar .btn-action:hover { background: #e8e8e8; }
-    .bottom-bar .btn-action.primary { background: #254760; color: #fff; border-color: #254760; }
-    .bottom-bar .btn-action.primary:hover { background: #1d3750; }
-    .bottom-bar .btn-action.danger { border-color: #c00; color: #c00; }
-    .bottom-bar .btn-action.danger:hover { background: #fff0f0; }
-
-    #load-input { display: none; }
-
-    .unsaved-badge {
-      display: none;
-      background: #e07000;
-      color: #fff;
-      font-size: 0.75rem;
-      padding: 0.2rem 0.55rem;
-      border-radius: 3px;
-      margin-left: auto;
-    }
-    .unsaved-badge.visible { display: inline-block; }
 
     .no-results { text-align: center; padding: 2rem; color: #888; }
 
@@ -232,8 +160,9 @@
 <body>
 
   <h1>Fleet Street Heritage – Page Listing</h1>
-  <p class="meta">Generated 2026-04-04 15:27 UTC &nbsp;·&nbsp; <span id="total-count">97</span> pages
+  <p class="meta">Generated 2026-04-04 15:27 UTC &nbsp;·&nbsp; 97 pages
     &nbsp;·&nbsp; <a href="index.html">← Admin home</a>
+    &nbsp;·&nbsp; <a href="pages-edit.html">Edit pages →</a>
     &nbsp;·&nbsp; <a href="../editor/">Editor hub →</a></p>
 
   <div id="sanity-panel" class="sanity-panel ok" aria-live="polite"></div>
@@ -245,6 +174,11 @@
       <button data-vol="1">Vol I</button>
       <button data-vol="2">Vol II</button>
       <button data-vol="3">Vol III</button>
+    </div>
+    <div class="filter-group" role="group" aria-label="Filter by live status">
+      <button class="active" data-live="all">Live + hidden</button>
+      <button data-live="1">Live only</button>
+      <button data-live="0">Hidden only</button>
     </div>
     <span class="count" id="count"></span>
     <button class="filter-group button" id="btn-text-out" onclick="toggleTextOut()">Text list</button>
@@ -261,16 +195,15 @@
     <table id="pages-table" aria-label="Page listing">
       <thead>
         <tr>
-          <th data-col="num"      class="sort-asc">#</th>
+          <th data-col="num"       class="sort-asc">#</th>
           <th data-col="title">Title</th>
           <th data-col="slug">Slug</th>
           <th data-col="volume">Vol</th>
-          <th data-col="live"    >Live</th>
+          <th data-col="live">Live</th>
           <th data-col="has_easy">Easy Read</th>
           <th data-col="has_audio">Audio</th>
           <th data-col="h_wall">H Wall</th>
-          <th class="no-sort">Links</th>
-          <th class="no-sort">Edit</th>
+          <th>Links</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -278,17 +211,8 @@
     <p class="no-results" id="no-results" hidden>No pages match.</p>
   </div>
 
-  <div class="bottom-bar">
-    <button class="btn-action" id="btn-add">+ Add page</button>
-    <button class="btn-action" id="btn-load">Load JSON…</button>
-    <input type="file" id="load-input" accept=".json">
-    <button class="btn-action primary" id="btn-export">Export pages.json</button>
-    <span class="unsaved-badge" id="unsaved-badge">Unsaved changes</span>
-  </div>
-
   <script>
-    // ── Data ───────────────────────────────────────────────
-    const INITIAL = [
+    const PAGES = [
   {
     "num": "102",
     "slug": "points-of-interest-map",
@@ -1357,30 +1281,36 @@
     "has_audio": false
   }
 ];
-    let pages = INITIAL.map(p => ({...p}));
-    let dirty = false;
 
-    // ── Sort / filter state ────────────────────────────────
     let sortCol    = 'num';
     let sortDir    = 1;
     let filterVol  = 'all';
+    let filterLive = 'all';
     let searchQ    = '';
-    let editingIdx = null;   // index into pages[] currently being edited
-    let view       = [];     // current filtered+sorted rows
+    let rows       = [];
 
-    // ── Text output ────────────────────────────────────────
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function tick(v) {
+      return v ? '<span class="tick"  aria-label="yes"></span>'
+               : '<span class="cross" aria-label="no">–</span>';
+    }
+
     const SORT_LABELS = { num: '#', title: 'Title', slug: 'Slug', volume: 'Volume',
                           live: 'Live', has_easy: 'Easy Read', has_audio: 'Audio' };
 
-    function buildText(view) {
+    function buildText(rows) {
       const dir     = sortDir === 1 ? '↑' : '↓';
-      const volDesc = filterVol === 'all' ? 'All volumes' : 'Vol ' + filterVol;
-      const parts   = [`Sorted by: ${SORT_LABELS[sortCol] || sortCol} ${dir}`, volDesc];
+      const volDesc = filterVol  === 'all' ? 'All volumes' : 'Vol ' + filterVol;
+      const livDesc = filterLive === 'all' ? 'Live + hidden' : filterLive === '1' ? 'Live only' : 'Hidden only';
+      const parts   = [`Sorted by: ${SORT_LABELS[sortCol] || sortCol} ${dir}`, volDesc, livDesc];
       if (searchQ) parts.push(`Search: "${searchQ}"`);
-      const header  = `Fleet Street Heritage – ${view.length} of ${pages.length} items\n${parts.join(' | ')}`;
+      const header  = `Fleet Street Heritage – ${rows.length} of ${PAGES.length} items\n${parts.join(' | ')}`;
       const yn      = v => v ? 'yes' : 'no';
       const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio', 'H Wall'];
-      const data    = view.map(p => [String(p.num), p.title, p.slug, String(p.volume),
+      const data    = rows.map(p => [String(p.num), p.title, p.slug, String(p.volume),
                         yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio), yn(p.h_wall)]);
       const widths  = hdrs.map((h, ci) => Math.max(h.length, ...data.map(r => r[ci].length)));
       const fmt     = row => row.map((v, ci) =>
@@ -1404,40 +1334,19 @@
       }).catch(() => { ta.select(); document.execCommand('copy'); });
     }
 
-    // ── Helpers ────────────────────────────────────────────
-    function esc(s) {
-      return String(s)
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function markDirty() {
-      dirty = true;
-      document.getElementById('unsaved-badge').classList.add('visible');
-      document.getElementById('total-count').textContent = pages.length;
-    }
-
-    function tick(v)  { return v ? '<span class="tick"  aria-label="yes"></span>'
-                                 : '<span class="cross" aria-label="no">–</span>'; }
-    function volBadge(v) {
-      return `<span class="vol-badge v${v}">${v}</span>`;
-    }
-
-    // ── Render ─────────────────────────────────────────────
     function render() {
-      // Build filtered + sorted view (indices into pages[])
-      view = pages
-        .map((p, i) => ({...p, _i: i}))
-        .filter(p => {
-          if (filterVol !== 'all' && String(p.volume) !== filterVol) return false;
-          if (searchQ) {
-            const q = searchQ.toLowerCase();
-            if (!p.title.toLowerCase().includes(q) && !p.slug.includes(q)) return false;
-          }
-          return true;
-        });
+      rows = PAGES.filter(p => {
+        if (filterVol !== 'all' && String(p.volume) !== filterVol) return false;
+        if (filterLive === '1' && p.live === false) return false;
+        if (filterLive === '0' && p.live !== false) return false;
+        if (searchQ) {
+          const q = searchQ.toLowerCase();
+          if (!p.title.toLowerCase().includes(q) && !p.slug.includes(q)) return false;
+        }
+        return true;
+      });
 
-      view.sort((a, b) => {
+      rows.sort((a, b) => {
         let av = a[sortCol], bv = b[sortCol];
         if (typeof av === 'boolean') av = av ? 1 : 0;
         if (typeof bv === 'boolean') bv = bv ? 1 : 0;
@@ -1446,17 +1355,66 @@
       });
 
       const tbody = document.getElementById('tbody');
-      tbody.innerHTML = view.map(p => {
-        const i = p._i;
-        if (i === editingIdx) return editRow(p, i);
-        return viewRow(p, i);
+      tbody.innerHTML = rows.map(p => {
+        const nl   = `../nl/${p.slug}.html`;
+        const qr   = `../qr/${p.num}.html`;
+        const easy = `../easy/${p.slug}.html`;
+        const rowClass = p.live === false ? ' class="not-live"' : '';
+        return `<tr${rowClass}>
+          <td class="num">${esc(p.num)}</td>
+          <td>${esc(p.title)}</td>
+          <td class="slug">${esc(p.slug)}</td>
+          <td><span class="vol-badge v${p.volume}">${p.volume}</span></td>
+          <td>${tick(p.live !== false)}</td>
+          <td>${tick(p.has_easy)}</td>
+          <td>${tick(p.has_audio)}</td>
+          <td>${tick(p.h_wall)}</td>
+          <td class="links">
+            <a href="${nl}"  target="_blank">NL</a>
+            <a href="${qr}"  target="_blank">QR</a>
+            ${p.has_easy ? `<a href="${easy}" target="_blank">Easy</a>` : ''}
+          </td>
+        </tr>`;
       }).join('');
 
-      document.getElementById('count').textContent = `showing ${view.length} of ${pages.length} items`;
-      document.getElementById('no-results').hidden = view.length > 0;
-      document.getElementById('text-out').value = buildText(view);
-      runSanityChecks();
+      document.getElementById('count').textContent = `showing ${rows.length} of ${PAGES.length} items`;
+      document.getElementById('no-results').hidden = rows.length > 0;
+      document.getElementById('text-out').value = buildText(rows);
     }
+
+    document.querySelectorAll('thead th[data-col]').forEach(th => {
+      th.addEventListener('click', () => {
+        sortDir = (sortCol === th.dataset.col) ? sortDir * -1 : 1;
+        sortCol = th.dataset.col;
+        document.querySelectorAll('thead th').forEach(t =>
+          t.classList.remove('sort-asc','sort-desc'));
+        th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+        render();
+      });
+    });
+
+    document.querySelectorAll('.filter-group button[data-vol]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterVol = btn.dataset.vol;
+        btn.closest('.filter-group').querySelectorAll('button')
+          .forEach(b => b.classList.toggle('active', b === btn));
+        render();
+      });
+    });
+
+    document.querySelectorAll('.filter-group button[data-live]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterLive = btn.dataset.live;
+        btn.closest('.filter-group').querySelectorAll('button')
+          .forEach(b => b.classList.toggle('active', b === btn));
+        render();
+      });
+    });
+
+    document.getElementById('search').addEventListener('input', e => {
+      searchQ = e.target.value.trim();
+      render();
+    });
 
     // ── Sanity checks ──────────────────────────────────
     function runSanityChecks() {
@@ -1468,7 +1426,7 @@
       ];
 
       const pageIssues = [];
-      pages.forEach(p => {
+      PAGES.forEach(p => {
         const failing = checks.filter(c => c.test(p)).map(c => ({ label: c.label, crit: c.crit(p) }));
         if (failing.length) pageIssues.push({ page: p, failing });
       });
@@ -1482,8 +1440,8 @@
 
       const total = pageIssues.reduce((n, pi) => n + pi.failing.length, 0);
       const items = pageIssues.map(({ page, failing }) => {
-        const id   = page.num && page.title ? `${esc(page.num)} – ${esc(page.title)}` : `(num: ${esc(page.num||'?')})`;
-        const tags = failing.map(f => f.crit ? `<span class="crit">${f.label}</span>` : f.label).join(', ');
+        const id    = page.num && page.title ? `${esc(page.num)} – ${esc(page.title)}` : `(num: ${esc(page.num||'?')})`;
+        const tags  = failing.map(f => f.crit ? `<span class="crit">${f.label}</span>` : f.label).join(', ');
         return `<li>${id}: ${tags}</li>`;
       }).join('');
 
@@ -1491,216 +1449,8 @@
       panel.innerHTML = `<strong>⚠ ${total} issue${total !== 1 ? 's' : ''} on ${pageIssues.length} page${pageIssues.length !== 1 ? 's' : ''}:</strong><ul>${items}</ul>`;
     }
 
-    function viewRow(p, i) {
-      const nl   = `../nl/${p.slug}.html`;
-      const qr   = `../qr/${p.num}.html`;
-      const easy = `../easy/${p.slug}.html`;
-      const dimClass = p.live === false ? ' class="dim"' : '';
-      return `<tr data-i="${i}"${dimClass}>
-        <td class="num">${esc(p.num)}</td>
-        <td>${esc(p.title)}</td>
-        <td class="slug">${esc(p.slug)}</td>
-        <td>${volBadge(p.volume)}</td>
-        <td><input type="checkbox" ${p.live !== false ? 'checked' : ''}
-              aria-label="Live" onchange="toggleLive(${i}, this.checked)"></td>
-        <td>${tick(p.has_easy)}</td>
-        <td>${tick(p.has_audio)}</td>
-        <td><input type="checkbox" ${p.h_wall !== false ? 'checked' : ''}
-              aria-label="Heritage Wall" onchange="toggleHWall(${i}, this.checked)"></td>
-        <td class="links">
-          <a href="${nl}"   target="_blank">NL</a>
-          <a href="${qr}"   target="_blank">QR</a>
-          ${p.has_easy ? `<a href="${easy}" target="_blank">Easy</a>` : ''}
-        </td>
-        <td class="actions">
-          <a onclick="startEdit(${i})">Edit</a>
-          <a class="del" onclick="deletePage(${i})">Delete</a>
-        </td>
-      </tr>`;
-    }
-
-    function editRow(p, i) {
-      return `<tr data-i="${i}" class="editing">
-        <td><input class="edit-input" id="e-num"    value="${esc(p.num)}"></td>
-        <td><input class="edit-input" id="e-title"  value="${esc(p.title)}"></td>
-        <td><input class="edit-input mono" id="e-slug" value="${esc(p.slug)}"></td>
-        <td>
-          <select class="edit-input" id="e-volume">
-            <option value="1" ${p.volume==1?'selected':''}>1</option>
-            <option value="2" ${p.volume==2?'selected':''}>2</option>
-            <option value="3" ${p.volume==3?'selected':''}>3</option>
-          </select>
-        </td>
-        <td><input type="checkbox" id="e-live" ${p.live !== false ? 'checked' : ''}></td>
-        <td>${tick(p.has_easy)}</td>
-        <td>${tick(p.has_audio)}</td>
-        <td><input type="checkbox" id="e-h_wall" ${p.h_wall !== false ? 'checked' : ''}></td>
-        <td></td>
-        <td class="actions">
-          <button class="btn btn-save"   onclick="saveEdit(${i})">Save</button>
-          <button class="btn btn-cancel" onclick="cancelEdit()">Cancel</button>
-        </td>
-      </tr>`;
-    }
-
-    // ── Actions ────────────────────────────────────────────
-    function toggleLive(i, val) {
-      pages[i].live = val;
-      markDirty();
-      const tr = document.querySelector(`tr[data-i="${i}"]`);
-      if (tr) tr.outerHTML = viewRow(pages[i], i);
-    }
-
-    function toggleHWall(i, val) {
-      pages[i].h_wall = val;
-      markDirty();
-      const tr = document.querySelector(`tr[data-i="${i}"]`);
-      if (tr) tr.outerHTML = viewRow(pages[i], i);
-    }
-
-    function startEdit(i) {
-      if (editingIdx !== null && editingIdx !== i) cancelEdit();
-      editingIdx = i;
-      render();
-      document.getElementById('e-title')?.focus();
-    }
-
-    function saveEdit(i) {
-      const num    = document.getElementById('e-num').value.trim();
-      const title  = document.getElementById('e-title').value.trim();
-      const slug   = document.getElementById('e-slug').value.trim();
-      const volume = parseInt(document.getElementById('e-volume').value, 10);
-      const live   = document.getElementById('e-live').checked;
-
-      if (!num || !title || !slug) {
-        alert('Number, title and slug are all required.');
-        return;
-      }
-
-      // If num changed, has_pdf status is unknown until next regeneration
-      const has_pdf = (num === String(pages[i].num)) ? pages[i].has_pdf : false;
-      const h_wall  = document.getElementById('e-h_wall').checked;
-      pages[i] = { ...pages[i], num, title, slug, volume, live, has_pdf, h_wall };
-      editingIdx = null;
-      markDirty();
-      render();
-    }
-
-    function cancelEdit() {
-      // If this was a newly added blank row, remove it
-      if (editingIdx !== null && pages[editingIdx]._new) {
-        pages.splice(editingIdx, 1);
-      }
-      editingIdx = null;
-      render();
-    }
-
-    function deletePage(i) {
-      if (!confirm(`Delete "${pages[i].title}"?`)) return;
-      if (editingIdx === i) editingIdx = null;
-      pages.splice(i, 1);
-      markDirty();
-      render();
-    }
-
-    // ── Add page ───────────────────────────────────────────
-    document.getElementById('btn-add').addEventListener('click', () => {
-      const i = pages.length;
-      pages.push({ num: '', title: '', slug: '', volume: 1, live: true,
-                   has_pdf: false, has_easy: false, has_audio: false, _new: true });
-      editingIdx = i;
-      // Temporarily clear filters so the new row is visible
-      filterVol = 'all';
-      searchQ = '';
-      document.getElementById('search').value = '';
-      document.querySelectorAll('.filter-group button').forEach(b => {
-        b.classList.toggle('active', b.dataset.vol === 'all');
-      });
-      render();
-      document.getElementById('e-num')?.focus();
-    });
-
-    // ── Export ─────────────────────────────────────────────
-    document.getElementById('btn-export').addEventListener('click', () => {
-      // Strip computed/internal fields before export
-      const clean = pages.map(({ has_pdf, has_easy, has_audio, _new, ...rest }) => rest);
-      const out = JSON.stringify({ pages: clean }, null, 2);
-      const blob = new Blob([out], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'pages.json';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    });
-
-    // ── Load ───────────────────────────────────────────────
-    document.getElementById('btn-load').addEventListener('click', () => {
-      document.getElementById('load-input').click();
-    });
-
-    document.getElementById('load-input').addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        try {
-          const data = JSON.parse(ev.target.result);
-          if (!data.pages || !Array.isArray(data.pages)) throw new Error('Invalid format');
-          // Preserve has_easy / has_audio from current data where num matches
-          const statusMap = {};
-          pages.forEach(p => { statusMap[p.num] = { has_pdf: p.has_pdf, has_easy: p.has_easy, has_audio: p.has_audio }; });
-          pages = data.pages.map(p => ({
-            has_pdf: false, has_easy: false, has_audio: false,
-            ...statusMap[p.num],
-            ...p,
-          }));
-          editingIdx = null;
-          dirty = false;
-          document.getElementById('unsaved-badge').classList.remove('visible');
-          render();
-        } catch (err) {
-          alert('Could not load JSON: ' + err.message);
-        }
-      };
-      reader.readAsText(file);
-      e.target.value = '';
-    });
-
-    // ── Sort ───────────────────────────────────────────────
-    document.querySelectorAll('thead th[data-col]').forEach(th => {
-      th.addEventListener('click', () => {
-        const col = th.dataset.col;
-        sortDir = (sortCol === col) ? sortDir * -1 : 1;
-        sortCol = col;
-        document.querySelectorAll('thead th').forEach(t =>
-          t.classList.remove('sort-asc', 'sort-desc'));
-        th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
-        render();
-      });
-    });
-
-    // ── Filter ─────────────────────────────────────────────
-    document.querySelectorAll('.filter-group button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterVol = btn.dataset.vol;
-        document.querySelectorAll('.filter-group button')
-          .forEach(b => b.classList.toggle('active', b === btn));
-        render();
-      });
-    });
-
-    // ── Search ─────────────────────────────────────────────
-    document.getElementById('search').addEventListener('input', e => {
-      searchQ = e.target.value.trim();
-      render();
-    });
-
-    // ── Keyboard esc to cancel edit ────────────────────────
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && editingIdx !== null) cancelEdit();
-    });
-
     render();
+    runSanityChecks();
   </script>
 
 </body>

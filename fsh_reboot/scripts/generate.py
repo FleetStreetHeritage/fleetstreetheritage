@@ -245,8 +245,18 @@ def generate_admin(pages_with_status):
                 .replace('<!-- PAGE_COUNT -->',   page_count)
                 .replace('<!-- GA_ID -->',        GA_ID))
 
-    (ADMIN_DIR / 'index.html').write_text(render('admin.html'),      encoding='utf-8')
+    pages_html = render('admin.html')
+    (ADMIN_DIR / 'pages.html').write_text(pages_html, encoding='utf-8')
+    (EDITOR_DIR / 'pages.html').write_text(pages_html, encoding='utf-8')
     (ADMIN_DIR / 'pages-edit.html').write_text(render('pages-edit.html'), encoding='utf-8')
+
+
+def generate_admin_hub():
+    generated_at = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+    html = (load_template('admin-hub.html')
+            .replace('<!-- GA_ID -->',        GA_ID)
+            .replace('<!-- GENERATED_AT -->', generated_at))
+    (ADMIN_DIR / 'index.html').write_text(html, encoding='utf-8')
 
 
 # ── Main ────────────────────────────────────────────────────────────────────
@@ -288,6 +298,7 @@ def main():
     generate_editor_hub()
     generate_markdown_ref()
     generate_admin(pages_with_status)
+    generate_admin_hub()
 
     missing_pdfs = [p for p in pages_with_status if not p['has_pdf']]
     if missing_pdfs:
@@ -310,7 +321,9 @@ def main():
         print(f"  {EASY_DIR}/   ×{counts['easy']} Easy Read pages")
     print(f"  {QR_DIR}/   ×{counts['qr']} QR redirects (staging/prod)")
     print(f"  {LIVE_QR_DIR}/   ×{counts['qr']} live QR redirects → {'prod' if PROD_MODE else 'staging'} paths")
-    print(f"  {ADMIN_DIR}/index.html  +  pages-edit.html")
+    print(f"  {ADMIN_DIR}/index.html  (admin hub)")
+    print(f"  {ADMIN_DIR}/pages.html  +  pages-edit.html")
+    print(f"  {EDITOR_DIR}/pages.html  (copy)")
     print(f"==============")
 
 
