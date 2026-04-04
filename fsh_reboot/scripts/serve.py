@@ -27,8 +27,18 @@ def local_ip():
 
 os.chdir(SERVE_DIR)
 
-handler = http.server.SimpleHTTPRequestHandler
-handler.log_message = lambda *a: None  # suppress per-request noise
+class handler(http.server.SimpleHTTPRequestHandler):
+    def address_string(self):  # disable reverse DNS lookup — prevents delays
+        return self.client_address[0]
+    def log_message(self, *a): # suppress per-request noise
+        pass
+
+import socketserver
+
+class server(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+    def handle_error(self, request, client_address):  # suppress connection resets
+        pass
 
 ip = local_ip()
 print(f'Serving {SERVE_DIR}')
@@ -36,5 +46,5 @@ print(f'Local:   http://localhost:{PORT}')
 print(f'Network: http://{ip}:{PORT}')
 print('Ctrl-C to stop.')
 
-with http.server.HTTPServer(('0.0.0.0', PORT), handler) as httpd:
+with server(('0.0.0.0', PORT), handler) as httpd:
     httpd.serve_forever()

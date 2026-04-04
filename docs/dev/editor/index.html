@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FSH Editor</title>
+  G-ZP7L32M9GB
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      background: #254760;
+      color: #fff;
+      padding: 2rem 1.5rem 4rem;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.6rem;
+      color: #FFFF66;
+      margin-bottom: 0.25rem;
+    }
+    .meta {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2rem;
+    }
+    .meta a { color: rgba(255,255,255,0.6); }
+    .meta a:hover { color: #FFFF66; }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      display: inline-block;
+      padding: 0.55rem 1.2rem;
+      background: #1a3450;
+      color: #FFFF66;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .nav-links a:hover { background: #0f2030; }
+    .workflow h2 {
+      font-size: 1.1rem;
+      color: #FFFF66;
+      margin: 1.8rem 0 0.5rem;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .workflow h3 {
+      font-size: 0.95rem;
+      color: #FFFF66;
+      margin: 1.4rem 0 0.4rem;
+    }
+    .workflow p  { margin-bottom: 0.7rem; color: rgba(255,255,255,0.9); }
+    .workflow ul, .workflow ol {
+      padding-left: 1.4rem;
+      margin-bottom: 0.8rem;
+      color: rgba(255,255,255,0.9);
+    }
+    .workflow li { margin-bottom: 0.3rem; }
+    .workflow strong { color: #fff; }
+    .workflow em { color: rgba(255,255,255,0.75); font-style: italic; }
+    .workflow hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      margin: 1.8rem 0;
+    }
+    .workflow code {
+      background: rgba(0,0,0,0.3);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+      font-family: Menlo, monospace;
+      font-size: 0.88em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>FSH Editor</h1>
+  <p class="meta">Generated 2026-04-04 13:21 UTC &nbsp;·&nbsp; <a href="../admin/">Pages listing →</a></p>
+
+  <div class="nav-links">
+    <a href="index_draft.html">View draft homepage →</a>
+    <a href="../admin/">Pages listing →</a>
+  </div>
+
+  <div class="workflow">
+    <h2 class="col-title">Editing content — Working Copy guide</h2>
+<p>This guide explains how to update the website's homepage content using Working Copy on iOS.</p>
+<hr>
+<h2 class="col-heading">What you're editing</h2>
+<p>The homepage has five content blocks, each stored as a simple text file in the `content_draft` folder:</p>
+<ul class="col-list"><li><strong>hero.md</strong> — the large banner at the top of the page</li><li><strong>col1.md</strong> — left column</li><li><strong>col2.md</strong> — middle column</li><li><strong>col3.md</strong> — right column</li><li><strong>banner.md</strong> — the book banner</li></ul>
+<p>For formatting guidance (bold, links, headings etc.) see `MARKDOWN.md` in this folder.</p>
+<hr>
+<h2 class="col-heading">Step 1 — Pull the latest version</h2>
+<p>Before editing, always make sure you have the latest version of the files.</p>
+<p>In Working Copy, open the <strong>fleetstreetheritage</strong> repository and tap <strong>Pull</strong> to fetch any recent changes.</p>
+<hr>
+<h2 class="col-heading">Step 2 — Edit a file</h2>
+<ol><li>In Working Copy, navigate to `fsh_reboot / editor / content_draft`</li><li>Tap the file you want to edit (e.g. `col1.md`)</li><li>Tap the <strong>pencil icon</strong> to edit</li><li>Make your changes and tap <strong>Done</strong></li></ol>
+<hr>
+<h2 class="col-heading">Step 3 — Commit your changes</h2>
+<p>When you're happy with your edits:</p>
+<ol><li>Tap the <strong>repository name</strong> at the top to go back to the repo view</li><li>Tap <strong>Commit</strong></li><li>Write a short note describing what you changed (e.g. <em>"Updated col1 intro text"</em>)</li><li>Tap <strong>Commit Changes</strong></li><li>Tap <strong>Push</strong> to send your changes to GitHub</li></ol>
+<p>Once pushed, GitHub will automatically run the generator and produce a preview page. Check the draft preview to see how your changes look before publishing.</p>
+<hr>
+<h2 class="col-heading">Step 4 — Publish when ready</h2>
+<p>When you've checked the draft preview and everything looks right:</p>
+<ol><li>In Working Copy, navigate to `fsh_reboot / editor / content_draft`</li><li>Tap the <strong>+</strong> button to create a new file</li><li>Name it exactly: `PUBLISH` (all capitals, no extension)</li><li>Leave it empty and tap <strong>Done</strong></li><li>Commit and push as in Step 3 (e.g. <em>"Publish content update"</em>)</li></ol>
+<p>GitHub will detect the `PUBLISH` file, copy your draft content to the live site, and delete the file automatically. The live homepage will update shortly after.</p>
+<hr>
+<h2 class="col-heading">Things to know</h2>
+<ul class="col-list"><li>You can commit and push as many times as you like while drafting — nothing goes live until you create the `PUBLISH` file</li><li>If you make a mistake after publishing, just edit the files again and publish again</li><li>The `PUBLISH` file disappears automatically after publishing — that's normal</li><li>Don't edit files in `fsh_reboot / content` directly — that folder is managed automatically</li></ul>
+  </div>
+
+</body>
+</html>

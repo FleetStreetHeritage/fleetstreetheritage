@@ -35,6 +35,7 @@ QR_DIR     = OUTPUT_DIR / 'qr'
 PDFS_DIR   = OUTPUT_DIR / 'pdfs'
 AUDIO_DIR  = OUTPUT_DIR / 'audio'
 ADMIN_DIR  = OUTPUT_DIR / 'admin'
+EDITOR_DIR = OUTPUT_DIR / 'editor'
 
 # Live QR codes always go to docs/qr/ regardless of mode.
 # In staging they point into docs/dev/; in prod they point into docs/ root.
@@ -180,7 +181,23 @@ def generate_index_draft(pages):
             .replace('<!-- COL_2 -->',           blocks['col2'])
             .replace('<!-- COL_3 -->',           blocks['col3'])
             .replace('<!-- VOLUME_SECTIONS -->', build_volume_sections(pages)))
-    (OUTPUT_DIR / 'index_draft.html').write_text(html, encoding='utf-8')
+    # index_draft lives one level deeper (editor/) so rewrite relative image paths
+    html = html.replace('src="images/', 'src="../images/')
+    (EDITOR_DIR / 'index_draft.html').write_text(html, encoding='utf-8')
+
+
+def generate_editor_hub():
+    """Generate the editor hub page from WORKFLOW.md."""
+    import content
+    workflow_path = SCRIPT_DIR.parent / 'editor' / 'WORKFLOW.md'
+    workflow_md   = workflow_path.read_text(encoding='utf-8') if workflow_path.exists() else ''
+    workflow_html = content.md_to_html(workflow_md)
+    generated_at  = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+    html = (load_template('editor-hub.html')
+            .replace('<!-- GA_ID -->',           GA_ID)
+            .replace('<!-- GENERATED_AT -->',    generated_at)
+            .replace('<!-- WORKFLOW_CONTENT -->', workflow_html))
+    (EDITOR_DIR / 'index.html').write_text(html, encoding='utf-8')
 
 
 # ── Live QR codes (docs/qr/) ────────────────────────────────────────────────
@@ -218,7 +235,7 @@ def main():
     with open(DATA_FILE, encoding='utf-8') as f:
         pages = json.load(f)['pages']
 
-    for d in (OUTPUT_DIR, NL_DIR, EASY_DIR, QR_DIR, ADMIN_DIR, LIVE_QR_DIR):
+    for d in (OUTPUT_DIR, NL_DIR, EASY_DIR, QR_DIR, ADMIN_DIR, EDITOR_DIR, LIVE_QR_DIR):
         d.mkdir(parents=True, exist_ok=True)
 
     counts = {'nl': 0, 'easy': 0, 'qr': 0}
@@ -249,6 +266,7 @@ def main():
     generate_index(pages)
     generate_index_evolution(pages)
     generate_index_draft(pages)
+    generate_editor_hub()
     generate_admin(pages_with_status)
 
     missing_pdfs = [p for p in pages_with_status if not p['has_pdf']]
@@ -264,7 +282,8 @@ def main():
     print(f"Generated products as follows:")
     print(f"  {OUTPUT_DIR}/index.html")
     print(f"  {OUTPUT_DIR}/index_evolution.html")
-    print(f"  {OUTPUT_DIR}/index_draft.html  (from content_draft/)")
+    print(f"  {EDITOR_DIR}/index.html  (editor hub)")
+    print(f"  {EDITOR_DIR}/index_draft.html  (from content_draft/)")
     print(f"  {NL_DIR}/   ×{counts['nl']} NL pages")
     if counts['easy']:
         print(f"  {EASY_DIR}/   ×{counts['easy']} Easy Read pages")

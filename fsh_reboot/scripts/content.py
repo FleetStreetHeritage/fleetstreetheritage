@@ -74,12 +74,24 @@ def md_to_html(md):
                 parts.append(f'<img src="{m.group(2)}" alt="{m.group(1)}" class="col-img">')
             i += 1
 
+        elif line == '---' or line == '***' or line == '___':
+            parts.append('<hr>')
+            i += 1
+
         elif line.startswith('- '):
             items = []
             while i < len(lines) and lines[i].rstrip().startswith('- '):
                 items.append(f'<li>{inline_md(lines[i][2:])}</li>')
                 i += 1
             parts.append('<ul class="col-list">' + ''.join(items) + '</ul>')
+
+        elif re.match(r'^\d+\. ', line):
+            items = []
+            while i < len(lines) and re.match(r'^\d+\. ', lines[i].rstrip()):
+                text = re.sub(r'^\d+\. ', '', lines[i])
+                items.append(f'<li>{inline_md(text)}</li>')
+                i += 1
+            parts.append('<ol>' + ''.join(items) + '</ol>')
 
         else:
             para = []
