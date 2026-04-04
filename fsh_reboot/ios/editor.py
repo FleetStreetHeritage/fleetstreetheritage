@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# build 3
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -280,7 +281,7 @@ class FSHEditor(ui.View):
         text = self.editor.text if self.editor.text is not None else ''
         html = col_preview_html(text)
         base = REPO_ROOT / 'docs' / 'dev' / 'images'
-        self.preview.load_html(html, base_url=base.as_uri() + '/')
+        self.preview.load_html(html, base.as_uri() + '/')
 
     def _schedule_preview(self):
         if self._preview_timer:
@@ -294,7 +295,7 @@ class FSHEditor(ui.View):
         pv = ui.WebView()
         pv.scales_page_to_fit = True
         base = REPO_ROOT / 'docs' / 'dev'
-        pv.load_html(html, base_url=base.as_uri() + '/')
+        pv.load_html(html, base.as_uri() + '/')
         pv.present('fullscreen')
 
     # ── Validation ────────────────────────────────────────────────────────────
