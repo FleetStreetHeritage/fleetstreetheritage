@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 12
+# build 13
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -120,6 +120,22 @@ def full_page_html(texts):
                      '<p style="color:rgba(255,255,255,0.4);font-size:0.8rem;text-align:center">'
                      '(page listing not shown in preview)</p>'))
     return abs_images(html)
+
+
+# ── Preview container ─────────────────────────────────────────────────────────
+
+class _PreviewContainer(ui.View):
+    """Full-page preview wrapper. Calls on_close when dismissed."""
+    def __init__(self, html, on_close):
+        self._on_close = on_close
+        wv = ui.WebView()
+        wv.scales_page_to_fit = True
+        wv.flex = 'WH'
+        wv.load_html(html)
+        self.add_subview(wv)
+
+    def will_close(self):
+        ui.delay(self._on_close, 0.1)
 
 
 # ── Editor ────────────────────────────────────────────────────────────────────
@@ -398,10 +414,12 @@ class FSHEditor(ui.View):
 
     def _on_preview(self, sender):
         self._sync_editor()
-        pv = ui.WebView()
-        pv.scales_page_to_fit = True
-        pv.load_html(full_page_html(self.texts))
+        pv = _PreviewContainer(full_page_html(self.texts), self._after_preview)
         pv.present('fullscreen')
+
+    def _after_preview(self):
+        self._kb_height = 0
+        self.layout()
 
     # ── Validation ────────────────────────────────────────────────────────────
 
