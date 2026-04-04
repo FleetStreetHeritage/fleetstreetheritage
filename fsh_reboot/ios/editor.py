@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 10
+# build 11
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -236,12 +236,17 @@ class FSHEditor(ui.View):
         self._refresh_preview()
 
     def layout(self):
-        w, h   = self.width, self.height
-        pad    = 8
-        seg_h  = 36
-        btn_h  = 40
-        val_h  = 0
-        kb     = self._kb_height
+        w, h = self.width, self.height
+        if not w or not h:
+            return
+
+        pad   = 8
+        seg_h = 36
+        btn_h = 40
+        val_h = 0
+
+        # Clamp keyboard height — never push toolbar above the midpoint
+        kb = max(0, min(self._kb_height, h - (seg_h + btn_h + pad * 4 + 80)))
 
         self.seg.frame = (pad, pad, w - pad*2, seg_h)
 
@@ -259,7 +264,7 @@ class FSHEditor(ui.View):
 
         # Content area (between seg and toolbar)
         content_y = pad + seg_h + pad
-        content_h = toolbar_y - val_h - pad - content_y
+        content_h = max(40, toolbar_y - val_h - pad - content_y)
 
         landscape = (w > h) and (self.current_file != 'hero')
 
@@ -275,10 +280,10 @@ class FSHEditor(ui.View):
     # ── Keyboard avoidance ────────────────────────────────────────────────────
 
     def keyboard_frame_did_change(self, frame):
-        # frame is (x, y, w, h) in screen coords; use screen size as stable reference
         screen_h = ui.get_screen_size()[1]
         kb_top   = frame[1]
-        self._kb_height = max(0, screen_h - kb_top)
+        # If the keyboard top is at or beyond the screen bottom it's fully hidden
+        self._kb_height = max(0, screen_h - kb_top) if kb_top < screen_h else 0
         self.layout()
 
     # ── Segment labels ────────────────────────────────────────────────────────
