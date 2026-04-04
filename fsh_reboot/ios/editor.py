@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 14
+# build 15
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -18,6 +18,7 @@ from pathlib import Path
 # ── Paths ─────────────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).resolve().parent.parent.parent
 CONTENT_DIR = REPO_ROOT / 'fsh_reboot' / 'content_draft'
+LIVE_DIR    = REPO_ROOT / 'fsh_reboot' / 'content'
 TEMPLATE    = REPO_ROOT / 'fsh_reboot' / 'template' / 'index_evolution.html'
 IMAGES_DIR  = REPO_ROOT / 'docs' / 'dev' / 'images'
 SCRIPTS_DIR = REPO_ROOT / 'fsh_reboot' / 'scripts'
@@ -26,8 +27,8 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 import content as cnt
 md_to_html = cnt.md_to_html
 
-FILES  = ['hero',  'banner', 'col1',  'col2',  'col3']
-LABELS = ['Hero',  'Banner', 'Col 1', 'Col 2', 'Col 3']
+FILES  = ['hero',  'col1',  'col2',  'col3',  'banner']
+LABELS = ['Hero',  'Col 1', 'Col 2', 'Col 3', 'Banner']
 
 FSH_BLUE   = '#254760'
 FSH_YELLOW = '#FFFF66'
@@ -149,8 +150,8 @@ class _PreviewContainer(ui.View):
 
     def layout(self):
         w, h = self.width, self.height
-        self._close_btn.frame = (8, 0, w - 16, self.BAR_H)
-        self._wv.frame = (0, self.BAR_H, w, h - self.BAR_H)
+        self._wv.frame = (0, 0, w, h - self.BAR_H - 8)
+        self._close_btn.frame = (8, h - self.BAR_H - 4, w - 16, self.BAR_H)
 
     def _close(self, sender):
         self.close()
@@ -165,10 +166,11 @@ class FSHEditor(ui.View):
 
     def __init__(self):
         self.current_idx    = 0
-        self.original_texts = {}  # texts as last saved to disk
+        self.original_texts = {}  # texts as last saved to content_draft/
+        self.live_texts     = {}  # texts from content/ (published live)
         self.texts          = {}  # current in-editor texts
         self.pending_commit = set()  # saved but not yet committed
-        self.show_original  = False
+        self.show_state     = 0   # 0=current  1=saved-draft  2=live
         self._preview_timer = None
         self._touch_start   = None
         self._kb_height     = 0
@@ -184,6 +186,9 @@ class FSHEditor(ui.View):
             t = path.read_text(encoding='utf-8') if path.exists() else ''
             self.original_texts[name] = t
             self.texts[name] = t
+            live_path = LIVE_DIR / f'{name}.md'
+            self.live_texts[name] = (live_path.read_text(encoding='utf-8')
+                                     if live_path.exists() else '')
 
     @property
     def current_file(self):
@@ -242,9 +247,9 @@ class FSHEditor(ui.View):
         self.val_bar.hidden = True
         self.add_subview(self.val_bar)
 
-        # Toolbar buttons — ⇄ toggle | Revert | Save | Preview | Commit | Publish
+        # Toolbar buttons — cycle | Revert | Save | Preview | Commit | Publish
         btn_specs = [
-            ('⇄',            self._on_toggle_original, '#2a4a60', '#888'),
+            ('🔄 Current',   self._on_cycle_state,     '#2a4a60', '#ccc'),
             ('Revert',       self._on_revert,           '#5a2020', '#fff'),
             ('Save',         self._on_save,             FSH_BLUE,  '#fff'),
             ('Preview page', self._on_preview,          FSH_BLUE,  FSH_YELLOW),
@@ -349,11 +354,13 @@ class FSHEditor(ui.View):
         dirty = self._is_dirty()
         has_pending = bool(self.pending_commit)
 
-        # Toggle: active (yellow) only when dirty and currently showing original
-        self.btn_toggle.enabled = dirty
-        self.btn_toggle.tint_color = FSH_YELLOW if (dirty and self.show_original) else \
-                                     '#ccc'      if dirty else '#555'
-        self.btn_toggle.alpha = 1.0 if dirty else 0.4
+        # Cycle button: always enabled; label and colour reflect current view state
+        _state_labels = {0: '🔄 Current', 1: '🔄 Saved', 2: '🔄 Live'}
+        _state_colors = {0: '#aaa', 1: '#ffcc44', 2: FSH_YELLOW}
+        self.btn_toggle.title      = _state_labels[self.show_state]
+        self.btn_toggle.tint_color = _state_colors[self.show_state]
+        self.btn_toggle.enabled    = True
+        self.btn_toggle.alpha      = 1.0
 
         # Revert: only when dirty
         self.btn_revert.enabled = dirty
@@ -375,7 +382,7 @@ class FSHEditor(ui.View):
     # ── Content switching ─────────────────────────────────────────────────────
 
     def _load_current(self):
-        self.show_original = False
+        self.show_state = 0
         self.editor.text = self.texts[self.current_file]
 
     def _on_segment(self, sender):
@@ -415,20 +422,21 @@ class FSHEditor(ui.View):
 
     # ── Original toggle ───────────────────────────────────────────────────────
 
-    def _on_toggle_original(self, sender):
+    def _on_cycle_state(self, sender):
         self._sync_editor()
-        if not self._is_dirty():
-            return
-        self.show_original = not self.show_original
+        self.show_state = (self.show_state + 1) % 3
         self._update_buttons()
         self._refresh_preview()
 
     # ── Preview ───────────────────────────────────────────────────────────────
 
     def _refresh_preview(self):
-        text = (self.original_texts[self.current_file]
-                if self.show_original else
-                (self.editor.text or ''))
+        if self.show_state == 2:
+            text = self.live_texts.get(self.current_file, '')
+        elif self.show_state == 1:
+            text = self.original_texts[self.current_file]
+        else:
+            text = self.editor.text or ''
         self.preview.load_html(col_preview_html(text))
 
     def _schedule_preview(self):
@@ -476,8 +484,7 @@ class FSHEditor(ui.View):
         if not self.btn_revert.enabled:
             return
         self.texts[self.current_file] = self.original_texts[self.current_file]
-        self.show_original = False
-        self._load_current()
+        self._load_current()  # resets show_state to 0
         self._update_seg_labels()
         self._update_buttons()
         self._refresh_preview()
