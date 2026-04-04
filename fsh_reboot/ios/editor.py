@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 3
+# build 4
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -103,6 +103,17 @@ COL_CSS = """
   ul { list-style: none; margin-top: 0.5rem; font-size: 0.85rem; }
   img { display: block; width: 100%; max-width: 220px; height: auto; margin-bottom: 0.75rem; }
 """
+
+
+def abs_images(html, images_dir):
+    """Rewrite relative img src attributes to absolute file:// URLs."""
+    def replace(m):
+        src = m.group(1)
+        if src.startswith('http') or src.startswith('file'):
+            return m.group(0)
+        abs_path = images_dir / Path(src).name
+        return f'src="{abs_path.as_uri()}"'
+    return re.sub(r'src="([^"]+)"', replace, html)
 
 
 def col_preview_html(text):
@@ -280,8 +291,8 @@ class FSHEditor(ui.View):
     def _refresh_preview(self):
         text = self.editor.text if self.editor.text is not None else ''
         html = col_preview_html(text)
-        base = REPO_ROOT / 'docs' / 'dev' / 'images'
-        self.preview.load_html(html, base.as_uri() + '/')
+        html = abs_images(html, REPO_ROOT / 'docs' / 'dev' / 'images')
+        self.preview.load_html(html)
 
     def _schedule_preview(self):
         if self._preview_timer:
@@ -294,8 +305,8 @@ class FSHEditor(ui.View):
         html = full_page_html(self.texts)
         pv = ui.WebView()
         pv.scales_page_to_fit = True
-        base = REPO_ROOT / 'docs' / 'dev'
-        pv.load_html(html, base.as_uri() + '/')
+        html = abs_images(html, REPO_ROOT / 'docs' / 'dev' / 'images')
+        pv.load_html(html)
         pv.present('fullscreen')
 
     # ── Validation ────────────────────────────────────────────────────────────
