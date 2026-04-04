@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 9
+# build 10
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -274,9 +274,9 @@ class FSHEditor(ui.View):
 
     # ── Keyboard avoidance ────────────────────────────────────────────────────
 
-    def keyboard_frame_will_change(self, frame):
-        # frame is (x, y, w, h) in screen coords; y < screen height means visible
-        screen_h = self.height
+    def keyboard_frame_did_change(self, frame):
+        # frame is (x, y, w, h) in screen coords; use screen size as stable reference
+        screen_h = ui.get_screen_size()[1]
         kb_top   = frame[1]
         self._kb_height = max(0, screen_h - kb_top)
         self.layout()
