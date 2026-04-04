@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 4
+# build 6
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -263,14 +263,16 @@ class FSHEditor(ui.View):
         content_y = pad + seg_h + pad
         content_h = h - content_y - btn_h - val_h - pad*2
 
-        landscape = w > h
+        landscape = w > h and self.current_file != 'hero'
+
+        self.editor.hidden = False
         if landscape:
             half = (w - pad * 3) / 2
             self.editor.frame  = (pad,          content_y, half, content_h)
-            self.preview.frame = (pad*2 + half,  content_y, half, content_h)
+            self.preview.frame = (pad*2 + half, content_y, half, content_h)
         else:
             half = (content_h - pad) / 2
-            self.editor.frame  = (pad, content_y,          w - pad*2, half)
+            self.editor.frame  = (pad, content_y,              w - pad*2, half)
             self.preview.frame = (pad, content_y + half + pad, w - pad*2, half)
 
     # ── Content switching ─────────────────────────────────────────────────────
