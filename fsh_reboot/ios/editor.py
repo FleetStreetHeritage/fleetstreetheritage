@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 13
+# build 14
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -125,14 +125,35 @@ def full_page_html(texts):
 # ── Preview container ─────────────────────────────────────────────────────────
 
 class _PreviewContainer(ui.View):
-    """Full-page preview wrapper. Calls on_close when dismissed."""
+    """Full-page preview wrapper with its own Close button."""
+    BAR_H = 44
+
     def __init__(self, html, on_close):
         self._on_close = on_close
+        self.background_color = '#254760'
+
+        # Close button — clearly labelled, nothing like the app-quit X
+        btn = ui.Button()
+        btn.title = '← Close preview'
+        btn.tint_color = '#FFFF66'
+        btn.font = ('Helvetica Neue', 15)
+        btn.action = self._close
+        self._close_btn = btn
+        self.add_subview(btn)
+
         wv = ui.WebView()
         wv.scales_page_to_fit = True
-        wv.flex = 'WH'
         wv.load_html(html)
+        self._wv = wv
         self.add_subview(wv)
+
+    def layout(self):
+        w, h = self.width, self.height
+        self._close_btn.frame = (8, 0, w - 16, self.BAR_H)
+        self._wv.frame = (0, self.BAR_H, w, h - self.BAR_H)
+
+    def _close(self, sender):
+        self.close()
 
     def will_close(self):
         ui.delay(self._on_close, 0.1)
@@ -261,8 +282,11 @@ class FSHEditor(ui.View):
         btn_h = 40
         val_h = 0
 
-        # Clamp keyboard height — never push toolbar above the midpoint
-        kb = max(0, min(self._kb_height, h - (seg_h + btn_h + pad * 4 + 80)))
+        # Seg always anchored at top — minimum below it before toolbar
+        seg_bottom  = pad + seg_h + pad
+        min_content = 80  # never let content area collapse to nothing
+        max_kb      = h - seg_bottom - min_content - btn_h - pad
+        kb = max(0, min(self._kb_height, max_kb))
 
         self.seg.frame = (pad, pad, w - pad*2, seg_h)
 
@@ -270,6 +294,8 @@ class FSHEditor(ui.View):
         if self.val_bar.text and not self.val_bar.hidden:
             val_h = 44
         toolbar_y = h - kb - btn_h - pad
+        # Hard floor: toolbar can never overlap seg
+        toolbar_y = max(seg_bottom + min_content, toolbar_y)
         self.val_bar.frame = (0, toolbar_y - val_h, w, val_h)
 
         # Toolbar
@@ -355,6 +381,7 @@ class FSHEditor(ui.View):
     def _on_segment(self, sender):
         self._sync_editor()
         self.current_idx = sender.selected_index
+        self._kb_height = 0
         self._load_current()
         self.layout()
         self._refresh_preview()
@@ -365,6 +392,7 @@ class FSHEditor(ui.View):
         self._sync_editor()
         self.current_idx = (self.current_idx + delta) % len(FILES)
         self.seg.selected_index = self.current_idx
+        self._kb_height = 0
         self._load_current()
         self.layout()
         self._refresh_preview()
@@ -415,7 +443,7 @@ class FSHEditor(ui.View):
     def _on_preview(self, sender):
         self._sync_editor()
         pv = _PreviewContainer(full_page_html(self.texts), self._after_preview)
-        pv.present('fullscreen')
+        pv.present('fullscreen', hide_title_bar=True)
 
     def _after_preview(self):
         self._kb_height = 0
