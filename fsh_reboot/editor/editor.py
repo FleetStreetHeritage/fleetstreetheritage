@@ -4,7 +4,7 @@
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
 
-Stored in fsh_reboot/ios/editor.py in the repo.
+Stored in fsh_reboot/editor/editor.py in the repo.
 Open the repo root folder in Pythonista, then run this file.
 """
 
@@ -17,7 +17,7 @@ from pathlib import Path
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).resolve().parent.parent.parent
-CONTENT_DIR = REPO_ROOT / 'fsh_reboot' / 'content_draft'
+CONTENT_DIR = REPO_ROOT / 'fsh_reboot' / 'editor' / 'content_draft'
 LIVE_DIR    = REPO_ROOT / 'fsh_reboot' / 'content'
 TEMPLATE    = REPO_ROOT / 'fsh_reboot' / 'template' / 'index_evolution.html'
 IMAGES_DIR  = REPO_ROOT / 'docs' / 'dev' / 'images'

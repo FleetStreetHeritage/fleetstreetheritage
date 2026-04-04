@@ -22,7 +22,7 @@ REPO_ROOT    = SCRIPT_DIR.parent.parent
 DATA_FILE    = SCRIPT_DIR.parent / 'data' / 'pages.json'
 TEMPLATE_DIR = SCRIPT_DIR.parent / 'template'
 CONTENT_DIR  = SCRIPT_DIR.parent / 'content'
-DRAFT_DIR    = SCRIPT_DIR.parent / 'content_draft'
+DRAFT_DIR    = SCRIPT_DIR.parent / 'editor' / 'content_draft'
 
 CONTENT_FILES = ['hero.md', 'banner.md', 'col1.md', 'col2.md', 'col3.md']
 
