@@ -245,7 +245,7 @@ def generate_admin(pages_with_status):
                 .replace('<!-- PAGE_COUNT -->',   page_count)
                 .replace('<!-- GA_ID -->',        GA_ID))
 
-    pages_html = render('admin.html')
+    pages_html = render('pages.html')
     (ADMIN_DIR / 'pages.html').write_text(pages_html, encoding='utf-8')
 
     # Editor copy: fix meta links for editor/ context
