@@ -64,6 +64,7 @@ This is the second paragraph.
 The image file must exist in the images folder.
 
 Linked image (tapping opens a URL):
+
 ```
 [![description](filename.jpg)](https://example.com)
 ```

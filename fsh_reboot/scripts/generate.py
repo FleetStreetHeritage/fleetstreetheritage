@@ -186,18 +186,37 @@ def generate_index_draft(pages):
     (EDITOR_DIR / 'index_draft.html').write_text(html, encoding='utf-8')
 
 
+def _render_editor_md(md_path):
+    """Read a markdown file from the editor folder and return rendered HTML."""
+    import content
+    md = md_path.read_text(encoding='utf-8') if md_path.exists() else ''
+    return content.md_to_html(md)
+
+
 def generate_editor_hub():
     """Generate the editor hub page from WORKFLOW.md."""
-    import content
-    workflow_path = SCRIPT_DIR.parent / 'editor' / 'WORKFLOW.md'
-    workflow_md   = workflow_path.read_text(encoding='utf-8') if workflow_path.exists() else ''
-    workflow_html = content.md_to_html(workflow_md)
+    workflow_html = _render_editor_md(SCRIPT_DIR.parent / 'editor' / 'WORKFLOW.md')
     generated_at  = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
     html = (load_template('editor-hub.html')
-            .replace('<!-- GA_ID -->',           GA_ID)
-            .replace('<!-- GENERATED_AT -->',    generated_at)
+            .replace('<!-- GA_ID -->',            GA_ID)
+            .replace('<!-- GENERATED_AT -->',     generated_at)
+            .replace('<!-- BACK_LINK -->',        '')
             .replace('<!-- WORKFLOW_CONTENT -->', workflow_html))
     (EDITOR_DIR / 'index.html').write_text(html, encoding='utf-8')
+
+
+def generate_markdown_ref():
+    """Generate markdown.html reference page from MARKDOWN.md."""
+    content_html = _render_editor_md(SCRIPT_DIR.parent / 'editor' / 'MARKDOWN.md')
+    generated_at = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+    back = '<p style="margin-bottom:1.5rem"><a href="index.html" style="color:#FFFF66">← Editor home</a></p>'
+    html = (load_template('editor-hub.html')
+            .replace('<!-- GA_ID -->',            GA_ID)
+            .replace('<!-- GENERATED_AT -->',     generated_at)
+            .replace('<!-- BACK_LINK -->',        back)
+            .replace('FSH Editor',                'Markdown reference')
+            .replace('<!-- WORKFLOW_CONTENT -->', content_html))
+    (EDITOR_DIR / 'markdown.html').write_text(html, encoding='utf-8')
 
 
 # ── Live QR codes (docs/qr/) ────────────────────────────────────────────────
@@ -267,6 +286,7 @@ def main():
     generate_index_evolution(pages)
     generate_index_draft(pages)
     generate_editor_hub()
+    generate_markdown_ref()
     generate_admin(pages_with_status)
 
     missing_pdfs = [p for p in pages_with_status if not p['has_pdf']]
@@ -284,6 +304,7 @@ def main():
     print(f"  {OUTPUT_DIR}/index_evolution.html")
     print(f"  {EDITOR_DIR}/index.html  (editor hub)")
     print(f"  {EDITOR_DIR}/index_draft.html  (from content_draft/)")
+    print(f"  {EDITOR_DIR}/markdown.html  (markdown reference)")
     print(f"  {NL_DIR}/   ×{counts['nl']} NL pages")
     if counts['easy']:
         print(f"  {EASY_DIR}/   ×{counts['easy']} Easy Read pages")

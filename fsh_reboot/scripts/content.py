@@ -16,6 +16,7 @@ Supported markdown:
   blank line        → paragraph break
 """
 
+import html as _html
 import re
 from pathlib import Path
 
@@ -49,6 +50,15 @@ def md_to_html(md):
 
         if not line:
             i += 1
+
+        elif line.startswith('```'):
+            i += 1  # skip opening fence
+            code_lines = []
+            while i < len(lines) and not lines[i].rstrip().startswith('```'):
+                code_lines.append(lines[i])
+                i += 1
+            i += 1  # skip closing fence
+            parts.append('<pre><code>' + _html.escape('\n'.join(code_lines)) + '</code></pre>')
 
         elif line.startswith('# '):
             parts.append(f'<h2 class="col-title">{inline_md(line[2:])}</h2>')
@@ -97,7 +107,7 @@ def md_to_html(md):
             para = []
             while i < len(lines):
                 l = lines[i].rstrip()
-                if not l or l.startswith(('#', '-', '!')):
+                if not l or l.startswith(('#', '-', '!')) or l.startswith('```'):
                     break
                 para.append(inline_md(l))
                 i += 1

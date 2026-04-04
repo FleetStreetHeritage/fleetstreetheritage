@@ -1,13 +1,22 @@
 
+todos
+	get github control of fsh org and
+	set up domain for magpiealley on pages
+	set up github actions
+
+
 
 team questions
 	what are the easy read pdfs for? do we need them?
 	can i have a full map of the panels on the wall, or coordinates for each one?
+	let's rename 63 & 28 Stonecutter Street to bradlaw and someone
 
 
 to remember
 	check on the jump down the page - looks like something to do with the first visit thing
-	
+		
+
+
 
 
 
