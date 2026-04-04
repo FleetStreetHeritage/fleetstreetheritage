@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 15
+# build 16
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -126,32 +126,73 @@ def full_page_html(texts):
 # ── Preview container ─────────────────────────────────────────────────────────
 
 class _PreviewContainer(ui.View):
-    """Full-page preview wrapper with its own Close button."""
-    BAR_H = 44
+    """Full-page preview — dark overlay frame, cycle + dismiss buttons at bottom."""
+    INSET  = 14
+    BTN_H  = 42
 
-    def __init__(self, html, on_close):
-        self._on_close = on_close
-        self.background_color = '#254760'
+    _STATE_LABELS = {0: '🔄 Editing', 1: '🔄 Saved', 2: '🔄 Live'}
+    _STATE_COLORS = {0: '#aaa',       1: '#ffcc44',  2: FSH_YELLOW}
 
-        # Close button — clearly labelled, nothing like the app-quit X
-        btn = ui.Button()
-        btn.title = '← Close preview'
-        btn.tint_color = '#FFFF66'
-        btn.font = ('Helvetica Neue', 15)
-        btn.action = self._close
-        self._close_btn = btn
-        self.add_subview(btn)
+    def __init__(self, all_texts, on_close, initial_state=0):
+        """all_texts: {'editing': {name: text}, 'saved': ..., 'live': ...}"""
+        self._all_texts  = all_texts
+        self._on_close   = on_close
+        self._state      = initial_state
+        self.background_color = '#08181f'  # dark, slightly distinct from editor
 
+        # WebView — inset on all sides to show the dark frame border
         wv = ui.WebView()
         wv.scales_page_to_fit = True
-        wv.load_html(html)
+        wv.corner_radius = 6
         self._wv = wv
         self.add_subview(wv)
 
+        # Cycle button (left)
+        cyc = ui.Button()
+        cyc.font = ('Helvetica Neue', 14)
+        cyc.background_color = FSH_BLUE
+        cyc.corner_radius = 6
+        cyc.action = self._on_cycle
+        self._cyc = cyc
+        self.add_subview(cyc)
+
+        # Dismiss button (right) — same styling as Preview page button
+        dis = ui.Button()
+        dis.title = 'Dismiss preview'
+        dis.tint_color = FSH_YELLOW
+        dis.font = ('Helvetica Neue', 14)
+        dis.background_color = FSH_BLUE
+        dis.corner_radius = 6
+        dis.action = self._close
+        self._dis = dis
+        self.add_subview(dis)
+
+        self._update_cycle()
+        self._load_html()
+
     def layout(self):
-        w, h = self.width, self.height
-        self._wv.frame = (0, 0, w, h - self.BAR_H - 8)
-        self._close_btn.frame = (8, h - self.BAR_H - 4, w - 16, self.BAR_H)
+        w, h  = self.width, self.height
+        i     = self.INSET
+        bh    = self.BTN_H
+        self._wv.frame  = (i, i, w - i*2, h - i*3 - bh)
+        btn_y = h - i - bh
+        half  = (w - i*3) / 2
+        self._cyc.frame = (i,        btn_y, half, bh)
+        self._dis.frame = (i*2+half, btn_y, half, bh)
+
+    def _on_cycle(self, sender):
+        self._state = (self._state + 1) % 3
+        self._update_cycle()
+        self._load_html()
+
+    def _update_cycle(self):
+        self._cyc.title      = self._STATE_LABELS[self._state]
+        self._cyc.tint_color = self._STATE_COLORS[self._state]
+
+    def _load_html(self):
+        key   = {0: 'editing', 1: 'saved', 2: 'live'}[self._state]
+        texts = self._all_texts[key]
+        self._wv.load_html(full_page_html(texts))
 
     def _close(self, sender):
         self.close()
@@ -355,7 +396,7 @@ class FSHEditor(ui.View):
         has_pending = bool(self.pending_commit)
 
         # Cycle button: always enabled; label and colour reflect current view state
-        _state_labels = {0: '🔄 Current', 1: '🔄 Saved', 2: '🔄 Live'}
+        _state_labels = {0: '🔄 Editing', 1: '🔄 Saved', 2: '🔄 Live'}
         _state_colors = {0: '#aaa', 1: '#ffcc44', 2: FSH_YELLOW}
         self.btn_toggle.title      = _state_labels[self.show_state]
         self.btn_toggle.tint_color = _state_colors[self.show_state]
@@ -450,7 +491,13 @@ class FSHEditor(ui.View):
 
     def _on_preview(self, sender):
         self._sync_editor()
-        pv = _PreviewContainer(full_page_html(self.texts), self._after_preview)
+        all_texts = {
+            'editing': dict(self.texts),
+            'saved':   dict(self.original_texts),
+            'live':    dict(self.live_texts),
+        }
+        pv = _PreviewContainer(all_texts, self._after_preview,
+                               initial_state=self.show_state)
         pv.present('fullscreen', hide_title_bar=True)
 
     def _after_preview(self):
