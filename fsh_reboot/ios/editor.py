@@ -19,12 +19,14 @@ from pathlib import Path
 # fsh_reboot/ios/editor.py → parent.parent = fsh_reboot/ → parent = repo root
 REPO_ROOT    = Path(__file__).resolve().parent.parent.parent
 CONTENT_DIR  = REPO_ROOT / 'fsh_reboot' / 'content'
-SCRIPTS_DIR  = REPO_ROOT / 'fsh_reboot' / 'scripts'
 TEMPLATE     = REPO_ROOT / 'fsh_reboot' / 'template' / 'index_evolution.html'
 IMAGES_DIR   = REPO_ROOT / 'docs' / 'dev' / 'images'
 
+SCRIPTS_DIR  = REPO_ROOT / 'fsh_reboot' / 'scripts'
 sys.path.insert(0, str(SCRIPTS_DIR))
 import content as cnt
+
+md_to_html = cnt.md_to_html
 
 # ── Content files ─────────────────────────────────────────────────────────────
 FILES  = ['hero',  'banner', 'col1',  'col2',  'col3']
@@ -103,7 +105,7 @@ COL_CSS = """
 
 
 def col_preview_html(text):
-    body = cnt.md_to_html(text) if text.strip() else '<p style="color:#aaa">(empty)</p>'
+    body = md_to_html(text) if text.strip() else '<p style="color:#aaa">(empty)</p>'
     return f'<html><head><meta name="viewport" content="width=device-width"><style>{COL_CSS}</style></head><body>{body}</body></html>'
 
 
@@ -113,14 +115,14 @@ def full_page_html(texts):
         return '<html><body><p>Template not found.</p></body></html>'
 
     def block(name, wrapper_open, wrapper_close):
-        inner = cnt.md_to_html(texts.get(name, ''))
+        inner = md_to_html(texts.get(name, ''))
         return f'{wrapper_open}{inner}{wrapper_close}' if inner.strip() else ''
 
     hero_block   = block('hero',   '<div class="hero">',        '</div>')
     banner_block = block('banner', '<div class="book-banner">', '</div>')
-    col1 = cnt.md_to_html(texts.get('col1', ''))
-    col2 = cnt.md_to_html(texts.get('col2', ''))
-    col3 = cnt.md_to_html(texts.get('col3', ''))
+    col1 = md_to_html(texts.get('col1', ''))
+    col2 = md_to_html(texts.get('col2', ''))
+    col3 = md_to_html(texts.get('col3', ''))
 
     html = (TEMPLATE.read_text(encoding='utf-8')
             .replace('<!-- GA_ID -->',        'GA-PREVIEW')
@@ -277,7 +279,8 @@ class FSHEditor(ui.View):
     def _refresh_preview(self):
         text = self.editor.text if self.editor.text is not None else ''
         html = col_preview_html(text)
-        self.preview.load_html(html)
+        base = REPO_ROOT / 'docs' / 'dev' / 'images'
+        self.preview.load_html(html, base_url=base.as_uri() + '/')
 
     def _schedule_preview(self):
         if self._preview_timer:
@@ -290,7 +293,8 @@ class FSHEditor(ui.View):
         html = full_page_html(self.texts)
         pv = ui.WebView()
         pv.scales_page_to_fit = True
-        pv.load_html(html)
+        base = REPO_ROOT / 'docs' / 'dev'
+        pv.load_html(html, base_url=base.as_uri() + '/')
         pv.present('fullscreen')
 
     # ── Validation ────────────────────────────────────────────────────────────
