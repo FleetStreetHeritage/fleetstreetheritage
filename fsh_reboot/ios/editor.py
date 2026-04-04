@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# build 11
+# build 12
 """
 FSH Content Editor — Pythonista iOS app
 Edit and preview content markdown files for the Fleet Street Heritage website.
@@ -390,7 +390,10 @@ class FSHEditor(ui.View):
     def _schedule_preview(self):
         if self._preview_timer:
             self._preview_timer.cancel()
-        self._preview_timer = threading.Timer(0.5, self._refresh_preview)
+        # Timer fires on a background thread — dispatch UI update back to main thread
+        self._preview_timer = threading.Timer(
+            0.5, lambda: ui.delay(self._refresh_preview, 0)
+        )
         self._preview_timer.start()
 
     def _on_preview(self, sender):
