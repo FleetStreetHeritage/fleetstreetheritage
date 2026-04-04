@@ -247,7 +247,13 @@ def generate_admin(pages_with_status):
 
     pages_html = render('admin.html')
     (ADMIN_DIR / 'pages.html').write_text(pages_html, encoding='utf-8')
-    (EDITOR_DIR / 'pages.html').write_text(pages_html, encoding='utf-8')
+
+    # Editor copy: fix meta links for editor/ context
+    editor_pages_html = (pages_html
+        .replace('<a href="index.html">← Admin home</a>', '<a href="index.html">← Editor home</a>')
+        .replace('&nbsp;·&nbsp; <a href="pages-edit.html">Edit pages →</a>', '')
+        .replace('&nbsp;·&nbsp; <a href="../editor/">Editor hub →</a>', ''))
+    (EDITOR_DIR / 'pages.html').write_text(editor_pages_html, encoding='utf-8')
     (ADMIN_DIR / 'pages-edit.html').write_text(render('pages-edit.html'), encoding='utf-8')
 
 
