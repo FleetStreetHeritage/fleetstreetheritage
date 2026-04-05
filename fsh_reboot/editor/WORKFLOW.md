@@ -16,7 +16,7 @@ The five content blocks are:
 - **col3.md** — right column
 - **banner.md** — the book banner
 
-The website maintains [a draft](index_draft.html) of the homepage, which isn't shown to the public. This page can be edited, previewed, discussed and corrected until it's ready to be published as the new live homepage. 
+The website maintains [a draft homepage](index_draft.html), which isn't shown to the public. This page can be edited, previewed, discussed and corrected until it's ready to be published as the new live homepage. 
 
 This *draft* page is what you're editing. The five content blocks are each derived from a simple text file. These text files are stored in the `fsh_reboot/editor/content_draft` folder, which you have in your copy of the fleetstreetheritage repository.
 
