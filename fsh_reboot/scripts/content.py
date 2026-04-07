@@ -35,7 +35,7 @@ def inline_md(text):
         text
     )
     text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', text)
-    text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
+    text = re.sub(r'`([^`]+)`', lambda m: f'<code>{_html.escape(m.group(1))}</code>', text)
     text = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', text)
     text = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', text)
     return text
@@ -62,7 +62,7 @@ def md_to_html(md):
             parts.append('<pre><code>' + _html.escape('\n'.join(code_lines)) + '</code></pre>')
 
         elif line.startswith('# '):
-            parts.append(f'<h2 class="col-title">{inline_md(line[2:])}</h2>')
+            parts.append(f'<h1 class="col-title">{inline_md(line[2:])}</h1>')
             i += 1
 
         elif line.startswith('## '):
@@ -83,6 +83,10 @@ def md_to_html(md):
             m = re.match(r'!\[([^\]]*)\]\(([^)]+)\)', line)
             if m:
                 parts.append(f'<img src="{m.group(2)}" alt="{m.group(1)}" class="col-img">')
+            i += 1
+
+        elif line.startswith('<div') or line.startswith('</div>'):
+            parts.append(line)
             i += 1
 
         elif line == '---' or line == '***' or line == '___':
@@ -108,7 +112,7 @@ def md_to_html(md):
             para = []
             while i < len(lines):
                 l = lines[i].rstrip()
-                if not l or l.startswith(('#', '-', '!')) or l.startswith('```'):
+                if not l or l.startswith(('#', '-', '!')) or l.startswith('```') or l.startswith('<div') or l.startswith('</div>'):
                     break
                 para.append(inline_md(l))
                 i += 1

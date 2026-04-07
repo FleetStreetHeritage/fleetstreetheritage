@@ -1,4 +1,6 @@
-# 94
+<div class="center">
+
+<div class="jumbo">94</div>
 
 information panels on many aspects of Fleet Street, an area known throughout the world for its rich history
 
@@ -9,3 +11,5 @@ information panels on many aspects of Fleet Street, an area known throughout the
 - Monuments
 - Places
 - Famous People
+
+</div>

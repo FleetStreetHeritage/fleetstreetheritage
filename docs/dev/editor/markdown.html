@@ -100,7 +100,7 @@
 
   <p style="margin-bottom:1.5rem"><a href="index.html" style="color:#FFFF66">← Editor home</a></p>
   <h1>Markdown reference</h1>
-  <p class="meta">Generated 2026-04-04 17:10 UTC &nbsp;·&nbsp; <a href="pages.html">Pages listing →</a></p>
+  <p class="meta">Generated 2026-04-06 16:06 UTC &nbsp;·&nbsp; <a href="pages.html">Pages listing →</a></p>
 
   <div class="nav-links">
     <a href="index_draft.html">View draft homepage →</a>
@@ -109,7 +109,7 @@
   </div>
 
   <div class="workflow">
-    <h2 class="col-title">Markdown reference</h2>
+    <h1 class="col-title">Markdown reference</h1>
 <p>Quick guide to the formatting supported in content files.</p>
 <hr>
 <h2 class="col-heading">Headings</h2>
@@ -141,8 +141,23 @@ This is the second paragraph.</code></pre>
 <p>Linked image (tapping opens a URL):</p>
 <pre><code>[![description](filename.jpg)](https://example.com)</code></pre>
 <hr>
+<h2 class="col-heading">Layout and style</h2>
+<p>Wrap content in <code>&lt;div class=&quot;...&quot;&gt;</code> and <code>&lt;/div&gt;</code> to apply a style. Available classes:</p>
+<ul class="col-list"><li><code>center</code> — centre-align the content</li><li><code>jumbo</code> — very large yellow text, for a big number or display word</li><li><code>small</code> — smaller text, useful for captions</li><li><code>accent</code> — yellow text for emphasis</li><li><code>muted</code> — dimmed text for secondary content</li><li><code>box</code> — draws a bordered box around the content</li></ul>
+<p>Classes can be combined, e.g. <code>&lt;div class=&quot;center small&quot;&gt;</code>.</p>
+<p>Example — a centred caption beneath an image:</p>
+<pre><code>![description](image.jpg)
+
+&lt;div class=&quot;center small&quot;&gt;
+Caption text here
+&lt;/div&gt;</code></pre>
+<p>Example — a callout box:</p>
+<pre><code>&lt;div class=&quot;box&quot;&gt;
+Tickets available now — see the events page for details
+&lt;/div&gt;</code></pre>
+<hr>
 <h2 class="col-heading">Notes</h2>
-<ul class="col-list"><li>HTML tags are not supported — use the markdown above instead</li><li>Links in the banner and columns will appear yellow and underlined</li><li>Leave the file empty if you don't want that block to appear on the page</li></ul>
+<ul class="col-list"><li>Links in the banner and columns will appear yellow and underlined</li><li>Leave the file empty if you don't want that block to appear on the page</li></ul>
   </div>
 
 </body>
