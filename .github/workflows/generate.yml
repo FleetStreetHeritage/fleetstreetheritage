@@ -34,15 +34,14 @@ jobs:
             echo "No PUBLISH flag — draft commit only"
           fi
 
-      # Commit step disabled until repo write permissions are enabled in Settings → Actions → General
-      # - name: Commit content changes
-      #   run: |
-      #     git config user.name  "github-actions[bot]"
-      #     git config user.email "github-actions[bot]@users.noreply.github.com"
-      #     git add fsh_reboot/content/ fsh_reboot/editor/content_draft/
-      #     if git diff --cached --quiet; then
-      #       echo "Nothing to commit"
-      #     else
-      #       git commit -m "chore: promote content_draft to content [skip ci]"
-      #       git push
-      #     fi
+      - name: Commit generated output
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/dev/ fsh_reboot/content/ fsh_reboot/editor/content_draft/
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "chore: regenerate site [skip ci]"
+            git push
+          fi
