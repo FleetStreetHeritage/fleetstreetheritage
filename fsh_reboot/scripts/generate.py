@@ -186,8 +186,9 @@ def generate_index_draft(pages):
             .replace('<!-- COL_2 -->',           blocks['col2'])
             .replace('<!-- COL_3 -->',           blocks['col3'])
             .replace('<!-- VOLUME_SECTIONS -->', build_volume_sections(pages)))
-    # index_draft lives one level deeper (editor/) so rewrite relative image paths
+    # index_draft lives one level deeper (editor/) so rewrite relative paths
     html = html.replace('src="images/', 'src="../images/')
+    html = html.replace('href="nl/', 'href="../nl/')
     (EDITOR_DIR / 'index_draft.html').write_text(html, encoding='utf-8')
 
 
