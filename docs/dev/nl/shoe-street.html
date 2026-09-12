@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>63 & 28 Stonecutter Street – The Heritage of Fleet Street</title>
-  <meta name="description" content="63 & 28 Stonecutter Street">
+  <title>Shoe Street – The Heritage of Fleet Street</title>
+  <meta name="description" content="Shoe Street">
 
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZP7L32M9GB"></script>
@@ -169,14 +169,14 @@
 
     <span class="site-title" aria-label="The Heritage of Fleet Street">The Heritage of Fleet Street</span>
 
-    <span class="page-title" aria-current="page">63 & 28 Stonecutter Street</span>
+    <span class="page-title" aria-current="page">Shoe Street</span>
 
     <nav aria-label="Page controls">
 
       <!-- Audio player — hidden if no audio file for this page -->
       <div id="audio-wrap" class="unavailable" aria-label="Audio narration">
         <audio id="audio-player" controls preload="none" aria-label="Listen to narration">
-          <source src="../audio/121.mp3" type="audio/mpeg">
+          <source src="../audio/171.mp3" type="audio/mpeg">
         </audio>
       </div>
 
@@ -192,8 +192,8 @@
       <button id="zoom-toggle" aria-label="Zoom in on PDF">Zoom in</button>
 
       <!-- Prev / Next -->
-      <a id="nav-prev" href="62-fleet-street.html" aria-label="Previous page">&#8592; Prev</a>
-      <a id="nav-next" href="85-fleet-street-the-reuters-building.html" aria-label="Next page">Next &#8594;</a>
+      <a id="nav-prev" href="fleet-street-quarter.html" aria-label="Previous page">&#8592; Prev</a>
+      <a id="nav-next" href="maugham-library.html" aria-label="Next page">Next &#8594;</a>
 
       <!-- Home -->
       <a href="../index.html" aria-label="Return to home page">Home</a>
@@ -205,13 +205,13 @@
 
   <script>
     // ── Config (set per page) ──────────────────────────────
-    const PAGE_ID   = '63-and-28-stonecutter-street';        // e.g. 'dr-johnson'
-    const PAGE_NUM  = '121';        // e.g. '115'
+    const PAGE_ID   = 'shoe-street';        // e.g. 'dr-johnson'
+    const PAGE_NUM  = '171';        // e.g. '115'
     const HAS_AUDIO = false;         // true | false
     const HAS_EASY  = false;          // true | false
-    const EASY_URL  = '../easy/63-and-28-stonecutter-street.html';        // e.g. 'easy-dr-johnson.html'
-    const NL_URL    = '63-and-28-stonecutter-street.html';          // e.g. 'dr-johnson.html'
-    const AUDIO_SRC = '../audio/121.mp3';
+    const EASY_URL  = '../easy/shoe-street.html';        // e.g. 'easy-dr-johnson.html'
+    const NL_URL    = 'shoe-street.html';          // e.g. 'dr-johnson.html'
+    const AUDIO_SRC = '../audio/171.mp3';
 
     // ── View preference ────────────────────────────────────
     const STORAGE_KEY = 'fsh_view';
@@ -298,7 +298,7 @@
     }
 
     // ── PDF rendering (touch = PDF.js canvas; desktop = iframe) ──
-    const PDF_SRC = '../pdfs/121.pdf';
+    const PDF_SRC = '../pdfs/171_ShoeStreetWeb.pdf';
     const wrap    = document.getElementById('pdf-wrap');
     const zoomBtn = document.getElementById('zoom-toggle');
 
@@ -314,7 +314,7 @@
       const canvas = document.createElement('canvas');
       canvas.id = 'pdf-canvas';
       canvas.tabIndex = 0;
-      canvas.setAttribute('aria-label', '63 & 28 Stonecutter Street – information panel');
+      canvas.setAttribute('aria-label', 'Shoe Street – information panel');
       canvas.hidden = true;
       wrap.appendChild(canvas);
 
@@ -409,7 +409,7 @@
       const frame = document.createElement('iframe');
       frame.id       = 'pdf-frame';
       frame.src      = PDF_SRC + '#zoom=fitH';
-      frame.title    = '63 & 28 Stonecutter Street – information panel';
+      frame.title    = 'Shoe Street – information panel';
       frame.tabIndex = 0;
       wrap.appendChild(frame);
     }

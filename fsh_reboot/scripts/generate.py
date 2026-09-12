@@ -54,6 +54,11 @@ def sub(template, replacements):
         result = result.replace(f'<!-- {key} -->', str(value))
     return result
 
+# ── PDF filenames ────────────────────────────────────────────────────────────
+def pdf_filename(page):
+    """Supplied PDF filename for a page, falling back to the old <num>.pdf scheme."""
+    return page.get('pdf', f"{page['num']}.pdf")
+
 # ── Nav URLs ─────────────────────────────────────────────────────────────────
 def nl_url(page):
     """Relative URL to a page's NL wrapper, from within the nl/ directory."""
@@ -70,7 +75,7 @@ def generate_nl(page, prev_page, next_page, has_easy, has_audio):
         'PAGE_DESCRIPTION': page['title'],
         'PAGE_ID':          page['slug'],
         'PAGE_NUM':         page['num'],
-        'PDF_FILE':         f"../pdfs/{page['num']}.pdf",
+        'PDF_FILE':         f"../pdfs/{pdf_filename(page)}",
         'AUDIO_FILE':       f"../audio/{page['num']}.mp3",
         'EASY_URL':         f"../easy/{page['slug']}.html",
         'NL_URL':           f"{page['slug']}.html",
@@ -280,7 +285,7 @@ def main():
         prev_page = pages[i - 1] if i > 0 else None
         next_page = pages[i + 1] if i < len(pages) - 1 else None
 
-        has_pdf   = (PDFS_DIR  / f"{page['num']}.pdf").exists()
+        has_pdf   = (PDFS_DIR  / pdf_filename(page)).exists()
         has_easy  = (PDFS_DIR  / f"E_{page['num']}.pdf").exists()
         has_audio = (AUDIO_DIR / f"{page['num']}.mp3").exists()
 
