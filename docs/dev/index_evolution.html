@@ -89,10 +89,13 @@
 
     /* ── Page grid ───────────────────────────────────────── */
     .page-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 0 1.25rem;
+      columns: 200px;
+      column-gap: 1.25rem;
       list-style: none;
+    }
+
+    .page-grid li {
+      break-inside: avoid;
     }
 
     .page-grid li a {
