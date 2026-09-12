@@ -7,6 +7,8 @@ on:
       - 'fsh_reboot/data/pages.json'
       - 'fsh_reboot/template/**'
       - 'fsh_reboot/scripts/**'
+      - 'fsh_reboot/content/**'
+      - 'fsh_reboot/editor/**'
       - 'docs/dev/pdfs/**'
       - 'docs/dev/audio/**'
 
