@@ -139,15 +139,6 @@
       margin-bottom: 0.2rem;
     }
 
-    .hero .col-heading {
-      font-size: 0.95rem;
-      font-weight: normal;
-      text-transform: none;
-      letter-spacing: 0;
-      color: var(--fsh-yellow);
-      margin-bottom: 0.75rem;
-    }
-
     .col-title-loud,
     .hero .col-title-loud {
       text-transform: uppercase;
@@ -184,15 +175,31 @@
 
     .intro-col p { margin-bottom: 0.6rem; }
 
-    .intro-col a {
+    /* Content links — identical treatment in hero, columns and banner */
+    .hero a, .intro-col a, .book-banner a {
       color: var(--fsh-yellow);
       text-decoration: underline;
       text-underline-offset: 2px;
     }
-    .intro-col a:hover,
-    .intro-col a:focus {
+    .hero a:hover,  .hero a:focus,
+    .intro-col a:hover,  .intro-col a:focus,
+    .book-banner a:hover, .book-banner a:focus {
       text-decoration-color: transparent;
     }
+
+    /* Lists and rules — consistent across content areas */
+    .hero ol, .intro-col ol, .book-banner ol {
+      padding-left: 1.4rem;
+      margin-bottom: 0.6rem;
+    }
+    .hero hr, .intro-col hr, .book-banner hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      margin: 0.75rem 0;
+    }
+
+    /* Paragraph spacing in the banner, matching the columns */
+    .book-banner p + p { margin-top: 0.6rem; }
 
     .col-heading {
       font-size: 0.85rem;
@@ -247,14 +254,6 @@
       margin-bottom: 1.5rem;
     }
 
-    .book-banner a {
-      color: var(--fsh-yellow);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .book-banner a:hover,
-    .book-banner a:focus { text-decoration-color: transparent; }
-
     /* ── Footer ──────────────────────────────────────────── */
     footer {
       text-align: center;
@@ -275,7 +274,7 @@
   </header>
 
 <div class="hero"><h1 class="col-title">The Fleet Street Heritage Wall</h1>
-<h2 class="col-heading">under the sundial in Bouverie Street</h2>
+<h3 class="col-heading">under the sundial in Bouverie Street</h3>
 <p>This innovative exhibition brings the Heritage of Fleet Street to life, actually in Fleet Street — on ceramic panels available 24/7, on sister web pages and on audio files. It will be one of the most interactive exhibitions in London.</p>
 <p>Please support us creating new pages while we complete the Heritage Wall this autumn.</p>
 <img src="images/NewCardImageOldLettersVer2.jpg" alt="Diagram of the Fleet Street Heritage Wall layout" class="col-img"></div>
@@ -284,7 +283,7 @@
 
     <div class="intro-grid">
 
-      <div class="intro-col"><h2 class="col-heading">Planning Permission</h2>
+      <div class="intro-col"><h3 class="col-heading">Planning Permission</h3>
 <p>Planning permission was given on 29 April 2025 for the Fleet Street Heritage Wall under the sundial in Bouverie Street. The next step will be raising the funds. We hope to build the Heritage Wall this summer.</p>
 <p>This innovative project will help make Fleet Street a really special place again — please see our planning application <a href="https://www.fleetstreetheritage.co.uk/Leaflet2.html">leaflet</a> for full details.</p>
 <p>A temporary Heritage Wall Exhibition is displayed under the sundial on Bouverie Street (EC4Y 1JU).</p></div>
@@ -295,7 +294,7 @@
 <ul class="col-list"><li>Maps & Walks</li><li>Freedom of the Press</li><li>Architecture of Fleet Street</li><li>History 1500 onwards</li><li>Monuments</li><li>Places</li><li>Famous People</li></ul>
 </div></div>
 
-      <div class="intro-col"><h2 class="col-heading">Heritage Book</h2>
+      <div class="intro-col"><h3 class="col-heading">Heritage Book</h3>
 <a href="https://www.fleetstreetheritage.co.uk/bookshop.html"><img src="images/Amazon2cover.png" alt="The Heritage of Fleet Street – second edition cover" class="col-img"></a>
 <p>The second edition of our Heritage book was published in May 2025. Expanded by over 20 pages, available at the same price of £15.</p></div>
 

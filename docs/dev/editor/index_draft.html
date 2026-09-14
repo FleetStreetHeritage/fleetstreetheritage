@@ -139,15 +139,6 @@
       margin-bottom: 0.2rem;
     }
 
-    .hero .col-heading {
-      font-size: 0.95rem;
-      font-weight: normal;
-      text-transform: none;
-      letter-spacing: 0;
-      color: var(--fsh-yellow);
-      margin-bottom: 0.75rem;
-    }
-
     .col-title-loud,
     .hero .col-title-loud {
       text-transform: uppercase;
@@ -184,15 +175,31 @@
 
     .intro-col p { margin-bottom: 0.6rem; }
 
-    .intro-col a {
+    /* Content links — identical treatment in hero, columns and banner */
+    .hero a, .intro-col a, .book-banner a {
       color: var(--fsh-yellow);
       text-decoration: underline;
       text-underline-offset: 2px;
     }
-    .intro-col a:hover,
-    .intro-col a:focus {
+    .hero a:hover,  .hero a:focus,
+    .intro-col a:hover,  .intro-col a:focus,
+    .book-banner a:hover, .book-banner a:focus {
       text-decoration-color: transparent;
     }
+
+    /* Lists and rules — consistent across content areas */
+    .hero ol, .intro-col ol, .book-banner ol {
+      padding-left: 1.4rem;
+      margin-bottom: 0.6rem;
+    }
+    .hero hr, .intro-col hr, .book-banner hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      margin: 0.75rem 0;
+    }
+
+    /* Paragraph spacing in the banner, matching the columns */
+    .book-banner p + p { margin-top: 0.6rem; }
 
     .col-heading {
       font-size: 0.85rem;
@@ -247,14 +254,6 @@
       margin-bottom: 1.5rem;
     }
 
-    .book-banner a {
-      color: var(--fsh-yellow);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .book-banner a:hover,
-    .book-banner a:focus { text-decoration-color: transparent; }
-
     /* ── Footer ──────────────────────────────────────────── */
     footer {
       text-align: center;
@@ -274,8 +273,8 @@
     <p class="subtitle">www.fleetstreetheritage.co.uk</p>
   </header>
 
-<div class="hero"><h1 class="col-title col-title-loud">Open House 2026</h1>
-<h2 class="col-heading">A preview of the Fleet Street Heritage Wall — Bouverie Street, EC4Y 1JU</h2>
+<div class="hero"><h2 class="col-title col-title-loud">Open House 2026</h2>
+<h3 class="col-heading">A preview of the Fleet Street Heritage Wall — Bouverie Street, EC4Y 1JU</h3>
 <p>Between <strong>12 and 20 September</strong> we are exhibiting a preview of the Fleet Street Heritage Wall, bringing the Heritage of Fleet Street to life, actually in Fleet Street — on ceramic panels available 24/7, on sister web pages and on audio files. The Wall itself is planned for completion in porcelain tiles in the Autumn.</p>
 <p>We will be on site from <strong>10am to 4pm, 17 to 20 September</strong>, with talks every half hour explaining this innovative urban development which will "put the Heritage back into Fleet Street". See our <a href="https://programme.openhouse.org.uk/listings/10644">Open House programme page</a> for full details.</p>
 <p>Please support us creating new pages while we complete the Heritage Wall this autumn.</p>
