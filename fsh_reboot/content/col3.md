@@ -1,4 +1,4 @@
-## Heritage Book
+### Heritage Book
 
 [![The Heritage of Fleet Street – second edition cover](images/Amazon2cover.png)](https://www.fleetstreetheritage.co.uk/bookshop.html)
 

@@ -1,6 +1,6 @@
-#! Open House 2026
+## Open House 2026
 
-## A preview of the Fleet Street Heritage Wall — Bouverie Street, EC4Y 1JU
+### A preview of the Fleet Street Heritage Wall — Bouverie Street, EC4Y 1JU
 
 Between **12 and 20 September** we are exhibiting a preview of the Fleet Street Heritage Wall, bringing the Heritage of Fleet Street to life, actually in Fleet Street — on ceramic panels available 24/7, on sister web pages and on audio files. The Wall itself is planned for completion in porcelain tiles in the Autumn.
 

@@ -4,7 +4,7 @@ This guide explains how to update the website's homepage content using Working C
 
 ---
 
-## What you're editing
+### What you're editing
 
 In addition to the layout and the page listings (which are automatically generated), the homepage has five content blocks which can be edited.
 
@@ -27,7 +27,7 @@ For formatting guidance (bold, links, headings etc.) see [markdown.html](markdow
 
 ---
 
-## Step 1 — Pull the latest version
+### Step 1 — Pull the latest version
 
 Before editing, always make sure you have the latest version of the files.
 
@@ -35,7 +35,7 @@ In Working Copy, open the **fleetstreetheritage** repository and tap **Pull** to
 
 ---
 
-## Step 2 — Edit a file
+### Step 2 — Edit a file
 
 1. In Working Copy, navigate to `fsh_reboot / editor / content_draft`
 2. Tap the file you want to edit (e.g. `col1.md`)
@@ -44,7 +44,7 @@ In Working Copy, open the **fleetstreetheritage** repository and tap **Pull** to
 
 ---
 
-## Step 3 — Commit your changes to `content_draft` and preview the results
+### Step 3 — Commit your changes to `content_draft` and preview the results
 
 When you're happy with your edits:
 
@@ -57,7 +57,7 @@ Once pushed, GitHub will automatically run the generator and produce a new previ
 
 ---
 
-## Step 4 — When ready, tell GitHub to publish `content_draft` to become the new live homepage
+### Step 4 — When ready, tell GitHub to publish `content_draft` to become the new live homepage
 
 When you've checked the draft preview, made all the changes you want to, and everything looks right:
 
@@ -71,7 +71,7 @@ GitHub will detect the `PUBLISH` file when you commit, copy your draft content t
 
 ---
 
-## Things to know
+### Things to know
 
 - You can commit and push as many times as you like while drafting — nothing goes live until you create the `PUBLISH` file
 - If you make a mistake after publishing, just edit the files again and publish again

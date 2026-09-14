@@ -1,4 +1,4 @@
-## Planning Permission
+### Planning Permission
 
 Planning permission was given on 29 April 2025 for the Fleet Street Heritage Wall under the sundial in Bouverie Street. The next step will be raising the funds. We hope to build the Heritage Wall this summer.
 

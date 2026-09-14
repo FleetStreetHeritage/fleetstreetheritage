@@ -4,21 +4,21 @@ Quick guide to the formatting supported in content files.
 
 ---
 
-## Headings
+### Headings
 
 ```
 # Large display heading
-#! Large heading in yellow capitals
-## Small section heading
+## Large heading in yellow capitals
+### Small section heading
 ```
 
 Use `#` for a large bold heading (e.g. a big number or title).
-Use `#!` for a large heading rendered in yellow capitals (e.g. an announcement).
-Use `##` for a smaller uppercase section label.
+Use `##` for a large heading rendered in yellow capitals (e.g. an announcement).
+Use `###` for a smaller uppercase section label.
 
 ---
 
-## Paragraphs
+### Paragraphs
 
 Just write text. Leave a blank line between paragraphs.
 
@@ -30,7 +30,7 @@ This is the second paragraph.
 
 ---
 
-## Bold and italic
+### Bold and italic
 
 ```
 **this is bold**
@@ -39,7 +39,7 @@ This is the second paragraph.
 
 ---
 
-## Links
+### Links
 
 ```
 [link text](https://example.com)
@@ -47,7 +47,7 @@ This is the second paragraph.
 
 ---
 
-## Bullet lists
+### Bullet lists
 
 ```
 - First item
@@ -57,7 +57,7 @@ This is the second paragraph.
 
 ---
 
-## Images
+### Images
 
 ```
 ![description of image](filename.jpg)
@@ -73,7 +73,7 @@ Linked image (tapping opens a URL):
 
 ---
 
-## Layout and style
+### Layout and style
 
 Wrap content in `<div class="...">` and `</div>` to apply a style. Available classes:
 
@@ -106,7 +106,7 @@ Tickets available now — see the events page for details
 
 ---
 
-## Notes
+### Notes
 
-- Links in the banner and columns will appear yellow and underlined
+- Links will appear yellow and underlined, wherever they are used
 - Leave the file empty if you don't want that block to appear on the page
