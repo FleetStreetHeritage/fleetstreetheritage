@@ -60,13 +60,17 @@ def pdf_filename(page):
     return page.get('pdf', f"{page['num']}.pdf")
 
 # ── Nav URLs ─────────────────────────────────────────────────────────────────
+# Where wrapper pages point "Home", relative to the nl/ and easy/ directories.
+# When the new homepage goes live at the site root this is the one place to change.
+WRAPPER_HOME_URL = '../index.html'
+
 def nl_url(page):
     """Relative URL to a page's NL wrapper, from within the nl/ directory."""
-    return f"{page['slug']}.html" if page else '../index.html'
+    return f"{page['slug']}.html" if page else WRAPPER_HOME_URL
 
 def nl_url_from_outside(page):
     """Relative URL to a page's NL wrapper, from outside the nl/ directory (e.g. easy/, qr/)."""
-    return f"../nl/{page['slug']}.html" if page else '../index.html'
+    return f"../nl/{page['slug']}.html" if page else WRAPPER_HOME_URL
 
 # ── Page generators ─────────────────────────────────────────────────────────
 def generate_nl(page, prev_page, next_page, has_easy, has_audio):
@@ -83,6 +87,7 @@ def generate_nl(page, prev_page, next_page, has_easy, has_audio):
         'HAS_EASY':         'true' if has_easy else 'false',
         'PREV_URL':         nl_url(prev_page),
         'NEXT_URL':         nl_url(next_page),
+        'HOME_URL':         WRAPPER_HOME_URL,
     })
     (NL_DIR / f"{page['slug']}.html").write_text(html, encoding='utf-8')
 
@@ -100,6 +105,7 @@ def generate_easy(page, prev_page, next_page, has_audio):
         # prev/next route back through NL; NL redirect logic respects easy pref
         'PREV_URL':         nl_url_from_outside(prev_page),
         'NEXT_URL':         nl_url_from_outside(next_page),
+        'HOME_URL':         WRAPPER_HOME_URL,
     })
     (EASY_DIR / f"{page['slug']}.html").write_text(html, encoding='utf-8')
 
@@ -153,6 +159,7 @@ def generate_index_evolution(pages):
     import content
     blocks = content.get_blocks()
     html = (load_template('index_evolution.html')
+            .replace('<!-- HOME_URL -->',        'index_evolution.html')
             .replace('<!-- GA_ID -->',           GA_ID)
             .replace('<!-- HERO_BLOCK -->',      blocks['hero_block'])
             .replace('<!-- BANNER_BLOCK -->',    blocks['banner_block'])
@@ -179,6 +186,7 @@ def generate_index_draft(pages):
     import content
     blocks = content.get_blocks(content_dir=DRAFT_DIR)
     html = (load_template('index_evolution.html')
+            .replace('<!-- HOME_URL -->',        'index_draft.html')
             .replace('<!-- GA_ID -->',           GA_ID)
             .replace('<!-- HERO_BLOCK -->',      blocks['hero_block'])
             .replace('<!-- BANNER_BLOCK -->',    blocks['banner_block'])
