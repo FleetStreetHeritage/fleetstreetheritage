@@ -6,6 +6,7 @@ Called by generate.py; has no knowledge of output paths, templates, or GA IDs.
 
 Supported markdown:
   #  heading        → large display heading (.col-title)
+  #! heading        → large display heading in yellow capitals (.col-title-loud)
   ## heading        → small section heading (.col-heading)
   ![alt](src)       → image (.col-img)
   [![alt](src)](url)→ linked image
@@ -60,6 +61,10 @@ def md_to_html(md):
                 i += 1
             i += 1  # skip closing fence
             parts.append('<pre><code>' + _html.escape('\n'.join(code_lines)) + '</code></pre>')
+
+        elif line.startswith('#! '):
+            parts.append(f'<h1 class="col-title col-title-loud">{inline_md(line[3:])}</h1>')
+            i += 1
 
         elif line.startswith('# '):
             parts.append(f'<h1 class="col-title">{inline_md(line[2:])}</h1>')

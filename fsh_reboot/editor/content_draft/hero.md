@@ -1,6 +1,10 @@
-# The Fleet Street Heritage Wall
+#! Open House 2026
 
-This innovative exhibition brings the Heritage of Fleet Street to life, actually in Fleet Street — on ceramic panels available 24/7, on sister web pages and on audio files. It will be one of the most interactive exhibitions in London.
+## A preview of the Fleet Street Heritage Wall — Bouverie Street, EC4Y 1JU
+
+Between **12 and 20 September** we are exhibiting a preview of the Fleet Street Heritage Wall, bringing the Heritage of Fleet Street to life, actually in Fleet Street — on ceramic panels available 24/7, on sister web pages and on audio files. The Wall itself is planned for completion in porcelain tiles in the Autumn.
+
+We will be on site from **10am to 4pm, 17 to 20 September**, with talks every half hour explaining this innovative urban development which will "put the Heritage back into Fleet Street". See our [Open House programme page](https://programme.openhouse.org.uk/listings/10644) for full details.
 
 Please support us creating new pages while we complete the Heritage Wall this autumn.
 

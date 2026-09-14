@@ -8,10 +8,12 @@ Quick guide to the formatting supported in content files.
 
 ```
 # Large display heading
+#! Large heading in yellow capitals
 ## Small section heading
 ```
 
 Use `#` for a large bold heading (e.g. a big number or title).
+Use `#!` for a large heading rendered in yellow capitals (e.g. an announcement).
 Use `##` for a smaller uppercase section label.
 
 ---
