@@ -65,6 +65,17 @@
       font-size: 0.85rem;
     }
 
+    /* Site title as a home link — visually identical to the plain title */
+    #fsh-bar a.site-title,
+    #fsh-bar a.site-title:hover,
+    #fsh-bar a.site-title:focus {
+      border: none;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+    }
+
+
     #fsh-bar .page-title {
       font-size: 0.9rem;
       color: var(--fsh-yellow);
@@ -167,7 +178,7 @@
 
   <header id="fsh-bar" role="banner">
 
-    <span class="site-title" aria-label="The Heritage of Fleet Street">The Heritage of Fleet Street</span>
+    <a class="site-title" href="../index.html" aria-label="The Heritage of Fleet Street">The Heritage of Fleet Street</a>
 
     <span class="page-title" aria-current="page">News Chronicle</span>
 
