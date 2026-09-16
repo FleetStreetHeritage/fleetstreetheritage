@@ -1,0 +1,2 @@
+# Announcer signoff — placeholders: {title}, {num}. Draft wording, edit freely.
+You have been listening to {title}, number {num} in the Heritage of Fleet Street series. Find every page at fleet street heritage dot co dot U K.

@@ -1,0 +1,2 @@
+# Announcer intro — placeholders: {title}, {num}. Draft wording, edit freely.
+The Heritage of Fleet Street. {title}.
