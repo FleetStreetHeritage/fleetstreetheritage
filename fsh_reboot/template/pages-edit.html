@@ -404,6 +404,8 @@
       const pageIssues = [];
       pages.forEach(p => {
         const failing = checks.filter(c => c.test(p)).map(c => ({ label: c.label, crit: c.crit(p) }));
+        (p.data_issues || []).forEach(msg =>
+          failing.push({ label: 'invalid data — ' + msg + ' (page skipped from generation)', crit: true }));
         if (failing.length) pageIssues.push({ page: p, failing });
       });
 

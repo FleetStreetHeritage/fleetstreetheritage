@@ -304,26 +304,72 @@ def generate_admin_hub():
     (ADMIN_DIR / 'index.html').write_text(html, encoding='utf-8')
 
 
+# ── Data validation ─────────────────────────────────────────────────────────
+import re as _re
+
+def validate_pages(pages):
+    """Return {index: [problems]} for pages whose data would break a
+    substitution context. Titles may contain apostrophes (escaped where
+    needed); anything else needs a manual rename in pages.json. Invalid
+    pages are skipped by generation and flagged red in the admin sanity
+    panel until fixed — the rest of the site still generates and deploys."""
+    issues = {}
+    seen = {'num': set(), 'slug': set(), 'pdf': set()}
+    def add(i, msg):
+        issues.setdefault(i, []).append(msg)
+    for i, p in enumerate(pages):
+        if not _re.fullmatch(r'\d+', str(p.get('num', ''))):
+            add(i, "num must be digits only")
+        if not _re.fullmatch(r'[a-z0-9-]+', p.get('slug', '')):
+            add(i, "slug must be lowercase letters, digits and hyphens only")
+        for field in ('pdf', 'easy_pdf'):
+            if field in p and not _re.fullmatch(r'[A-Za-z0-9_&.-]+\.pdf', p[field]):
+                add(i, f"{field} filename has unsafe characters ({p[field]})")
+        title = p.get('title', '')
+        for ch, why in [('"', 'breaks HTML attributes'), ('<', 'breaks HTML'),
+                        ('>', 'breaks HTML'), ('\\', 'breaks JS strings')]:
+            if ch in title:
+                add(i, f"title contains {ch!r} ({why}) — please rephrase")
+        for field in ('num', 'slug', 'pdf'):
+            v = p.get(field)
+            if v in seen[field]:
+                add(i, f"duplicate {field} '{v}'")
+            seen[field].add(v)
+    return issues
+
+
 # ── Main ────────────────────────────────────────────────────────────────────
 def main():
     with open(DATA_FILE, encoding='utf-8') as f:
         pages = json.load(f)['pages']
+    data_issues = validate_pages(pages)
+    valid_pages = [p for i, p in enumerate(pages) if i not in data_issues]
 
     for d in (OUTPUT_DIR, NL_DIR, EASY_DIR, QR_DIR, ADMIN_DIR, EDITOR_DIR, LIVE_QR_DIR):
         d.mkdir(parents=True, exist_ok=True)
 
     counts = {'nl': 0, 'easy': 0, 'qr': 0}
+
+    # status for every page (invalid ones flagged for the admin sanity panel)
     pages_with_status = []
-
     for i, page in enumerate(pages):
-        prev_page = pages[i - 1] if i > 0 else None
-        next_page = pages[i + 1] if i < len(pages) - 1 else None
+        status = {
+            **page,
+            'has_pdf':   (PDFS_DIR  / pdf_filename(page)).exists(),
+            'has_easy':  (PDFS_DIR  / easy_pdf_filename(page)).exists(),
+            'has_audio': (AUDIO_DIR / f"{page['num']}.mp3").exists(),
+        }
+        if i in data_issues:
+            status['data_issues'] = data_issues[i]
+        pages_with_status.append(status)
 
-        has_pdf   = (PDFS_DIR  / pdf_filename(page)).exists()
+    # generation runs over valid pages only; prev/next skip invalid ones
+    for i, page in enumerate(valid_pages):
+        prev_page = valid_pages[i - 1] if i > 0 else None
+        next_page = valid_pages[i + 1] if i < len(valid_pages) - 1 else None
+
         has_easy  = (PDFS_DIR  / easy_pdf_filename(page)).exists()
         has_audio = (AUDIO_DIR / f"{page['num']}.mp3").exists()
-
-        pages_with_status.append({**page, 'has_pdf': has_pdf, 'has_easy': has_easy, 'has_audio': has_audio})
 
         generate_nl(page, prev_page, next_page, has_easy, has_audio)
         counts['nl'] += 1
@@ -337,12 +383,17 @@ def main():
         counts['qr'] += 1
 
     seed_draft()
-    generate_index(pages)
-    generate_index_draft(pages)
+    generate_index(valid_pages)
+    generate_index_draft(valid_pages)
     generate_editor_hub()
     generate_markdown_ref()
     generate_admin(pages_with_status)
     generate_admin_hub()
+
+    if data_issues:
+        print(f"  ⚠  {len(data_issues)} page(s) SKIPPED — invalid data, rename needed in pages.json:")
+        for i, msgs in sorted(data_issues.items()):
+            print(f"     {pages[i].get('num', '?')} – {pages[i].get('title', '?')}: {'; '.join(msgs)}")
 
     missing_pdfs = [p for p in pages_with_status if not p['has_pdf']]
     if missing_pdfs:
