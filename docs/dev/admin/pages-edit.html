@@ -234,7 +234,7 @@
 <body>
 
   <h1>Fleet Street Heritage – Page Listing</h1>
-  <p class="meta">Generated 2026-09-16 21:25 UTC &nbsp;·&nbsp; <span id="total-count">101</span> pages
+  <p class="meta">Generated 2026-09-16 21:40 UTC &nbsp;·&nbsp; <span id="total-count">101</span> pages
     &nbsp;·&nbsp; <a href="index.html">← Admin home</a>
     &nbsp;·&nbsp; <a href="../editor/">Editor hub →</a></p>
 
@@ -1617,6 +1617,8 @@
       const pageIssues = [];
       pages.forEach(p => {
         const failing = checks.filter(c => c.test(p)).map(c => ({ label: c.label, crit: c.crit(p) }));
+        (p.data_issues || []).forEach(msg =>
+          failing.push({ label: 'invalid data — ' + msg + ' (page skipped from generation)', crit: true }));
         if (failing.length) pageIssues.push({ page: p, failing });
       });
 
