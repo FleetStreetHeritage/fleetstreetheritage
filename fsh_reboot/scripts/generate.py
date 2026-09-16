@@ -37,6 +37,9 @@ AUDIO_DIR  = OUTPUT_DIR / 'audio'
 ADMIN_DIR  = OUTPUT_DIR / 'admin'
 EDITOR_DIR = OUTPUT_DIR / 'editor'
 
+# In prod mode, replaced index pages are archived here (outside docs/, so never published).
+ARCHIVE_DIR = REPO_ROOT / 'archived_index_pages'
+
 # Live QR codes always go to docs/qr/ regardless of mode.
 # In staging they point into docs/dev/; in prod they point into docs/ root.
 LIVE_QR_DIR   = REPO_ROOT / 'docs' / 'qr'
@@ -148,18 +151,29 @@ def build_volume_sections(pages):
     return '\n'.join(sections)
 
 
+def archive_existing_index():
+    """In prod mode, keep a dated copy of the homepage we are about to replace.
+    Skips the copy if the current page is identical to the newest archive."""
+    target = OUTPUT_DIR / 'index.html'
+    if not PROD_MODE or not target.exists():
+        return
+    ARCHIVE_DIR.mkdir(exist_ok=True)
+    existing = sorted(ARCHIVE_DIR.glob('index_*.html'))
+    if existing and existing[-1].read_bytes() == target.read_bytes():
+        return
+    stamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+    dest = ARCHIVE_DIR / f'index_{stamp}.html'
+    shutil.copy2(target, dest)
+    print(f"  archived replaced index → {dest.relative_to(REPO_ROOT)}")
+
+
 def generate_index(pages):
-    html = (load_template('index.html')
-            .replace('<!-- GA_ID -->',           GA_ID)
-            .replace('<!-- VOLUME_SECTIONS -->', build_volume_sections(pages)))
-    (OUTPUT_DIR / 'index.html').write_text(html, encoding='utf-8')
-
-
-def generate_index_evolution(pages):
+    """Generate the homepage from published content/ blocks."""
+    archive_existing_index()
     import content
     blocks = content.get_blocks()
-    html = (load_template('index_evolution.html')
-            .replace('<!-- HOME_URL -->',        'index_evolution.html')
+    html = (load_template('index.html')
+            .replace('<!-- HOME_URL -->',        'index.html')
             .replace('<!-- GA_ID -->',           GA_ID)
             .replace('<!-- HERO_BLOCK -->',      blocks['hero_block'])
             .replace('<!-- BANNER_BLOCK -->',    blocks['banner_block'])
@@ -167,7 +181,7 @@ def generate_index_evolution(pages):
             .replace('<!-- COL_2 -->',           blocks['col2'])
             .replace('<!-- COL_3 -->',           blocks['col3'])
             .replace('<!-- VOLUME_SECTIONS -->', build_volume_sections(pages)))
-    (OUTPUT_DIR / 'index_evolution.html').write_text(html, encoding='utf-8')
+    (OUTPUT_DIR / 'index.html').write_text(html, encoding='utf-8')
 
 
 def seed_draft():
@@ -185,7 +199,7 @@ def generate_index_draft(pages):
     """Generate index_draft.html from content_draft/ source files."""
     import content
     blocks = content.get_blocks(content_dir=DRAFT_DIR)
-    html = (load_template('index_evolution.html')
+    html = (load_template('index.html')
             .replace('<!-- HOME_URL -->',        'index_draft.html')
             .replace('<!-- GA_ID -->',           GA_ID)
             .replace('<!-- HERO_BLOCK -->',      blocks['hero_block'])
@@ -313,7 +327,6 @@ def main():
 
     seed_draft()
     generate_index(pages)
-    generate_index_evolution(pages)
     generate_index_draft(pages)
     generate_editor_hub()
     generate_markdown_ref()
@@ -332,7 +345,6 @@ def main():
     print(f"++++++++++++++")
     print(f"Generated products as follows:")
     print(f"  {OUTPUT_DIR}/index.html")
-    print(f"  {OUTPUT_DIR}/index_evolution.html")
     print(f"  {EDITOR_DIR}/index.html  (editor hub)")
     print(f"  {EDITOR_DIR}/index_draft.html  (from content_draft/)")
     print(f"  {EDITOR_DIR}/markdown.html  (markdown reference)")

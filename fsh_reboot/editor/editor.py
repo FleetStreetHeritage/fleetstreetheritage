@@ -19,7 +19,7 @@ from pathlib import Path
 REPO_ROOT   = Path(__file__).resolve().parent.parent.parent
 CONTENT_DIR = REPO_ROOT / 'fsh_reboot' / 'editor' / 'content_draft'
 LIVE_DIR    = REPO_ROOT / 'fsh_reboot' / 'content'
-TEMPLATE    = REPO_ROOT / 'fsh_reboot' / 'template' / 'index_evolution.html'
+TEMPLATE    = REPO_ROOT / 'fsh_reboot' / 'template' / 'index.html'
 IMAGES_DIR  = REPO_ROOT / 'docs' / 'dev' / 'images'
 SCRIPTS_DIR = REPO_ROOT / 'fsh_reboot' / 'scripts'
 
