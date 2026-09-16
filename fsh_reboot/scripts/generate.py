@@ -62,6 +62,11 @@ def pdf_filename(page):
     """Supplied PDF filename for a page, falling back to the old <num>.pdf scheme."""
     return page.get('pdf', f"{page['num']}.pdf")
 
+def easy_pdf_filename(page):
+    """Easy Read PDF filename: E_ + the main PDF filename (override with an
+    explicit 'easy_pdf' field in pages.json if a page ever needs one)."""
+    return page.get('easy_pdf', f"E_{pdf_filename(page)}")
+
 # ── Nav URLs ─────────────────────────────────────────────────────────────────
 # Where wrapper pages point "Home", relative to the nl/ and easy/ directories.
 # When the new homepage goes live at the site root this is the one place to change.
@@ -101,7 +106,7 @@ def generate_easy(page, prev_page, next_page, has_audio):
         'PAGE_DESCRIPTION': page['title'],
         'PAGE_ID':          page['slug'],
         'PAGE_NUM':         page['num'],
-        'EASY_PDF_FILE':    f"../pdfs/E_{page['num']}.pdf",
+        'EASY_PDF_FILE':    f"../pdfs/{easy_pdf_filename(page)}",
         'AUDIO_FILE':       f"../audio/{page['num']}.mp3",
         'NL_URL':           f"../nl/{page['slug']}.html",
         'HAS_AUDIO':        'true' if has_audio else 'false',
@@ -309,7 +314,7 @@ def main():
         next_page = pages[i + 1] if i < len(pages) - 1 else None
 
         has_pdf   = (PDFS_DIR  / pdf_filename(page)).exists()
-        has_easy  = (PDFS_DIR  / f"E_{page['num']}.pdf").exists()
+        has_easy  = (PDFS_DIR  / easy_pdf_filename(page)).exists()
         has_audio = (AUDIO_DIR / f"{page['num']}.mp3").exists()
 
         pages_with_status.append({**page, 'has_pdf': has_pdf, 'has_easy': has_easy, 'has_audio': has_audio})
