@@ -40,7 +40,7 @@ In Working Copy, open the **fleetstreetheritage** repository and tap **Pull** to
 1. In Working Copy, navigate to the directory `fsh_reboot/editor/content_draft/`
 2. Tap the file you want to edit (e.g. `col1.md`)
 3. Tap the **content icon** (the first of the three at the centre-bottom of the screen) to edit
-4. Make your changes, a little while later, the file icon will turn orange and show 'modified'
+4. Make your changes. After a moment, the file icon will turn orange and show 'modified'
 
 ---
 
@@ -76,4 +76,4 @@ GitHub will detect the `PUBLISH` file when you commit, copy your draft content t
 - You can commit and push as many times as you like while drafting — nothing goes live until you create the `PUBLISH` file
 - If you make a mistake after publishing, just edit the files again and publish again
 - The `PUBLISH` file disappears automatically after publishing — that's normal
-- Don't edit files in `fsh_reboot / content` directly — that folder is managed automatically
+- Don't edit files in `fsh_reboot/content/` directly — that folder is managed automatically
