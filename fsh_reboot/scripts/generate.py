@@ -62,6 +62,10 @@ def pdf_filename(page):
     """Supplied PDF filename for a page, falling back to the old <num>.pdf scheme."""
     return page.get('pdf', f"{page['num']}.pdf")
 
+def js_escape(text):
+    """Escape a string for safe substitution inside a single-quoted JS literal."""
+    return text.replace('\\', '\\\\').replace("'", "\\'")
+
 def easy_pdf_filename(page):
     """Easy Read PDF filename: E_ + the main PDF filename (override with an
     explicit 'easy_pdf' field in pages.json if a page ever needs one)."""
@@ -84,6 +88,7 @@ def nl_url_from_outside(page):
 def generate_nl(page, prev_page, next_page, has_easy, has_audio):
     html = sub(load_template('wrapper.html'), {
         'PAGE_TITLE':       page['title'],
+        'PAGE_TITLE_JS':    js_escape(page['title']),
         'PAGE_DESCRIPTION': page['title'],
         'PAGE_ID':          page['slug'],
         'PAGE_NUM':         page['num'],
@@ -103,6 +108,7 @@ def generate_nl(page, prev_page, next_page, has_easy, has_audio):
 def generate_easy(page, prev_page, next_page, has_audio):
     html = sub(load_template('wrapper-easy.html'), {
         'PAGE_TITLE':       page['title'],
+        'PAGE_TITLE_JS':    js_escape(page['title']),
         'PAGE_DESCRIPTION': page['title'],
         'PAGE_ID':          page['slug'],
         'PAGE_NUM':         page['num'],
