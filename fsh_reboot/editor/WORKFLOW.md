@@ -37,7 +37,7 @@ In Working Copy, open the **fleetstreetheritage** repository and tap **Pull** to
 
 ### Step 2 — Edit a file
 
-1. In Working Copy, navigate to `fsh_reboot / editor / content_draft`
+1. In Working Copy, navigate to the directory `fsh_reboot/editor/content_draft/`
 2. Tap the file you want to edit (e.g. `col1.md`)
 3. Tap the **content icon** (the first of the three at the centre-bottom of the screen) to edit
 4. Make your changes, a little while later, the file icon will turn orange and show 'modified'
@@ -61,7 +61,7 @@ Once pushed, GitHub will automatically run the generator and produce a new previ
 
 When you've checked the draft preview, made all the changes you want to, and everything looks right:
 
-1. In Working Copy, navigate to `fsh_reboot / editor / content_draft`
+1. In Working Copy, navigate to the directory `fsh_reboot/editor/content_draft/`
 2. Tap the **+** button to create a new file
 3. Name it exactly: `PUBLISH` (all capitals, no extension)
 4. Leave it empty and tap **Done**

@@ -41,6 +41,16 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Mirror the publish step from generate.yml so the deployed artifact
+      # reflects a PUBLISH promotion immediately (the commit-back of content/
+      # is still handled by the Generate site workflow).
+      - name: Promote draft locally if PUBLISH flag present
+        run: |
+          if [ -f fsh_reboot/editor/content_draft/PUBLISH ]; then
+            echo "PUBLISH flag found — using content_draft as published content"
+            cp fsh_reboot/editor/content_draft/*.md fsh_reboot/content/
+          fi
+
       - name: Generate staging pages
         run: python fsh_reboot/scripts/generate.py
 
