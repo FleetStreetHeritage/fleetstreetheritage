@@ -1,0 +1,31 @@
+# source: extracted-from-pdf — review before publishing
+# check: possible caption/heading, verify in body — "After the Peterloo Massacre in 1819, Lord Sidmouth"
+# check: possible caption/heading, verify in body — "Stamp T ax and Advertisement Duty"
+# check: possible caption/heading, verify in body — "Year Stamp T ax (pence) Advertisement Duty (pence)"
+# check: possible caption/heading, verify in body — "1712 ½ or 1 12"
+# check: possible caption/heading, verify in body — "1757 1 24"
+# check: possible caption/heading, verify in body — "1776 1½ 23"
+# check: possible caption/heading, verify in body — "1780 1½ 30"
+# check: possible caption/heading, verify in body — "1789 2 36"
+# check: possible caption/heading, verify in body — "1797 3½ 36"
+# check: possible caption/heading, verify in body — "1815 4 42"
+# check: possible caption/heading, verify in body — "1833 4 18"
+# check: possible caption/heading, verify in body — "1836 1 18"
+# check: possible caption/heading, verify in body — "1853 1 0"
+# check: possible caption/heading, verify in body — "1855 0 0"
+
+The Stamp Tax was one of the main instruments used by the British Government to control newspapers and other printed material. It was introduced in the Stamp Act of 1712, initially at a rate of one penny a full sheet or one halfpenny for a half sheet, plus one shilling (12 pence) per advertisement. It was increased in later years, reduced at times, before its abolition in 1855.
+
+Newsbooks and pamphlets started appearing in England in the 1600s. Their publication was suspended between 1632 and 1636 by order of the Star Chamber, a court in Westminster composed of privy counsellors and common- law judges. Control over news relaxed when the Star Chamber was abolished in 1641.
+
+The Licensing of the Press Act 1662 had for its full title “An Act for preventing the frequent Abuses in printing seditious treasonable and unlicensed Books and Pamphlets and for regulation of Printing and Printing Presses”. The Act was intended to last two years but was renewed until 1679; it resembled the regulations of the Star Chamber of 1637 and required printing presses to be registered with the Worshipful Company of Stationers. It lapsed in 1679, was re-enacted in 1682 and 1692, but in 1695 the Commons refused renewal. Some powers to issue warrants for libel searches were not finally declared illegal until 1765.
+
+Public appetite for news increased during the Civil War, largely met by pamphlets and books. The first daily in England was the Daily Courant in 1702; it was joined by several others, mainly short-lived. The growing number of newspapers was regarded with suspicion, leading to the Stamp Act of 1712. The tax was denounced as a “tax on knowledge” and initially set at ½ or 1 penny depending on sheet size. It rose gradually to 2 pence over 77 years, and after 1789 concern about the radical press led to increases up to 4 pence.
+
+The tax was unevenly applied. Originally it applied to papers carrying news, not opinion, and not to monthly publications. Exemptions were possible for government- friendly views. William Cobbett began publishing the Political Register in 1817; it sold for 2d and reached 40,000 circulation.
+
+After the Peterloo Massacre in 1819, Lord Sidmouth persuaded Parliament to pass the Six Acts, covering training, public meetings, arms, prosecutions, and stronger libel laws. The Newspaper and Stamp Duties Act applied duty to all publications, including opinion pieces previously exempt, though monthly publications and newspapers priced over seven pence were exempt.
+
+The Six Acts led to closures like the Spectator and prosecutions such as the Black Dwarf. These measures contributed to the War of the Unstamped, with prosecutions of radical publishers and distributors. It ended when advertisement duty was abolished in 1853 and the newspaper stamp tax in 1856. An additional stamp tax on paper, introduced in 1795 at 3 pence per pound weight, was abolished in 1861.
+
+Stamp T ax and Advertisement Duty Year Stamp T ax (pence) Advertisement Duty (pence) 1712 ½ or 1 12 1757 1 24 1776 1½ 23 1780 1½ 30 1789 2 36 1797 3½ 36 1815 4 42 1833 4 18 1836 1 18 1853 1 0 1855 0 0 Values in pre-decimal currency 240 pence = 1 pound

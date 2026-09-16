@@ -1,0 +1,5 @@
+# source: extracted-from-pdf — review before publishing
+# do-not-narrate (auto: little text found — likely map/diagram; remove this line to enable narration)
+# check: possible caption/heading, verify in body — "Points of Interest in Fleet Street"
+
+Points of Interest in Fleet Street Including newspaper offices, churches and information sites

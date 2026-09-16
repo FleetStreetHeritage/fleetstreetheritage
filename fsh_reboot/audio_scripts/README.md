@@ -9,10 +9,30 @@ Each `<num>.txt` contains the **body copy only** — the text the narrator
 voice reads. Plain text, written for listening (spell out abbreviations,
 drop visual references like "see diagram below").
 
-The first line may be a provenance comment, stripped before synthesis:
+Lines starting with `#` are comments, stripped before synthesis. Two have
+special meaning:
 
     # source: master
     # source: extracted-from-pdf — review before publishing
+
+records where the text came from, and
+
+    # do-not-narrate
+
+anywhere in the file tells the audio generator to skip the page entirely
+(no MP3, so the page's audio player stays hidden). Use it for maps,
+diagrams, and list/directory pages that read poorly aloud. Delete the
+line to enable narration for that page.
+
+Lines like
+
+    # check: possible caption/heading, verify in body — "…"
+
+are automated review pointers: the quoted fragment may be an image
+caption or visual heading that survived text extraction and would sound
+odd read aloud. Search the body for it, fix or remove it (or decide it's
+fine), then delete the check line. They are advisory only — the
+generator ignores them like any other comment.
 
 ## Intro and signoff (announcer voice)
 
