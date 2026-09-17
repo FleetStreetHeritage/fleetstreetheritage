@@ -72,7 +72,7 @@ def js_escape(text):
 # fit the fixed QR size budget — expanded to readable labels before they reach
 # any GA4 event, so reports show "Wall"/"Leaflet" rather than raw codes.
 SRC_LABELS = {
-    'wa': 'Wall',       # physical Heritage Wall, Bouverie Street
+    'wl': 'Wall',       # physical Heritage Wall, Bouverie Street
     'lf': 'Leaflet',
     'po': 'Poster',
     'wb': 'Web',        # external link to the site

@@ -41,13 +41,32 @@ to `SRC_LABELS` and this table together.
 
 | Code | Label | Source |
 |---|---|---|
-| `wa` | Wall | Physical Heritage Wall, Bouverie Street |
+| `wl` | Wall | Physical Heritage Wall, Bouverie Street |
 | `lf` | Leaflet | Printed leaflet |
 | `po` | Poster | Poster |
 | `wb` | Web | External link to the site (social, search, another website) |
 | `in` | Internal | Link from within the site itself |
 | `bk` | Book | The Heritage of Fleet Street book |
 | *(more TBD)* | | |
+
+## Printed QR domain
+
+Decision 2026-09-17: keep `www.` in printed QR URLs for now.
+
+`docs/CNAME` names `www.fleetstreetheritage.co.uk` as canonical, and GitHub
+Pages 301-redirects the bare apex domain to it — verified with `curl` that
+the path and query string survive the redirect unchanged (e.g.
+`fleetstreetheritage.co.uk/qr/home.html?s=wl` → `www.fleetstreetheritage.co.uk/qr/home.html?s=wl`).
+Because that redirect happens at the HTTP layer before any page script runs,
+GA never sees the apex hit at all — dropping `www.` from a printed code would
+be completely invisible in analytics, not just similar.
+
+The saving is 4 characters — not needed today (plain `s=` codes fit
+comfortably inside the Q-level budget at a fixed 37×37 either way), but
+available if a future code needs the headroom, e.g. a view-setting code
+(`&v=easy&f=2`) that's already tight against the M-level budget at 37×37.
+If that happens, drop `www.` from the encoded URL — behaviour is unaffected
+as long as the CNAME/canonical-domain setup is unchanged.
 
 ---
 
