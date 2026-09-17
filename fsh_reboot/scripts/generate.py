@@ -158,10 +158,10 @@ def generate_qr(page, has_easy):
 
 
 # ── Index page ──────────────────────────────────────────────────────────────
-VOLUME_LABELS = {
-    1: 'Volume I – People, Places, Monuments & History',
-    2: 'Volume II – Biographies of Past Newspapers',
-    3: 'Volume III – Biographies of Current Newspapers',
+PART_LABELS = {
+    1: 'Part 1 – People, Places, Monuments & History',
+    2: 'Part 2 – Biographies of Past Newspapers',
+    3: 'Part 3 – Biographies of Current Newspapers',
 }
 
 def build_volume_sections(pages):
@@ -176,7 +176,7 @@ def build_volume_sections(pages):
         )
         sections.append(
             f'      <section class="volume" aria-labelledby="vol-{v}-heading">\n'
-            f'        <h2 class="volume-heading" id="vol-{v}-heading">{VOLUME_LABELS[v]}</h2>\n'
+            f'        <h2 class="volume-heading" id="vol-{v}-heading">{PART_LABELS[v]}</h2>\n'
             f'        <ul class="page-grid">\n'
             f'{items}'
             f'        </ul>\n'

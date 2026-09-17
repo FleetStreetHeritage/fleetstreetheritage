@@ -242,11 +242,11 @@
 
   <div class="controls">
     <input type="search" id="search" placeholder="Search title or slug…" aria-label="Search pages">
-    <div class="filter-group" role="group" aria-label="Filter by volume">
+    <div class="filter-group" role="group" aria-label="Filter by part">
       <button class="active" data-vol="all">All</button>
-      <button data-vol="1">Vol I</button>
-      <button data-vol="2">Vol II</button>
-      <button data-vol="3">Vol III</button>
+      <button data-vol="1">Part 1</button>
+      <button data-vol="2">Part 2</button>
+      <button data-vol="3">Part 3</button>
     </div>
     <span class="count" id="count"></span>
     <button class="filter-group button" id="btn-text-out" onclick="toggleTextOut()">Text list</button>
@@ -266,7 +266,7 @@
           <th data-col="num"      class="sort-asc">#</th>
           <th data-col="title">Title</th>
           <th data-col="slug">Slug</th>
-          <th data-col="volume">Vol</th>
+          <th data-col="volume">Part</th>
           <th data-col="live"    >Live</th>
           <th data-col="has_easy">Easy Read</th>
           <th data-col="has_audio">Audio</th>
@@ -303,17 +303,17 @@
     let view       = [];     // current filtered+sorted rows
 
     // ── Text output ────────────────────────────────────────
-    const SORT_LABELS = { num: '#', title: 'Title', slug: 'Slug', volume: 'Volume',
+    const SORT_LABELS = { num: '#', title: 'Title', slug: 'Slug', volume: 'Part',
                           live: 'Live', has_easy: 'Easy Read', has_audio: 'Audio' };
 
     function buildText(view) {
       const dir     = sortDir === 1 ? '↑' : '↓';
-      const volDesc = filterVol === 'all' ? 'All volumes' : 'Vol ' + filterVol;
+      const volDesc = filterVol === 'all' ? 'All parts' : 'Part ' + filterVol;
       const parts   = [`Sorted by: ${SORT_LABELS[sortCol] || sortCol} ${dir}`, volDesc];
       if (searchQ) parts.push(`Search: "${searchQ}"`);
       const header  = `Fleet Street Heritage – ${view.length} of ${pages.length} items\n${parts.join(' | ')}`;
       const yn      = v => v ? 'yes' : 'no';
-      const hdrs    = ['#', 'Title', 'Slug', 'Vol', 'Live', 'PDF', 'Easy Read', 'Audio', 'H Wall'];
+      const hdrs    = ['#', 'Title', 'Slug', 'Part', 'Live', 'PDF', 'Easy Read', 'Audio', 'H Wall'];
       const data    = view.map(p => [String(p.num), p.title, p.slug, String(p.volume),
                         yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio), yn(p.h_wall)]);
       const widths  = hdrs.map((h, ci) => Math.max(h.length, ...data.map(r => r[ci].length)));
