@@ -1,0 +1,45 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'Optional note describing this deploy (appears in the commit message)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - uses: actions/setup-python@v5.4.0
+        with:
+          python-version: '3.12'
+
+      - name: Generate production site
+        working-directory: fsh_reboot/scripts
+        run: python generate.py --prod
+
+      - name: Commit and push production output
+        env:
+          DEPLOY_NOTE: ${{ github.event.inputs.note }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html docs/nl/ docs/easy/ docs/qr/ docs/admin/ docs/editor/ docs/pdfs/ archived_index_pages/
+          if git diff --cached --quiet; then
+            echo "Nothing to commit — production is already up to date"
+          else
+            if [ -n "$DEPLOY_NOTE" ]; then
+              MSG="Deploy to production: $DEPLOY_NOTE [skip ci]"
+            else
+              MSG="Deploy to production [skip ci]"
+            fi
+            git commit -m "$MSG"
+            git push
+          fi

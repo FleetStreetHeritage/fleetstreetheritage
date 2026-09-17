@@ -34,6 +34,7 @@ EASY_DIR   = OUTPUT_DIR / 'easy'
 QR_DIR     = OUTPUT_DIR / 'qr'
 PDFS_DIR   = OUTPUT_DIR / 'pdfs'
 AUDIO_DIR  = OUTPUT_DIR / 'audio'
+DEV_PDFS_DIR = REPO_ROOT / 'docs' / 'dev' / 'pdfs'  # source for sync_prod_pdfs()
 ADMIN_DIR  = OUTPUT_DIR / 'admin'
 EDITOR_DIR = OUTPUT_DIR / 'editor'
 
@@ -198,6 +199,31 @@ def archive_existing_index():
     dest = ARCHIVE_DIR / f'index_{stamp}.html'
     shutil.copy2(target, dest)
     print(f"  archived replaced index → {dest.relative_to(REPO_ROOT)}")
+
+
+def sync_prod_pdfs():
+    """In prod mode, mirror docs/dev/pdfs/ into the prod PDFS_DIR so PDFs for
+    new or reworked pages are never missed at deploy time. Re-copies every
+    file unconditionally (cheap, and simpler than tracking what changed) —
+    git only picks up files whose content actually differs, since it diffs
+    by hash, not by mtime."""
+    if not PROD_MODE:
+        return
+    PDFS_DIR.mkdir(parents=True, exist_ok=True)
+    src_names = {f.name for f in DEV_PDFS_DIR.glob('*.pdf')}
+    for name in src_names:
+        shutil.copy2(DEV_PDFS_DIR / name, PDFS_DIR / name)
+    removed = 0
+    for f in PDFS_DIR.glob('*.pdf'):
+        if f.name not in src_names:
+            f.unlink()
+            removed += 1
+    try:
+        pdfs_label = PDFS_DIR.relative_to(REPO_ROOT)
+    except ValueError:
+        pdfs_label = PDFS_DIR
+    msg = f"  synced {pdfs_label}/ from docs/dev/pdfs/ ({len(src_names)} files"
+    print(msg + (f", removed {removed} stale)" if removed else ")"))
 
 
 def generate_index(pages):
@@ -392,6 +418,8 @@ def main():
 
     for d in (OUTPUT_DIR, NL_DIR, EASY_DIR, QR_DIR, ADMIN_DIR, EDITOR_DIR, LIVE_QR_DIR):
         d.mkdir(parents=True, exist_ok=True)
+
+    sync_prod_pdfs()
 
     counts = {'nl': 0, 'easy': 0, 'qr': 0}
 
