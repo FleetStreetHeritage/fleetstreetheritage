@@ -908,6 +908,87 @@
       "volume": 3,
       "live": true,
       "h_wall": true
+    },
+    {
+      "num": "401",
+      "slug": "jacky-hyams",
+      "story": true,
+      "title": "Jacky Hyams – Secretary to Sunday Mirror News Desk",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
+    },
+    {
+      "num": "402",
+      "slug": "neil-murray",
+      "story": true,
+      "title": "Neil Murray – Sub-editor, Daily Mirror",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
+    },
+    {
+      "num": "403",
+      "slug": "malcolm-cowan",
+      "story": true,
+      "title": "Malcolm Cowan – Systems Analyst, Mirror Group",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
+    },
+    {
+      "num": "404",
+      "slug": "paddy-ogara",
+      "story": true,
+      "title": "Paddy O'Gara – Features Department, Daily Mirror",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
+    },
+    {
+      "num": "405",
+      "slug": "roy-greenslade",
+      "story": true,
+      "title": "Roy Greenslade – Sub-editor",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
+    },
+    {
+      "num": "406",
+      "slug": "paul-duffett",
+      "story": true,
+      "title": "Paul Duffett – Circulation Sales Accounts Department",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
+    },
+    {
+      "num": "407",
+      "slug": "david-eccleston",
+      "story": true,
+      "title": "David Eccleston – Stereotyper",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
+    },
+    {
+      "num": "408",
+      "slug": "mick-clayton",
+      "story": true,
+      "title": "Mick Clayton – Compositor",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
+    },
+    {
+      "num": "409",
+      "slug": "michael-ash",
+      "story": true,
+      "title": "Michael Ash – Office Boy, News Chronicle",
+      "volume": 4,
+      "live": true,
+      "h_wall": false
     }
   ]
 }

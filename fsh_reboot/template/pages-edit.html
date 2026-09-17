@@ -102,6 +102,7 @@
       font-size: 0.75rem; font-weight: bold; background: #254760; color: #fff; }
     .vol-badge.v2 { background: #5a3e6e; }
     .vol-badge.v3 { background: #2e6e5a; }
+    .vol-badge.v4 { background: #8a5a2e; }
 
     .tick {
       display: inline-flex;
@@ -247,6 +248,7 @@
       <button data-vol="1">Part 1</button>
       <button data-vol="2">Part 2</button>
       <button data-vol="3">Part 3</button>
+      <button data-vol="4">Part 4</button>
     </div>
     <span class="count" id="count"></span>
     <button class="filter-group button" id="btn-text-out" onclick="toggleTextOut()">Text list</button>
@@ -395,7 +397,7 @@
     // ── Sanity checks ──────────────────────────────────
     function runSanityChecks() {
       const checks = [
-        { label: 'missing PDF',   crit: p => p.live !== false, test: p => !p.has_pdf },
+        { label: 'missing PDF',   crit: p => p.live !== false, test: p => !p.has_pdf && !p.story },
         { label: 'empty title',   crit: () => true,            test: p => !String(p.title||'').trim() },
         { label: 'empty slug',    crit: () => true,            test: p => !String(p.slug||'').trim() },
         { label: 'missing number',crit: () => true,            test: p => !String(p.num||'').trim() },
@@ -465,6 +467,7 @@
             <option value="1" ${p.volume==1?'selected':''}>1</option>
             <option value="2" ${p.volume==2?'selected':''}>2</option>
             <option value="3" ${p.volume==3?'selected':''}>3</option>
+            <option value="4" ${p.volume==4?'selected':''}>4</option>
           </select>
         </td>
         <td><input type="checkbox" id="e-live" ${p.live !== false ? 'checked' : ''}></td>

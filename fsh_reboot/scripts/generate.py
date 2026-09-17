@@ -35,6 +35,7 @@ QR_DIR     = OUTPUT_DIR / 'qr'
 PDFS_DIR   = OUTPUT_DIR / 'pdfs'
 AUDIO_DIR  = OUTPUT_DIR / 'audio'
 DEV_PDFS_DIR = REPO_ROOT / 'docs' / 'dev' / 'pdfs'  # source for sync_prod_pdfs()
+STORIES_DIR  = SCRIPT_DIR.parent / 'content' / 'stories'  # markdown source for story-type pages
 ADMIN_DIR  = OUTPUT_DIR / 'admin'
 EDITOR_DIR = OUTPUT_DIR / 'editor'
 
@@ -128,6 +129,28 @@ def generate_nl(page, prev_page, next_page, has_easy, has_audio):
     (NL_DIR / f"{page['slug']}.html").write_text(html, encoding='utf-8')
 
 
+def generate_story_nl(page, prev_page, next_page, has_audio):
+    """Story-type pages (prose content, no PDF) — content_html is rendered at
+    build time from fsh_reboot/content/stories/<num>.md via the shared
+    markdown parser, same subset used for the homepage content blocks."""
+    import content
+    md = (STORIES_DIR / f"{page['num']}.md").read_text(encoding='utf-8')
+    story_html = content.md_to_html(md)
+    html = sub(load_template('wrapper-story.html'), {
+        'PAGE_TITLE':       page['title'],
+        'PAGE_DESCRIPTION': page['title'],
+        'PAGE_ID':          page['slug'],
+        'PAGE_NUM':         page['num'],
+        'AUDIO_FILE':       f"../audio/{page['num']}.mp3",
+        'HAS_AUDIO':        'true' if has_audio else 'false',
+        'PREV_URL':         nl_url(prev_page),
+        'NEXT_URL':         nl_url(next_page),
+        'HOME_URL':         WRAPPER_HOME_URL,
+        'STORY_HTML':       story_html,
+    })
+    (NL_DIR / f"{page['slug']}.html").write_text(html, encoding='utf-8')
+
+
 def generate_easy(page, prev_page, next_page, has_audio):
     html = sub(load_template('wrapper-easy.html'), {
         'PAGE_TITLE':       page['title'],
@@ -162,7 +185,12 @@ PART_LABELS = {
     1: 'Part 1 – People, Places, Monuments & History',
     2: 'Part 2 – Biographies of Past Newspapers',
     3: 'Part 3 – Biographies of Current Newspapers',
+    4: 'Part 4 – Personal Stories',
 }
+
+# Parts whose page titles run long (e.g. "Name – Role") get a wider, 2-column
+# grid instead of the default 3, so titles don't wrap awkwardly.
+WIDE_PARTS = {4}
 
 def build_volume_sections(pages):
     volumes = {}
@@ -174,10 +202,11 @@ def build_volume_sections(pages):
             f'      <li><a href="nl/{p["slug"]}.html">{p["title"]}</a></li>\n'
             for p in volumes[v] if p.get('live', True)
         )
+        grid_class = 'page-grid page-grid-wide' if v in WIDE_PARTS else 'page-grid'
         sections.append(
             f'      <section class="volume" aria-labelledby="vol-{v}-heading">\n'
             f'        <h2 class="volume-heading" id="vol-{v}-heading">{PART_LABELS[v]}</h2>\n'
-            f'        <ul class="page-grid">\n'
+            f'        <ul class="{grid_class}">\n'
             f'{items}'
             f'        </ul>\n'
             f'      </section>\n'
@@ -403,6 +432,8 @@ def validate_pages(pages):
                 add(i, f"title contains {ch!r} ({why}) — please rephrase")
         for field in ('num', 'slug', 'pdf'):
             v = p.get(field)
+            if v is None:
+                continue  # absent (e.g. pdf on a story-type page) is not a duplicate
             if v in seen[field]:
                 add(i, f"duplicate {field} '{v}'")
             seen[field].add(v)
@@ -441,10 +472,13 @@ def main():
         prev_page = valid_pages[i - 1] if i > 0 else None
         next_page = valid_pages[i + 1] if i < len(valid_pages) - 1 else None
 
-        has_easy  = (PDFS_DIR  / easy_pdf_filename(page)).exists()
+        has_easy  = False if page.get('story') else (PDFS_DIR / easy_pdf_filename(page)).exists()
         has_audio = (AUDIO_DIR / f"{page['num']}.mp3").exists()
 
-        generate_nl(page, prev_page, next_page, has_easy, has_audio)
+        if page.get('story'):
+            generate_story_nl(page, prev_page, next_page, has_audio)
+        else:
+            generate_nl(page, prev_page, next_page, has_easy, has_audio)
         counts['nl'] += 1
 
         if has_easy:
@@ -469,7 +503,7 @@ def main():
         for i, msgs in sorted(data_issues.items()):
             print(f"     {pages[i].get('num', '?')} – {pages[i].get('title', '?')}: {'; '.join(msgs)}")
 
-    missing_pdfs = [p for p in pages_with_status if not p['has_pdf']]
+    missing_pdfs = [p for p in pages_with_status if not p['has_pdf'] and not p.get('story')]
     if missing_pdfs:
         print(f"  ⚠  {len(missing_pdfs)} page(s) missing main PDF:")
         for p in missing_pdfs:
