@@ -21,6 +21,18 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Generator code (fsh_reboot/scripts/, fsh_reboot/template/) is pinned to
+      # the 'stable' branch — only promoted there deliberately, via the
+      # "Promote main to Stable" workflow. Everything else (pages.json,
+      # content/*.md, PDFs, audio) always comes from main, so editors can
+      # publish content changes independent of whatever's mid-development
+      # on main and only visible on the dev preview so far.
+      - name: Pin generator code to the stable branch
+        run: |
+          git fetch --depth=1 origin stable
+          git checkout FETCH_HEAD -- fsh_reboot/scripts/ fsh_reboot/template/
+          echo "Generator code pinned to stable @ $(git rev-parse FETCH_HEAD)"
+
       - name: Generate production site
         working-directory: fsh_reboot/scripts
         run: python generate.py --prod

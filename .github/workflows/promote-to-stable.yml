@@ -1,0 +1,26 @@
+name: Promote main to Stable
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          ref: stable
+          fetch-depth: 0
+
+      # Fast-forward only: refuses if stable has diverged from main in a way
+      # that isn't a clean fast-forward (e.g. something was committed to
+      # stable directly). stable should only ever move by fast-forwarding
+      # to a point main has already reached.
+      - name: Fast-forward stable to main
+        run: |
+          git fetch origin main
+          git merge --ff-only origin/main
+          git push origin stable
