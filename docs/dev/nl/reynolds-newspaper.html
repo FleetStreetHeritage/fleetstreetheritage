@@ -232,7 +232,7 @@
     const fParam      = parseInt(params.get('f') ?? '0', 10);
 
     // ── Source code → readable label (for GA) ──────────────
-    const SRC_LABELS = {"wa":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
     function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
 
     function getStoredView() {
