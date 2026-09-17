@@ -317,7 +317,13 @@
     // If user has an easy-read preference, all page links will route through
     // the NL wrapper which automatically redirects to easy-read.
     // No special logic needed here.
-    gtag('event', 'page_view', { page_id: 'index' });
+    const params = new URLSearchParams(window.location.search);
+    const src    = params.get('s') || '';
+
+    // ── Source code → readable label (for GA) ──────────────
+    <!-- SRC_MAP_JS -->
+
+    gtag('event', 'page_view', { page_id: 'index', src_param: expandSrc(src) });
   </script>
 
 </body>

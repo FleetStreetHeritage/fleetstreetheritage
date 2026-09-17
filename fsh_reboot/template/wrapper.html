@@ -227,9 +227,12 @@
     // ── View preference ────────────────────────────────────
     const STORAGE_KEY = 'fsh_view';
     const params      = new URLSearchParams(window.location.search);
-    const src         = params.get('src') || '';
-    const vParam      = params.get('v')   || '';
+    const src         = params.get('s') || '';
+    const vParam      = params.get('v') || '';
     const fParam      = parseInt(params.get('f') ?? '0', 10);
+
+    // ── Source code → readable label (for GA) ──────────────
+    <!-- SRC_MAP_JS -->
 
     function getStoredView() {
       return localStorage.getItem(STORAGE_KEY) || '';
@@ -251,7 +254,7 @@
     // If this is the NL page but user should see Easy Read, redirect
     if (targetView === 'easy' && HAS_EASY) {
       const dest = new URL(EASY_URL, window.location.href);
-      if (src) dest.searchParams.set('src', src);
+      if (src) dest.searchParams.set('s', src);
       window.location.replace(dest.toString());
     }
 
@@ -272,7 +275,7 @@
         gtag('event', 'audio_play', {
           page_id: PAGE_ID,
           page_num: PAGE_NUM,
-          src_param: src
+          src_param: expandSrc(src)
         });
       });
     }
@@ -299,11 +302,11 @@
           from: targetView,
           to: next,
           page_id: PAGE_ID,
-          src_param: src
+          src_param: expandSrc(src)
         });
 
         const dest = new URL(next === 'easy' ? EASY_URL : NL_URL, window.location.href);
-        if (src) dest.searchParams.set('src', src);
+        if (src) dest.searchParams.set('s', src);
         window.location.href = dest.toString();
       });
     }
@@ -431,7 +434,7 @@
       page_num:      PAGE_NUM,
       content_group: PAGE_NUM.substring(0, 1) + 'xx',
       view:          targetView,
-      src_param:     src
+      src_param:     expandSrc(src)
     });
   </script>
 

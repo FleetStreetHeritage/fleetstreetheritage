@@ -53,6 +53,7 @@ def load_template(name):
 # ── Substitution ────────────────────────────────────────────────────────────
 def sub(template, replacements):
     result = template.replace('<!-- GA_ID -->', GA_ID)
+    result = result.replace('<!-- SRC_MAP_JS -->', src_map_js())
     for key, value in replacements.items():
         result = result.replace(f'<!-- {key} -->', str(value))
     return result
@@ -65,6 +66,27 @@ def pdf_filename(page):
 def js_escape(text):
     """Escape a string for safe substitution inside a single-quoted JS literal."""
     return text.replace('\\', '\\\\').replace("'", "\\'")
+
+# ── QR source codes ──────────────────────────────────────────────────────────
+# Two-letter codes for the 's' query param on QR and page URLs — kept short to
+# fit the fixed QR size budget — expanded to readable labels before they reach
+# any GA4 event, so reports show "Wall"/"Leaflet" rather than raw codes.
+SRC_LABELS = {
+    'wa': 'Wall',       # physical Heritage Wall, Bouverie Street
+    'lf': 'Leaflet',
+    'po': 'Poster',
+    'wb': 'Web',        # external link to the site
+    'in': 'Internal',   # link from within the site itself
+    'bk': 'Book',
+}
+
+def src_map_js():
+    """JS snippet: SRC_LABELS lookup + expandSrc() helper. Any unrecognised
+    code passes through as-is, so a typo stays visible in GA instead of
+    vanishing silently."""
+    labels = json.dumps(SRC_LABELS, separators=(',', ':'))
+    return (f"const SRC_LABELS = {labels};\n"
+            f"    function expandSrc(code) {{ return code ? (SRC_LABELS[code] || code) : ''; }}")
 
 def easy_pdf_filename(page):
     """Easy Read PDF filename: E_ + the main PDF filename (override with an
@@ -186,6 +208,7 @@ def generate_index(pages):
     html = (load_template('index.html')
             .replace('<!-- HOME_URL -->',        'index.html')
             .replace('<!-- GA_ID -->',           GA_ID)
+            .replace('<!-- SRC_MAP_JS -->',      src_map_js())
             .replace('<!-- HERO_BLOCK -->',      blocks['hero_block'])
             .replace('<!-- BANNER_BLOCK -->',    blocks['banner_block'])
             .replace('<!-- COL_1 -->',           blocks['col1'])
@@ -213,6 +236,7 @@ def generate_index_draft(pages):
     html = (load_template('index.html')
             .replace('<!-- HOME_URL -->',        'index_draft.html')
             .replace('<!-- GA_ID -->',           GA_ID)
+            .replace('<!-- SRC_MAP_JS -->',      src_map_js())
             .replace('<!-- HERO_BLOCK -->',      blocks['hero_block'])
             .replace('<!-- BANNER_BLOCK -->',    blocks['banner_block'])
             .replace('<!-- COL_1 -->',           blocks['col1'])
