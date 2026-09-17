@@ -269,6 +269,27 @@ def generate_live_qr(page, has_easy):
     (LIVE_QR_DIR / f"{page['num']}.html").write_text(html, encoding='utf-8')
 
 
+# ── Non-page QR redirects ───────────────────────────────────────────────────
+# Stable QR URLs for destinations that aren't wrapper pages. Print materials
+# can commit to these URLs now; where they land is a regeneration decision.
+def generate_special_qrs():
+    specials = [
+        # (filename stem, page_id for analytics, staging target, live target)
+        # live home QR points at the public homepage (docs/index.html) in both
+        # modes — unlike page QRs, its destination already exists in production.
+        ('home', 'home', '../index.html', '../index.html'),
+    ]
+    for stem, page_id, staging_target, live_target in specials:
+        for out_dir, target in ((QR_DIR, staging_target), (LIVE_QR_DIR, live_target)):
+            html = sub(load_template('qr-redirect.html'), {
+                'PAGE_ID':  page_id,
+                'PAGE_NUM': page_id,
+                'NL_URL':   target,
+                'EASY_URL': '',
+            })
+            (out_dir / f'{stem}.html').write_text(html, encoding='utf-8')
+
+
 # ── Admin page ──────────────────────────────────────────────────────────────
 def generate_admin(pages_with_status):
     ADMIN_DIR.mkdir(parents=True, exist_ok=True)
@@ -382,6 +403,7 @@ def main():
         generate_live_qr(page, has_easy)
         counts['qr'] += 1
 
+    generate_special_qrs()
     seed_draft()
     generate_index(valid_pages)
     generate_index_draft(valid_pages)
