@@ -197,7 +197,11 @@
     const STORAGE_KEY = 'fsh_view';
     const VISITED_KEY = 'fsh_visited';
     const params      = new URLSearchParams(window.location.search);
-    const src         = params.get('src') || '';
+    const src         = params.get('s') || '';
+
+    // ── Source code → readable label (for GA) ──────────────
+    const SRC_LABELS = {"wa":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
 
     // Being on this page means view = easy; ensure stored pref matches
     // (unless user arrived via f=1, but we don't redirect from ER page)
@@ -221,7 +225,7 @@
           page_id:  PAGE_ID,
           page_num: PAGE_NUM,
           view:     'easy',
-          src_param: src
+          src_param: expandSrc(src)
         });
       });
     }
@@ -351,11 +355,11 @@
         from:      'easy',
         to:        'nl',
         page_id:   PAGE_ID,
-        src_param: src
+        src_param: expandSrc(src)
       });
 
       const dest = new URL(NL_URL, window.location.href);
-      if (src) dest.searchParams.set('src', src);
+      if (src) dest.searchParams.set('s', src);
       window.location.href = dest.toString();
     });
 
@@ -365,7 +369,7 @@
       page_num:      PAGE_NUM,
       content_group: PAGE_NUM.substring(0, 1) + 'xx',
       view:          'easy',
-      src_param:     src
+      src_param:     expandSrc(src)
     });
   </script>
 
