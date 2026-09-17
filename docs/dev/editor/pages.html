@@ -163,7 +163,7 @@
 <body>
 
   <h1>Fleet Street Heritage – Page Listing</h1>
-  <p class="meta">Generated 2026-09-17 13:43 UTC &nbsp;·&nbsp; 110 pages
+  <p class="meta">Generated 2026-09-17 13:57 UTC &nbsp;·&nbsp; 110 pages
     &nbsp;·&nbsp; <a href="index.html">← Editor home</a>
     
     </p>
@@ -204,7 +204,8 @@
           <th data-col="slug">Slug</th>
           <th data-col="volume">Part</th>
           <th data-col="live">Live</th>
-          <th data-col="has_easy">Easy Read</th>
+          <th data-col="has_pdf">PDF</th>
+          <th data-col="has_easy">e_PDF</th>
           <th data-col="has_audio">Audio</th>
           <th data-col="h_wall">H Wall</th>
           <th>Links</th>
@@ -1555,8 +1556,14 @@
                : '<span class="cross" aria-label="no">–</span>';
     }
 
+    function pdfCell(p) {
+      // Story-type pages (prose, no PDF at all) never have one — show a
+      // neutral "n/a" rather than a cross, which would read as "missing".
+      return p.story ? '<span class="cross" aria-label="not applicable">n/a</span>' : tick(p.has_pdf);
+    }
+
     const SORT_LABELS = { num: '#', title: 'Title', slug: 'Slug', volume: 'Part',
-                          live: 'Live', has_easy: 'Easy Read', has_audio: 'Audio' };
+                          live: 'Live', has_easy: 'e_PDF', has_audio: 'Audio' };
 
     function buildText(rows) {
       const dir     = sortDir === 1 ? '↑' : '↓';
@@ -1566,7 +1573,7 @@
       if (searchQ) parts.push(`Search: "${searchQ}"`);
       const header  = `Fleet Street Heritage – ${rows.length} of ${PAGES.length} items\n${parts.join(' | ')}`;
       const yn      = v => v ? 'yes' : 'no';
-      const hdrs    = ['#', 'Title', 'Slug', 'Part', 'Live', 'PDF', 'Easy Read', 'Audio', 'H Wall'];
+      const hdrs    = ['#', 'Title', 'Slug', 'Part', 'Live', 'PDF', 'e_PDF', 'Audio', 'H Wall'];
       const data    = rows.map(p => [String(p.num), p.title, p.slug, String(p.volume),
                         yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio), yn(p.h_wall)]);
       const widths  = hdrs.map((h, ci) => Math.max(h.length, ...data.map(r => r[ci].length)));
@@ -1623,6 +1630,7 @@
           <td class="slug">${esc(p.slug)}</td>
           <td><span class="vol-badge v${p.volume}">${p.volume}</span></td>
           <td>${tick(p.live !== false)}</td>
+          <td>${pdfCell(p)}</td>
           <td>${tick(p.has_easy)}</td>
           <td>${tick(p.has_audio)}</td>
           <td>${tick(p.h_wall)}</td>
@@ -1676,7 +1684,7 @@
     // ── Sanity checks ──────────────────────────────────
     function runSanityChecks() {
       const checks = [
-        { label: 'missing PDF',   crit: p => p.live !== false, test: p => !p.has_pdf && !p.story },
+        { label: 'missing PDF',   crit: () => true,            test: p => !p.has_pdf && !p.story },
         { label: 'empty title',   crit: () => true,            test: p => !String(p.title||'').trim() },
         { label: 'empty slug',    crit: () => true,            test: p => !String(p.slug||'').trim() },
         { label: 'missing number',crit: () => true,            test: p => !String(p.num||'').trim() },
