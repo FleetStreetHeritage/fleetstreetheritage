@@ -38,7 +38,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/dev/ fsh_reboot/content/ fsh_reboot/editor/content_draft/
+          git add docs/dev/ docs/qr/ fsh_reboot/content/ fsh_reboot/editor/content_draft/
           if git diff --cached --quiet; then
             echo "Nothing to commit"
           else

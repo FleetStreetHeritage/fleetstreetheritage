@@ -23,15 +23,19 @@
   <script>
     // ── Per-page config ────────────────────────────────────
     const NL_URL   = '../dev/nl/crane-court.html';     // e.g. 'dr-johnson.html'
-    const EASY_URL = '';   // e.g. 'easy-dr-johnson.html'  ('' if none)
+    const EASY_URL = '../dev/easy/crane-court.html';   // e.g. 'easy-dr-johnson.html'  ('' if none)
     const PAGE_ID  = 'crane-court';
     const PAGE_NUM = '113';
 
     // ── Read URL params ────────────────────────────────────
     const params = new URLSearchParams(window.location.search);
-    const src    = params.get('src') || '';
-    const vParam = params.get('v')   || '';
+    const src    = params.get('s') || '';
+    const vParam = params.get('v') || '';
     const fParam = parseInt(params.get('f') ?? '0', 10);
+
+    // ── Source code → readable label (for GA) ──────────────
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
 
     // ── Resolve view ───────────────────────────────────────
     const STORAGE_KEY = 'fsh_view';
@@ -54,13 +58,13 @@
     // ── Build destination URL ──────────────────────────────
     const base = (view === 'easy' && hasEasy) ? EASY_URL : NL_URL;
     const dest = new URL(base, window.location.href);
-    if (src) dest.searchParams.set('src', src);
+    if (src) dest.searchParams.set('s', src);
 
     // ── Fire GA event before redirect ─────────────────────
     gtag('event', 'qr_scan', {
       page_id:    PAGE_ID,
       page_num:   PAGE_NUM,
-      src_param:  src,
+      src_param:  expandSrc(src),
       view_param: vParam,
       force:      fParam,
       routed_to:  view
