@@ -444,7 +444,7 @@
     const src    = params.get('s') || '';
 
     // ── Source code → readable label (for GA) ──────────────
-    const SRC_LABELS = {"wa":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
     function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
 
     gtag('event', 'page_view', { page_id: 'index', src_param: expandSrc(src) });
