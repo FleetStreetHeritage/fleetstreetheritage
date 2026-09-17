@@ -1,6 +1,13 @@
 name: Deploy to Production
 
 on:
+  # workflow_dispatch ONLY, deliberately. Auto-triggering this on content
+  # pushes (pages.json, PDFs, etc.) is the right long-term behaviour once
+  # the site is genuinely live — but until the first real --prod deploy has
+  # happened deliberately, this must never fire on its own: pages.json and
+  # docs/dev/pdfs/ are touched by completely routine day-to-day work, which
+  # would otherwise perform the live switchover itself as a side effect.
+  # Re-add a push trigger (see git history) only after that first deploy.
   workflow_dispatch:
     inputs:
       note:

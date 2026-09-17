@@ -24,14 +24,17 @@ jobs:
         run: python generate.py
 
       - name: Publish draft → content (if PUBLISH flag present)
+        id: publish
         run: |
           if [ -f fsh_reboot/editor/content_draft/PUBLISH ]; then
             echo "PUBLISH flag found — promoting content_draft to content"
             cp fsh_reboot/editor/content_draft/*.md fsh_reboot/content/
             rm fsh_reboot/editor/content_draft/PUBLISH
             cd fsh_reboot/scripts && python generate.py
+            echo "published=true" >> "$GITHUB_OUTPUT"
           else
             echo "No PUBLISH flag — draft commit only"
+            echo "published=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Commit generated output
@@ -42,6 +45,13 @@ jobs:
           if git diff --cached --quiet; then
             echo "Nothing to commit"
           else
-            git commit -m "chore: regenerate site [skip ci]"
+            if [ "${{ steps.publish.outputs.published }}" = "true" ]; then
+              # Deliberately NOT [skip ci]: this is what lets Deploy to
+              # Production's own push-trigger (on fsh_reboot/content/**)
+              # fire and put the newly-published homepage copy live.
+              git commit -m "chore: publish content update"
+            else
+              git commit -m "chore: regenerate site [skip ci]"
+            fi
             git push
           fi
