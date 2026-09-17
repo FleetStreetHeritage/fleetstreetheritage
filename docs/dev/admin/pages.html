@@ -95,6 +95,7 @@
       font-size: 0.75rem; font-weight: bold; background: #254760; color: #fff; }
     .vol-badge.v2 { background: #5a3e6e; }
     .vol-badge.v3 { background: #2e6e5a; }
+    .vol-badge.v4 { background: #8a5a2e; }
 
     .tick {
       display: inline-flex;
@@ -162,7 +163,7 @@
 <body>
 
   <h1>Fleet Street Heritage – Page Listing</h1>
-  <p class="meta">Generated 2026-09-17 12:56 UTC &nbsp;·&nbsp; 101 pages
+  <p class="meta">Generated 2026-09-17 13:21 UTC &nbsp;·&nbsp; 110 pages
     &nbsp;·&nbsp; <a href="index.html">← Admin home</a>
     &nbsp;·&nbsp; <a href="pages-edit.html">Edit pages →</a>
     &nbsp;·&nbsp; <a href="../editor/">Editor hub →</a></p>
@@ -176,6 +177,7 @@
       <button data-vol="1">Part 1</button>
       <button data-vol="2">Part 2</button>
       <button data-vol="3">Part 3</button>
+      <button data-vol="4">Part 4</button>
     </div>
     <div class="filter-group" role="group" aria-label="Filter by live status">
       <button class="active" data-live="all">Live + hidden</button>
@@ -1426,6 +1428,114 @@
     "has_pdf": true,
     "has_easy": true,
     "has_audio": false
+  },
+  {
+    "num": "401",
+    "slug": "jacky-hyams",
+    "story": true,
+    "title": "Jacky Hyams – Secretary to Sunday Mirror News Desk",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "402",
+    "slug": "neil-murray",
+    "story": true,
+    "title": "Neil Murray – Sub-editor, Daily Mirror",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "403",
+    "slug": "malcolm-cowan",
+    "story": true,
+    "title": "Malcolm Cowan – Systems Analyst, Mirror Group",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "404",
+    "slug": "paddy-ogara",
+    "story": true,
+    "title": "Paddy O'Gara – Features Department, Daily Mirror",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "405",
+    "slug": "roy-greenslade",
+    "story": true,
+    "title": "Roy Greenslade – Sub-editor",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "406",
+    "slug": "paul-duffett",
+    "story": true,
+    "title": "Paul Duffett – Circulation Sales Accounts Department",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "407",
+    "slug": "david-eccleston",
+    "story": true,
+    "title": "David Eccleston – Stereotyper",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "408",
+    "slug": "mick-clayton",
+    "story": true,
+    "title": "Mick Clayton – Compositor",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "409",
+    "slug": "michael-ash",
+    "story": true,
+    "title": "Michael Ash – Office Boy, News Chronicle",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
   }
 ];
 
@@ -1566,7 +1676,7 @@
     // ── Sanity checks ──────────────────────────────────
     function runSanityChecks() {
       const checks = [
-        { label: 'missing PDF',   crit: p => p.live !== false, test: p => !p.has_pdf },
+        { label: 'missing PDF',   crit: p => p.live !== false, test: p => !p.has_pdf && !p.story },
         { label: 'empty title',   crit: () => true,            test: p => !String(p.title||'').trim() },
         { label: 'empty slug',    crit: () => true,            test: p => !String(p.slug||'').trim() },
         { label: 'missing number',crit: () => true,            test: p => !String(p.num||'').trim() },

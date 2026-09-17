@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>David Eccleston – Stereotyper – The Heritage of Fleet Street</title>
+  <meta name="description" content="David Eccleston – Stereotyper">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZP7L32M9GB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ZP7L32M9GB');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fsh-blue:   #254760;
+      --fsh-yellow: #FFFF66;
+      --fsh-white:  #ffffff;
+      --bar-full:   4rem;
+      --bar-compact: 2.75rem;
+      --transition: 0.3s ease;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      min-height: 100dvh;
+    }
+
+    /* ── Header bar (matches the PDF wrapper) ──────────────── */
+    #fsh-bar {
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1rem;
+      height: var(--bar-full);
+      transition: height var(--transition);
+      flex-shrink: 0;
+      overflow: hidden;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+    }
+
+    body.returning #fsh-bar {
+      height: var(--bar-compact);
+    }
+
+    #fsh-bar .site-title {
+      font-size: 1rem;
+      font-weight: bold;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    body.returning #fsh-bar .site-title {
+      font-size: 0.85rem;
+    }
+
+    #fsh-bar a.site-title,
+    #fsh-bar a.site-title:hover,
+    #fsh-bar a.site-title:focus {
+      border: none;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+    }
+
+    #fsh-bar .page-title {
+      font-size: 0.9rem;
+      color: var(--fsh-yellow);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    body.returning #fsh-bar .page-title {
+      font-size: 0.8rem;
+    }
+
+    #fsh-bar nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    #fsh-bar a, #fsh-bar button {
+      color: var(--fsh-white);
+      text-decoration: none;
+      font-size: 0.8rem;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 3px;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    #fsh-bar a:hover, #fsh-bar button:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.7);
+    }
+
+    #audio-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    audio {
+      height: 1.6rem;
+      max-width: 10rem;
+    }
+
+    .unavailable { display: none !important; }
+
+    /* ── Skip link (accessibility) ───────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* ── Story content ──────────────────────────────────── */
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .story h1 {
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      margin-bottom: 0.25rem;
+    }
+
+    .story h2 {
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--fsh-yellow);
+      margin-bottom: 1.5rem;
+    }
+
+    .story p {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1.1rem;
+    }
+
+    .story a {
+      color: var(--fsh-yellow);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .story hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.25);
+      margin: 1.75rem 0;
+    }
+
+    .story img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 1.5rem auto;
+      border-radius: 4px;
+    }
+
+    .story .small { font-size: 0.8rem; }
+    .story .muted { opacity: 0.65; }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#story-content">Skip to content</a>
+
+  <header id="fsh-bar" role="banner">
+
+    <a class="site-title" href="../index.html" aria-label="The Heritage of Fleet Street">The Heritage of Fleet Street</a>
+
+    <span class="page-title" aria-current="page">David Eccleston – Stereotyper</span>
+
+    <nav aria-label="Page controls">
+
+      <!-- Audio player — hidden if no audio file for this page -->
+      <div id="audio-wrap" class="unavailable" aria-label="Audio narration">
+        <audio id="audio-player" controls preload="none" aria-label="Listen to narration">
+          <source src="../audio/407.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+      <!-- Prev / Next -->
+      <a id="nav-prev" href="paul-duffett.html" aria-label="Previous page">&#8592; Prev</a>
+      <a id="nav-next" href="mick-clayton.html" aria-label="Next page">Next &#8594;</a>
+
+      <!-- Home -->
+      <a href="../index.html" aria-label="Return to home page">Home</a>
+
+    </nav>
+  </header>
+
+  <main id="story-content">
+    <article class="story">
+<h1 class="col-title">David Eccleston</h1>
+<h3 class="col-heading">Stereotyper</h3>
+<p>My first visit to Fleet Street was in 1954 as an apprentice stereotyper (we made printing plates from hot metal which was an alloy of lead, tin and antimony and our workshops were called foundries). One day a week I attended the London School of Printing in Stamford Street, from there I would walk past Fleet Street to Back Hill in Clerkenwell where we studied metallurgy.</p>
+<p>My apprenticeship, which was in Watford where I was living, finished in 1960 and I wanted to work in London, so I took a vacancy at Fleetway Press in Southwark, working on magazines and comics, I think my wages were about £18-19 per week. The journey to work from Watford sometimes took about two hours so I moved to a bedsit in Clapham South and from there I could get to work in about half an hour.</p>
+<p>I left Fleetway in 1961 and took a job at Crawford Foundry in Turnmill Street Clerkenwell, a trade house making plates of pictures and ads that were used in magazines and newspapers. At that time there was no shortage of work and I remember one man starting a job on Monday morning and leaving at lunchtime to find another job in the afternoon. Clerkenwell was an interesting area to work in, there were good pubs, Italian cafes, Leather Lane market and second hand book stalls in Farringdon Road. I worked in several trade houses but during the 1960s other processes became more competitive, much of our work was lost and I was unemployed in 1966.</p>
+<p>However casual shifts were available on newspapers. These shifts were called grasses, and could vary in hours and wages - usually about £5-9, more on Saturdays as the shifts were longer. I worked on most of the papers including smaller ones such as the Greyhound Express, Morning Star and Hansard where I had to sign the official secrets act!</p>
+<p>The grasses were allocated by the London branch office of our union and could be from about 2-5 days or nights per week. Most of the newspaper buildings were old and working conditions were not good, but we did get plenty of breaks between pages and editions and the Fleet Street pubs were good where you could often meet friends working on other papers.</p>
+<p>In 1970 I obtained a permanent job on the People working Saturdays from 4pm-11.30pm. The People was part of the IPC group which included the Daily and Sunday Mirror, Sporting Life and Reveille, if you had a job on the People there was a progression list for applying for vacancies within the group, so in 1973 I came up for a job on the Sporting Life, the job consisted of four nights on the Sporting Life in the Mirror building at Holborn Circus and Saturday on the People at Northcliffe House in Tudor Street. At that time the Mirror group was owned by Reed International, a very good company to work for but in 1984 the papers were sold to Robert Maxwell and from then things began to go downhill, Maxwell quickly seized control of our pension fund and treated it as his own despite paying nothing into it.</p>
+<p>Hot metal was replaced by photo polymer around 1986 which made a big change to our way of platemaking and although I had been working with hot metal (which consisted mostly of lead) on a daily basis for over 30 years, breathing in lead dust and fumes especially when cleaning (drossing) the metal which had to be done every day, when I had a blood test it did not show more than a normal level of lead and I think my workmates were the same.</p>
+<p>In 1988 printing moved from Holborn to Stamford Street and Watford, we had been invited to apply for our jobs under less favourable conditions but I decided to take redundancy instead and retrained in Litho platemaking. So ended my working life in Fleet Street.</p>
+<div class="small muted">© David Eccleston, 2023</div>
+    </article>
+  </main>
+
+  <script>
+    // ── Config (set per page) ──────────────────────────────
+    const PAGE_ID   = 'david-eccleston';
+    const PAGE_NUM  = '407';
+    const HAS_AUDIO = false;
+
+    // ── Source code → readable label (for GA) ──────────────
+    const params = new URLSearchParams(window.location.search);
+    const src    = params.get('s') || '';
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
+
+    // ── Returning visitor detection ────────────────────────
+    const VISITED_KEY = 'fsh_visited';
+    if (localStorage.getItem(VISITED_KEY)) {
+      document.body.classList.add('returning');
+    } else {
+      localStorage.setItem(VISITED_KEY, '1');
+    }
+
+    // ── Audio ──────────────────────────────────────────────
+    if (HAS_AUDIO) {
+      const wrap = document.getElementById('audio-wrap');
+      wrap.classList.remove('unavailable');
+
+      document.getElementById('audio-player').addEventListener('play', () => {
+        gtag('event', 'audio_play', {
+          page_id: PAGE_ID,
+          page_num: PAGE_NUM,
+          src_param: expandSrc(src)
+        });
+      });
+    }
+
+    // ── GA page view with content group + source ───────────
+    gtag('event', 'page_view', {
+      page_id:       PAGE_ID,
+      page_num:      PAGE_NUM,
+      content_group: PAGE_NUM.substring(0, 1) + 'xx',
+      view:          'story',
+      src_param:     expandSrc(src)
+    });
+  </script>
+
+</body>
+</html>
