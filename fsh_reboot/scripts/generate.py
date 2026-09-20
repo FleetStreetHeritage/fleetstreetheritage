@@ -27,7 +27,8 @@ DRAFT_DIR    = SCRIPT_DIR.parent / 'editor' / 'content_draft'
 CONTENT_FILES = ['hero.md', 'banner.md', 'col1.md', 'col2.md', 'col3.md']
 
 PROD_MODE  = '--prod' in sys.argv
-GA_ID      = 'G-E01B51HMZL' if PROD_MODE else 'G-ZP7L32M9GB'
+PROD_GA_ID = 'G-E01B51HMZL'
+GA_ID      = PROD_GA_ID if PROD_MODE else 'G-ZP7L32M9GB'
 OUTPUT_DIR = REPO_ROOT / 'docs' if PROD_MODE else REPO_ROOT / 'docs' / 'dev'
 NL_DIR     = OUTPUT_DIR / 'nl'
 EASY_DIR   = OUTPUT_DIR / 'easy'
@@ -45,19 +46,20 @@ EDITOR_DIR = OUTPUT_DIR / 'editor'
 # In prod mode, replaced index pages are archived here (outside docs/, so never published).
 ARCHIVE_DIR = REPO_ROOT / 'archived_index_pages'
 
-# Live QR codes always go to docs/qr/ regardless of mode.
-# In staging they point into docs/dev/; in prod they point into docs/ root.
+# Live QR codes (the printed ones) always go to docs/qr/ and always point at
+# the production pages in docs/ root with the production GA ID, whatever the
+# mode — a staging run must never repoint them. docs/dev/qr/ is the staging
+# copy for testing the redirect itself.
 LIVE_QR_DIR   = REPO_ROOT / 'docs' / 'qr'
-LIVE_NL_BASE  = '../nl/'   if PROD_MODE else '../dev/nl/'
-LIVE_EASY_BASE = '../easy/' if PROD_MODE else '../dev/easy/'
+LIVE_PDFS_DIR = REPO_ROOT / 'docs' / 'pdfs'  # Easy Read availability as production sees it
 
 # ── Template loading ────────────────────────────────────────────────────────
 def load_template(name):
     return (TEMPLATE_DIR / name).read_text(encoding='utf-8')
 
 # ── Substitution ────────────────────────────────────────────────────────────
-def sub(template, replacements):
-    result = template.replace('<!-- GA_ID -->', GA_ID)
+def sub(template, replacements, ga_id=GA_ID):
+    result = template.replace('<!-- GA_ID -->', ga_id)
     result = result.replace('<!-- SRC_MAP_JS -->', src_map_js())
     for key, value in replacements.items():
         result = result.replace(f'<!-- {key} -->', str(value))
@@ -365,13 +367,14 @@ def generate_markdown_ref():
 
 
 # ── Live QR codes (docs/qr/) ────────────────────────────────────────────────
-def generate_live_qr(page, has_easy):
+def generate_live_qr(page):
+    has_easy = False if page.get('story') else (LIVE_PDFS_DIR / easy_pdf_filename(page)).exists()
     html = sub(load_template('qr-redirect.html'), {
         'PAGE_ID':  page['slug'],
         'PAGE_NUM': page['num'],
-        'NL_URL':   f"{LIVE_NL_BASE}{page['slug']}.html",
-        'EASY_URL': f"{LIVE_EASY_BASE}{page['slug']}.html" if has_easy else '',
-    })
+        'NL_URL':   f"../nl/{page['slug']}.html",
+        'EASY_URL': f"../easy/{page['slug']}.html" if has_easy else '',
+    }, ga_id=PROD_GA_ID)
     (LIVE_QR_DIR / f"{page['num']}.html").write_text(html, encoding='utf-8')
 
 
@@ -392,7 +395,7 @@ def generate_special_qrs():
                 'PAGE_NUM': page_id,
                 'NL_URL':   target,
                 'EASY_URL': '',
-            })
+            }, ga_id=PROD_GA_ID if out_dir == LIVE_QR_DIR else GA_ID)
             (out_dir / f'{stem}.html').write_text(html, encoding='utf-8')
 
 
@@ -514,7 +517,7 @@ def main():
             counts['easy'] += 1
 
         generate_qr(page, has_easy)
-        generate_live_qr(page, has_easy)
+        generate_live_qr(page)
         counts['qr'] += 1
 
     generate_special_qrs()
@@ -550,7 +553,7 @@ def main():
     if counts['easy']:
         print(f"  {EASY_DIR}/   ×{counts['easy']} Easy Read pages")
     print(f"  {QR_DIR}/   ×{counts['qr']} QR redirects (staging/prod)")
-    print(f"  {LIVE_QR_DIR}/   ×{counts['qr']} live QR redirects → {'prod' if PROD_MODE else 'staging'} paths")
+    print(f"  {LIVE_QR_DIR}/   ×{counts['qr']} live QR redirects → prod paths (always)")
     print(f"  {ADMIN_DIR}/index.html  (admin hub)")
     print(f"  {ADMIN_DIR}/pages.html  +  pages-edit.html")
     print(f"  {EDITOR_DIR}/pages.html  (copy)")
