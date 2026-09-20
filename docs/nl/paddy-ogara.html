@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paddy O'Gara – Features Department, Daily Mirror – The Heritage of Fleet Street</title>
+  <meta name="description" content="Paddy O'Gara – Features Department, Daily Mirror">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fsh-blue:   #254760;
+      --fsh-yellow: #FFFF66;
+      --fsh-white:  #ffffff;
+      --bar-full:   4rem;
+      --bar-compact: 2.75rem;
+      --transition: 0.3s ease;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      min-height: 100dvh;
+    }
+
+    /* ── Header bar (matches the PDF wrapper) ──────────────── */
+    #fsh-bar {
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1rem;
+      height: var(--bar-full);
+      transition: height var(--transition);
+      flex-shrink: 0;
+      overflow: hidden;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+    }
+
+    body.returning #fsh-bar {
+      height: var(--bar-compact);
+    }
+
+    #fsh-bar .site-title {
+      font-size: 1rem;
+      font-weight: bold;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    body.returning #fsh-bar .site-title {
+      font-size: 0.85rem;
+    }
+
+    #fsh-bar a.site-title,
+    #fsh-bar a.site-title:hover,
+    #fsh-bar a.site-title:focus {
+      border: none;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+    }
+
+    #fsh-bar .page-title {
+      font-size: 0.9rem;
+      color: var(--fsh-yellow);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    body.returning #fsh-bar .page-title {
+      font-size: 0.8rem;
+    }
+
+    #fsh-bar nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    #fsh-bar a, #fsh-bar button {
+      color: var(--fsh-white);
+      text-decoration: none;
+      font-size: 0.8rem;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 3px;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    #fsh-bar a:hover, #fsh-bar button:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.7);
+    }
+
+    #audio-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    audio {
+      height: 1.6rem;
+      max-width: 10rem;
+    }
+
+    .unavailable { display: none !important; }
+
+    /* ── Skip link (accessibility) ───────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* ── Story content ──────────────────────────────────── */
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .story h1 {
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      margin-bottom: 0.25rem;
+    }
+
+    .story h2 {
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--fsh-yellow);
+      margin-bottom: 1.5rem;
+    }
+
+    .story p {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1.1rem;
+    }
+
+    .story a {
+      color: var(--fsh-yellow);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .story hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.25);
+      margin: 1.75rem 0;
+    }
+
+    .story img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 1.5rem auto;
+      border-radius: 4px;
+    }
+
+    .story .small { font-size: 0.8rem; }
+    .story .muted { opacity: 0.65; }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#story-content">Skip to content</a>
+
+  <header id="fsh-bar" role="banner">
+
+    <a class="site-title" href="../index.html" aria-label="The Heritage of Fleet Street">The Heritage of Fleet Street</a>
+
+    <span class="page-title" aria-current="page">Paddy O'Gara – Features Department, Daily Mirror</span>
+
+    <nav aria-label="Page controls">
+
+      <!-- Audio player — hidden if no audio file for this page -->
+      <div id="audio-wrap" class="unavailable" aria-label="Audio narration">
+        <audio id="audio-player" controls preload="none" aria-label="Listen to narration">
+          <source src="../audio/404.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+      <!-- Prev / Next -->
+      <a id="nav-prev" href="malcolm-cowan.html" aria-label="Previous page">&#8592; Prev</a>
+      <a id="nav-next" href="roy-greenslade.html" aria-label="Next page">Next &#8594;</a>
+
+      <!-- Home -->
+      <a href="../index.html" aria-label="Return to home page">Home</a>
+
+    </nav>
+  </header>
+
+  <main id="story-content">
+    <article class="story">
+<h1 class="col-title">Paddy O'Gara</h1>
+<h2 class="col-title col-title-loud">Features Department, Daily Mirror</h2>
+<p>I first entered the Daily Mirror building in Holborn, in 1962.</p>
+<p>The time was around 3 p.m. so almost everyone was still out to lunch.</p>
+<p>Mike Molloy, my best friend from art school days, had set me up for a job. He was the only Features Artist at the Mirror (he later went on to be Editor, then Editorial Director). Thanks to me, he was enjoying his first day off for weeks.</p>
+<p>Security concerns were unheard of back then.</p>
+<p>The Features Department, my destination, was divided from the main newsroom by a metal wall about 3.5 feet high. The office was spacious, with about 20 desks, each with a typewriter chained stoutly to it, and a shiny black telephone.</p>
+<p>The place was deserted except for a figure in one corner, stapling bus tickets to an expense sheet. This was, I later learned, Arthur Thirkell - the witty and learned Theatre critic, and a man of scrupulous honesty, viz, the bus tickets.</p>
+<p>He ignored me. I sat, awaiting instructions or acknowledgement. None was to be had. I opened up a copy of the day's paper. Outside the wall in the main newsroom, people ambled by. They glanced at me, but said nothing.</p>
+<p>Finally a small uproar spilled out of the lifts, and a gaggle - one or two of whom seemed slightly the worse for drink - heaved alongside. They were Tony Miles, years later to become both Editor, then Editorial Director; John Edwards, newly back for a stint in our New York office (and still unhappy about being expelled from Paradise); Roy Blackman, Defence Correspondent; Sheila Duncan (who did girlie stuff); and general reporter Dixon Scott, who fancied himself a folksy dispenser of homespun wisdom. (I learned all this later.)</p>
+<p>Feature writer Tony Miles, future Leader of Men (and the occasional woman), looked over the wall at me, summed up the situation at a glance, and revealed himself to be the keen-eyed hack future generations would come to appreciate: "Who's that cunt?" he asked. ...I was in.</p>
+<p>The following day, I was invited to join the Features drinking team at the "Printers Devil," pub alongside the Mirror building for "lunch." This normally consisted of four or five pints of bitter and a slice of veal ham and egg pie. John Edwards once opined that Tony Miles was so fond of the pie, that if they cut him in half after he was dead, "... they'd find concentric rings of white and yellow running though the middle of him."</p>
+<p>One day in The Devil, Dot, a P.R. - lady friend of ours, bustled in, "Boys, boys," she burbled, "I need your help... I want to find a journalist who's also a practising Christian."</p>
+<p>A profound and thoughtful silence fell. This was eventually broken by Dennis Futrell, Chief Features Sub, staring into his beer, and musing, "There was a man in Leeds, ten years ago..."</p>
+<p>"Futey" as we called him, soon became a second father to me. He died about 1965, far too young. He had a bad heart. I've seldom felt a death so keenly - before or since.</p>
+<p>Well, I settled down comfortably at The Mirror. Seemed to fit in. Gradually rose without trace to become Associate Editor, or something of that sort. Enjoyed most of it very much, and would probably have stayed there until retirement, except that Bob Maxwell took over, and it quickly became apparent that one of us would have to go, and he showed no inclination to. So, I did.</p>
+<p>Ah, well. Happy times.</p>
+<div class="small muted">© Paddy O'Gara, 2023</div>
+    </article>
+  </main>
+
+  <script>
+    // ── Config (set per page) ──────────────────────────────
+    const PAGE_ID   = 'paddy-ogara';
+    const PAGE_NUM  = '404';
+    const HAS_AUDIO = false;
+
+    // ── Source code → readable label (for GA) ──────────────
+    const params = new URLSearchParams(window.location.search);
+    const src    = params.get('s') || '';
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
+
+    // ── Returning visitor detection ────────────────────────
+    const VISITED_KEY = 'fsh_visited';
+    if (localStorage.getItem(VISITED_KEY)) {
+      document.body.classList.add('returning');
+    } else {
+      localStorage.setItem(VISITED_KEY, '1');
+    }
+
+    // ── Audio ──────────────────────────────────────────────
+    if (HAS_AUDIO) {
+      const wrap = document.getElementById('audio-wrap');
+      wrap.classList.remove('unavailable');
+
+      document.getElementById('audio-player').addEventListener('play', () => {
+        gtag('event', 'audio_play', {
+          page_id: PAGE_ID,
+          page_num: PAGE_NUM,
+          src_param: expandSrc(src)
+        });
+      });
+    }
+
+    // ── GA page view with content group + source ───────────
+    gtag('event', 'page_view', {
+      page_id:       PAGE_ID,
+      page_num:      PAGE_NUM,
+      content_group: PAGE_NUM.substring(0, 1) + 'xx',
+      view:          'story',
+      src_param:     expandSrc(src)
+    });
+  </script>
+
+</body>
+</html>

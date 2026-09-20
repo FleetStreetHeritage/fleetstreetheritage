@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FSH – Edit Pages</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL');
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.875rem;
+      background: #f4f4f4;
+      color: #222;
+      padding: 1.5rem;
+    }
+
+    h1 { font-size: 1.2rem; margin-bottom: 0.25rem; }
+    .meta { font-size: 0.75rem; color: #666; margin-bottom: 1.25rem; }
+    a { color: #254760; text-decoration: underline; }
+    a:hover { text-decoration: none; }
+
+    /* ── Controls ───────────────────────────────────── */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .controls input[type="search"] {
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      width: 220px;
+    }
+
+    .filter-group { display: flex; gap: 0.3rem; }
+
+    .filter-group button {
+      padding: 0.25rem 0.65rem;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .filter-group button.active { background: #254760; color: #fff; border-color: #254760; }
+
+    .count { margin-left: auto; font-size: 0.78rem; color: #666; }
+
+    /* ── Table ──────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; margin-bottom: 1.5rem; }
+
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+    thead th {
+      background: #254760;
+      color: #fff;
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      white-space: nowrap;
+      user-select: none;
+      cursor: pointer;
+    }
+    thead th:hover { background: #1d3750; }
+    thead th.sort-asc::after  { content: ' ▲'; font-size: 0.7em; }
+    thead th.sort-desc::after { content: ' ▼'; font-size: 0.7em; }
+    thead th.no-sort { cursor: default; }
+    thead th.no-sort:hover { background: #254760; }
+
+    tbody tr { border-bottom: 1px solid #eee; }
+    tbody tr:hover:not(.editing) { background: #f0f5f9; }
+    tbody tr.dim td:not(.actions) { opacity: 0.4; }
+    tbody tr.editing { background: #fffbe6; }
+
+    td { padding: 0.45rem 0.75rem; vertical-align: middle; }
+    td.num  { font-variant-numeric: tabular-nums; width: 3.5rem; }
+    td.slug { font-family: monospace; font-size: 0.78rem; color: #555; }
+    td.links a {
+      color: #254760; text-decoration: none; margin-right: 0.4rem;
+      font-size: 0.78rem; border-bottom: 1px dotted #254760;
+    }
+    td.links a:hover { color: #c00; border-bottom-color: #c00; }
+
+    td.actions { white-space: nowrap; }
+    td.actions a { cursor: pointer; margin-right: 0.5rem; color: #254760;
+      font-size: 0.78rem; border-bottom: 1px dotted #254760; }
+    td.actions a:hover { color: #c00; }
+    td.actions a.del:hover { color: #c00; }
+
+    .vol-badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 3px;
+      font-size: 0.75rem; font-weight: bold; background: #254760; color: #fff; }
+    .vol-badge.v2 { background: #5a3e6e; }
+    .vol-badge.v3 { background: #2e6e5a; }
+    .vol-badge.v4 { background: #8a5a2e; }
+
+    .tick {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.1em;
+      height: 1.1em;
+      border-radius: 50%;
+      background: #5aaa6e;
+      font-size: inherit;
+    }
+    .tick::after {
+      content: '';
+      display: block;
+      width: 0.5em;
+      height: 0.3em;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translate(0, -0.06em);
+    }
+    .cross { color: #bbb; }
+
+    /* ── Edit row ───────────────────────────────────── */
+    tr.editing td { padding: 0.3rem 0.5rem; }
+
+    .edit-input {
+      width: 100%;
+      padding: 0.25rem 0.4rem;
+      border: 1px solid #aaa;
+      border-radius: 3px;
+      font-size: 0.82rem;
+      font-family: inherit;
+    }
+    .edit-input.mono { font-family: monospace; }
+
+    select.edit-input { width: auto; }
+
+    .btn {
+      padding: 0.25rem 0.6rem;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-right: 0.3rem;
+    }
+    .btn-save   { background: #254760; color: #fff; }
+    .btn-cancel { background: #eee; color: #333; }
+    .btn-save:hover   { background: #1d3750; }
+    .btn-cancel:hover { background: #ddd; }
+
+    /* ── Bottom bar ─────────────────────────────────── */
+    .bottom-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      padding-top: 0.5rem;
+      border-top: 1px solid #ddd;
+    }
+
+    .bottom-bar .btn-action {
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      border: 1px solid #aaa;
+      background: #fff;
+    }
+    .bottom-bar .btn-action:hover { background: #e8e8e8; }
+    .bottom-bar .btn-action.primary { background: #254760; color: #fff; border-color: #254760; }
+    .bottom-bar .btn-action.primary:hover { background: #1d3750; }
+    .bottom-bar .btn-action.danger { border-color: #c00; color: #c00; }
+    .bottom-bar .btn-action.danger:hover { background: #fff0f0; }
+
+    #load-input { display: none; }
+
+    .unsaved-badge {
+      display: none;
+      background: #e07000;
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 3px;
+      margin-left: auto;
+    }
+    .unsaved-badge.visible { display: inline-block; }
+
+    .no-results { text-align: center; padding: 2rem; color: #888; }
+
+    /* ── Text output ─────────────────────────────────── */
+    #text-out-wrap { margin-bottom: 1rem; }
+    .text-out-inner { display: flex; flex-direction: column; gap: 0.4rem; }
+    .text-out-inner textarea {
+      width: 100%;
+      font-family: monospace;
+      font-size: 0.78rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      resize: vertical;
+      color: #222;
+    }
+    .text-out-inner button {
+      align-self: flex-start;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.78rem;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .text-out-inner button:hover { background: #e8e8e8; }
+
+    /* ── Sanity panel ────────────────────────────────── */
+    .sanity-panel {
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    .sanity-panel.ok   { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1e5c2a; }
+    .sanity-panel.warn { background: #fff3e0; border: 1px solid #ffcc80; color: #6d3a00; }
+    .sanity-panel ul   { margin-top: 0.35rem; padding-left: 1.3rem; }
+    .sanity-panel li   { margin-bottom: 0.15rem; }
+    .sanity-panel .crit { color: #c00; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>Fleet Street Heritage – Page Listing</h1>
+  <p class="meta">Generated 2026-09-20 11:57 UTC &nbsp;·&nbsp; <span id="total-count">110</span> pages
+    &nbsp;·&nbsp; <a href="index.html">← Admin home</a>
+    &nbsp;·&nbsp; <a href="../editor/">Editor hub →</a></p>
+
+  <div id="sanity-panel" class="sanity-panel ok" aria-live="polite"></div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search title or slug…" aria-label="Search pages">
+    <div class="filter-group" role="group" aria-label="Filter by part">
+      <button class="active" data-vol="all">All</button>
+      <button data-vol="1">Part 1</button>
+      <button data-vol="2">Part 2</button>
+      <button data-vol="3">Part 3</button>
+      <button data-vol="4">Part 4</button>
+    </div>
+    <span class="count" id="count"></span>
+    <button class="filter-group button" id="btn-text-out" onclick="toggleTextOut()">Text list</button>
+  </div>
+
+  <div id="text-out-wrap" hidden>
+    <div class="text-out-inner">
+      <textarea id="text-out" readonly rows="10"></textarea>
+      <button onclick="copyTextOut()">Copy to clipboard</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="pages-table" aria-label="Page listing">
+      <thead>
+        <tr>
+          <th data-col="num"      class="sort-asc">#</th>
+          <th data-col="title">Title</th>
+          <th data-col="slug">Slug</th>
+          <th data-col="volume">Part</th>
+          <th data-col="live"    >Live</th>
+          <th data-col="has_pdf" >PDF</th>
+          <th data-col="has_easy">e_PDF</th>
+          <th data-col="has_audio">Audio</th>
+          <th data-col="h_wall">H Wall</th>
+          <th class="no-sort">Links</th>
+          <th class="no-sort">Edit</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <p class="no-results" id="no-results" hidden>No pages match.</p>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn-action" id="btn-add">+ Add page</button>
+    <button class="btn-action" id="btn-load">Load JSON…</button>
+    <input type="file" id="load-input" accept=".json">
+    <button class="btn-action primary" id="btn-export">Export pages.json</button>
+    <span class="unsaved-badge" id="unsaved-badge">Unsaved changes</span>
+  </div>
+
+  <script>
+    // ── Data ───────────────────────────────────────────────
+    const INITIAL = [
+  {
+    "num": "102",
+    "slug": "points-of-interest-map",
+    "pdf": "102_PointsOfInterest.pdf",
+    "title": "Points of Interest / Map",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "103",
+    "slug": "list-of-newspapers-and-dates",
+    "pdf": "103_NewspapersPublished.pdf",
+    "title": "List of Newspapers and Dates",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "108",
+    "slug": "fleet-street-heritage-sundial",
+    "pdf": "108_HeritageSundial.pdf",
+    "title": "Fleet Street Heritage Sundial",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "134",
+    "slug": "fleet-street-heritage-walk-1",
+    "pdf": "134_HeritageWalkMap.pdf",
+    "title": "Fleet Street Heritage Walk 1",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "130",
+    "slug": "fleet-street-heritage-walk-2",
+    "pdf": "130_Heritagewalk.pdf",
+    "title": "Fleet Street Heritage Walk 2",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "116",
+    "slug": "freedom-of-the-press",
+    "pdf": "116_FreedomPress.pdf",
+    "title": "Freedom of the Press",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "117",
+    "slug": "fleet-street-at-the-reformation",
+    "pdf": "117_FleetStreetReformation.pdf",
+    "title": "Fleet Street at the Reformation 1538–40",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "145",
+    "slug": "fleet-street-architecture-introduction",
+    "pdf": "145_Architecture.pdf",
+    "title": "Fleet St Architecture – Introduction",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "146",
+    "slug": "fleet-street-architecture-south-from-temple-bar",
+    "pdf": "146_ArchSouth.pdf",
+    "title": "Fleet St Architecture – South Side from Temple Bar",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "147",
+    "slug": "fleet-street-architecture-south-to-ludgate",
+    "pdf": "147_ArchSouth2.pdf",
+    "title": "Fleet St Architecture – South Side to Ludgate Circus",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "148",
+    "slug": "fleet-street-architecture-north-from-ludgate",
+    "pdf": "148_ArchNorth2.pdf",
+    "title": "Fleet St Architecture – North Side from Ludgate Circus",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "149",
+    "slug": "fleet-street-architecture-north-to-temple-bar",
+    "pdf": "149_ArchNorth.pdf",
+    "title": "Fleet St Architecture – North Side to Temple Bar",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "136",
+    "slug": "legend-of-sweeney-todd",
+    "pdf": "136_SweeneyTodd.pdf",
+    "title": "Legend of Sweeney Todd",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "127",
+    "slug": "the-river-fleet",
+    "pdf": "127_RiverFleet.pdf",
+    "title": "The River Fleet",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "122",
+    "slug": "newspaper-stamp-tax",
+    "pdf": "122_NewspaperTax.pdf",
+    "title": "Newspaper Stamp Tax",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "101",
+    "slug": "fleet-street-in-the-1500s",
+    "pdf": "101_FleetStreet1500s.pdf",
+    "title": "Fleet Street in the 1500s",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "123",
+    "slug": "fleet-street-in-the-1600s",
+    "pdf": "123_FleetStreet1600s.pdf",
+    "title": "Fleet Street in the 1600s",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "143",
+    "slug": "fleet-street-in-the-1700s",
+    "pdf": "143_FleetStreet1700s.pdf",
+    "title": "Fleet Street in the 1700s",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "157",
+    "slug": "fleet-street-in-the-1800s",
+    "pdf": "157_FleetStreet1800s.pdf",
+    "title": "Fleet Street in the 1800s",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "168",
+    "slug": "fleet-street-in-1847-north",
+    "pdf": "168_FleetStreetNorth.pdf",
+    "title": "Fleet Street in 1847 – North",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "167",
+    "slug": "fleet-street-in-1847-south",
+    "pdf": "167_FleetStreetSouth.pdf",
+    "title": "Fleet Street in 1847 – South",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "118",
+    "slug": "the-great-fire-1666",
+    "pdf": "118_GreatFire.pdf",
+    "title": "The Great Fire, 1666",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "124",
+    "slug": "monuments-of-fleet-street",
+    "pdf": "124_Monuments.pdf",
+    "title": "Monuments of Fleet Street",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "156",
+    "slug": "st-george-and-the-dragon",
+    "pdf": "156_George&theDragon.pdf",
+    "title": "Saint George and the Dragon",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "137",
+    "slug": "17-fleet-street-prince-henrys-room",
+    "pdf": "137_PrinceHenry.pdf",
+    "title": "17 Fleet Street (Prince Henry's Room)",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "104",
+    "slug": "62-fleet-street",
+    "pdf": "104_No62FleetStreet.pdf",
+    "title": "62 Fleet Street",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "121",
+    "slug": "bradlaugh-and-besant",
+    "pdf": "121_Bradlaugh&Besant.pdf",
+    "title": "Bradlaugh and Besant",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "120",
+    "slug": "85-fleet-street-the-reuters-building",
+    "pdf": "120_85FleetStreet.pdf",
+    "title": "85 Fleet Street – The Reuters Building",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "138",
+    "slug": "bouverie-street",
+    "pdf": "138_BouverieStreet.pdf",
+    "title": "Bouverie Street",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "165",
+    "slug": "the-great-conduit",
+    "pdf": "165_GreatConduit.pdf",
+    "title": "The Great Conduit",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "140",
+    "slug": "pedestrian-courts-of-fleet-street",
+    "pdf": "140_PedestrianCourts.pdf",
+    "title": "Pedestrian Courts of Fleet Street",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "106",
+    "slug": "magpie-alley",
+    "pdf": "106_MagpieAlley.pdf",
+    "title": "Magpie Alley",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "111",
+    "slug": "ashentree-court",
+    "pdf": "111_AshentreeCourt.pdf",
+    "title": "Ashentree Court",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "142",
+    "slug": "alsatia",
+    "pdf": "142_Alsatia.pdf",
+    "title": "Alsatia",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "150",
+    "slug": "salisbury-square",
+    "pdf": "150_SalisburySquare.pdf",
+    "title": "Salisbury Square",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "113",
+    "slug": "crane-court",
+    "pdf": "113_CraneCourt.pdf",
+    "title": "Crane Court",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "114",
+    "slug": "st-dunstan-in-the-west",
+    "pdf": "114_StDunstanInTheWest.pdf",
+    "title": "Saint Dunstan-in-the-West",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "129",
+    "slug": "st-brides-church",
+    "pdf": "129_StBridesChurch.pdf",
+    "title": "Saint Bride's Church",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "151",
+    "slug": "temple-church",
+    "pdf": "151_TempleChurch.pdf",
+    "title": "Temple Church",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "135",
+    "slug": "st-brides-crypt-exhibition",
+    "pdf": "135_StBridesCrypt.pdf",
+    "title": "Saint Bride's Crypt Exhibition",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "109",
+    "slug": "ye-olde-cheshire-cheese",
+    "pdf": "109_CheshireCheese.pdf",
+    "title": "Ye Olde Cheshire Cheese",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "112",
+    "slug": "temple-bar",
+    "pdf": "112_TempleBar.pdf",
+    "title": "Temple Bar",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "131",
+    "slug": "middle-temple",
+    "pdf": "131_MiddleTemple.pdf",
+    "title": "Middle Temple",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "155",
+    "slug": "inner-temple",
+    "pdf": "155_InnerTemple.pdf",
+    "title": "Inner Temple",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "141",
+    "slug": "knights-templar",
+    "pdf": "141_KnightsTemplar.pdf",
+    "title": "Knights Templar",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "158",
+    "slug": "bridewell-palace",
+    "pdf": "158_BridewellPalace.pdf",
+    "title": "Bridewell Palace",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "107",
+    "slug": "cliffords-inn",
+    "pdf": "107_CliffordsInn.pdf",
+    "title": "Cliffords Inn",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "126",
+    "slug": "royal-society-in-fleet-street",
+    "pdf": "126_RoyalSociety.pdf",
+    "title": "Royal Society in Fleet Street",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "164",
+    "slug": "the-law-society",
+    "pdf": "164_LawSociety.pdf",
+    "title": "The Law Society",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "132",
+    "slug": "stationers-company",
+    "pdf": "132_StationersCompany.pdf",
+    "title": "Stationers Company",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "166",
+    "slug": "gresham-college",
+    "pdf": "166_GreshamCollege.pdf",
+    "title": "Gresham College",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "139",
+    "slug": "child-and-co",
+    "pdf": "139_Child&Co.pdf",
+    "title": "Child and Co",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "152",
+    "slug": "hoares-bank",
+    "pdf": "152_CHoare&Co.pdf",
+    "title": "Hoare's Bank",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "125",
+    "slug": "st-brides-foundation",
+    "pdf": "125_StBridesFoundation.pdf",
+    "title": "Saint Bride Foundation",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "128",
+    "slug": "wynken-de-worde",
+    "pdf": "128_WynkyndeWorde.pdf",
+    "title": "Wynken de Worde",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "169",
+    "slug": "the-pastons",
+    "pdf": "169_Pastons.pdf",
+    "title": "The Pastons",
+    "volume": 1,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "133",
+    "slug": "thomas-tompion-clockmaking",
+    "pdf": "133_ThomasTompian.pdf",
+    "title": "Thomas Tompion / Clockmaking",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "105",
+    "slug": "caslon-typefounders",
+    "pdf": "105_TypeFounding.pdf",
+    "title": "Caslon / Typefounders",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "115",
+    "slug": "dr-johnson",
+    "pdf": "115_DrJohnson.pdf",
+    "title": "Dr. Johnson",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "161",
+    "slug": "james-boswell",
+    "pdf": "161_JamesBoswell.pdf",
+    "title": "James Boswell",
+    "volume": 1,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "159",
+    "slug": "brass-crosby",
+    "pdf": "159_BrassCrosby.pdf",
+    "title": "Brass Crosby",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "163",
+    "slug": "william-hazlitt",
+    "pdf": "163_WilliamHazlitt.pdf",
+    "title": "William Hazlitt",
+    "volume": 1,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "119",
+    "slug": "cobbett-paine-and-fleet-street",
+    "pdf": "119_WilliamCobbett.pdf",
+    "title": "Cobbett, Paine & Fleet Street",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "153",
+    "slug": "henry-orator-hunt",
+    "pdf": "153_HenryHunt.pdf",
+    "title": "Henry 'Orator' Hunt",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "110",
+    "slug": "richard-carlile",
+    "pdf": "110_RichardCarlile.pdf",
+    "title": "Richard Carlile",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "144",
+    "slug": "henry-hetherington",
+    "pdf": "144_HenryHetherington.pdf",
+    "title": "Henry Hetherington",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "154",
+    "slug": "john-wilkes",
+    "pdf": "154_JohnWilkes.pdf",
+    "title": "John Wilkes",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "160",
+    "slug": "virginia-woolf",
+    "pdf": "160_VirginiaWoolf.pdf",
+    "title": "Virginia Woolf",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "162",
+    "slug": "eddy-shah",
+    "pdf": "162_EddyShah.pdf",
+    "title": "Eddy Shah",
+    "volume": 1,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "170",
+    "slug": "fleet-street-quarter",
+    "pdf": "170_FleetStreetQuarter.pdf",
+    "title": "Fleet Street Quarter",
+    "volume": 1,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "171",
+    "slug": "shoe-street",
+    "pdf": "171_ShoeStreet.pdf",
+    "title": "Shoe Street",
+    "volume": 1,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "172",
+    "slug": "maugham-library",
+    "pdf": "172_MaughamLibrary.pdf",
+    "title": "Maugham Library",
+    "volume": 1,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "173",
+    "slug": "jubilee-walkway",
+    "pdf": "173_JubileeWalk.pdf",
+    "title": "Jubilee Walkway",
+    "volume": 1,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "201",
+    "slug": "pall-mall-gazette",
+    "pdf": "201_PallMallGazette.pdf",
+    "title": "Pall Mall Gazette",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "202",
+    "slug": "daily-herald",
+    "pdf": "202_DailyHerald.pdf",
+    "title": "Daily Herald",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "203",
+    "slug": "the-republican",
+    "pdf": "203_TheRepublican.pdf",
+    "title": "The Republican",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "204",
+    "slug": "daily-courant",
+    "pdf": "204_DailyCourant.pdf",
+    "title": "Daily Courant",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "205",
+    "slug": "morning-post",
+    "pdf": "205_MorningPost.pdf",
+    "title": "Morning Post",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "207",
+    "slug": "lloyds-weekly",
+    "pdf": "207_LloydsWeekly.pdf",
+    "title": "Lloyd's Weekly",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "206",
+    "slug": "news-of-the-world",
+    "pdf": "206_NewsoftheWorld.pdf",
+    "title": "News of the World",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "209",
+    "slug": "daily-news",
+    "pdf": "209_DailyNews.pdf",
+    "title": "Daily News",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "208",
+    "slug": "daily-chronicle",
+    "pdf": "208_DailyChronicle.pdf",
+    "title": "Daily Chronicle",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "213",
+    "slug": "news-chronicle",
+    "pdf": "213_NewsChronicle.pdf",
+    "title": "News Chronicle",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "211",
+    "slug": "black-dwarf",
+    "pdf": "211_BlackDwarf.pdf",
+    "title": "Black Dwarf",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "218",
+    "slug": "punch",
+    "pdf": "218_Punch.pdf",
+    "title": "Punch",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "210",
+    "slug": "reynolds-newspaper",
+    "pdf": "210_ReynoldsWeekly.pdf",
+    "title": "Reynolds Newspaper",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "214",
+    "slug": "the-star",
+    "pdf": "214_TheStar.pdf",
+    "title": "The Star",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "215",
+    "slug": "poor-mans-guardian",
+    "pdf": "215_PoormansGuard.pdf",
+    "title": "Poor Man's Guardian",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "216",
+    "slug": "manchester-guardian",
+    "pdf": "216_ManchesterGuardian.pdf",
+    "title": "Manchester Guardian",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "212",
+    "slug": "picture-post",
+    "pdf": "212_PicturePost.pdf",
+    "title": "Picture Post",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "217",
+    "slug": "childrens-newspaper",
+    "pdf": "217_ChildrensNewspaper.pdf",
+    "title": "Children's Newspaper",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "219",
+    "slug": "the-eagle",
+    "pdf": "219_TheEagle.pdf",
+    "title": "The Eagle",
+    "volume": 2,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "301",
+    "slug": "the-telegraph",
+    "pdf": "301_DailyTelegraph.pdf",
+    "title": "The Telegraph",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "302",
+    "slug": "sunday-times",
+    "pdf": "302_SundayTimes.pdf",
+    "title": "Sunday Times",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "303",
+    "slug": "the-times",
+    "pdf": "303_Times.pdf",
+    "title": "The Times",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "304",
+    "slug": "the-sun",
+    "pdf": "304_TheSun.pdf",
+    "title": "The Sun",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "305",
+    "slug": "financial-times",
+    "pdf": "305_FinancialTimes.pdf",
+    "title": "Financial Times",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "309",
+    "slug": "the-guardian",
+    "pdf": "309_TheGuardian.pdf",
+    "title": "The Guardian",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "306",
+    "slug": "daily-mail",
+    "pdf": "306_TheMail.pdf",
+    "title": "Daily Mail",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "308",
+    "slug": "the-independent",
+    "pdf": "308_Independent.pdf",
+    "title": "The Independent",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "307",
+    "slug": "reuters",
+    "pdf": "307_Reuters.pdf",
+    "title": "Reuters",
+    "volume": 3,
+    "live": true,
+    "h_wall": true,
+    "has_pdf": true,
+    "has_easy": true,
+    "has_audio": false
+  },
+  {
+    "num": "401",
+    "slug": "jacky-hyams",
+    "story": true,
+    "title": "Jacky Hyams – Secretary to Sunday Mirror News Desk",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "402",
+    "slug": "neil-murray",
+    "story": true,
+    "title": "Neil Murray – Sub-editor, Daily Mirror",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "403",
+    "slug": "malcolm-cowan",
+    "story": true,
+    "title": "Malcolm Cowan – Systems Analyst, Mirror Group",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "404",
+    "slug": "paddy-ogara",
+    "story": true,
+    "title": "Paddy O'Gara – Features Department, Daily Mirror",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "405",
+    "slug": "roy-greenslade",
+    "story": true,
+    "title": "Roy Greenslade – Sub-editor",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "406",
+    "slug": "paul-duffett",
+    "story": true,
+    "title": "Paul Duffett – Circulation Sales Accounts Department",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "407",
+    "slug": "david-eccleston",
+    "story": true,
+    "title": "David Eccleston – Stereotyper",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "408",
+    "slug": "mick-clayton",
+    "story": true,
+    "title": "Mick Clayton – Compositor",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  },
+  {
+    "num": "409",
+    "slug": "michael-ash",
+    "story": true,
+    "title": "Michael Ash – Office Boy, News Chronicle",
+    "volume": 4,
+    "live": true,
+    "h_wall": false,
+    "has_pdf": false,
+    "has_easy": false,
+    "has_audio": false
+  }
+];
+    let pages = INITIAL.map(p => ({...p}));
+    let dirty = false;
+
+    // ── Sort / filter state ────────────────────────────────
+    let sortCol    = 'num';
+    let sortDir    = 1;
+    let filterVol  = 'all';
+    let searchQ    = '';
+    let editingIdx = null;   // index into pages[] currently being edited
+    let view       = [];     // current filtered+sorted rows
+
+    // ── Text output ────────────────────────────────────────
+    const SORT_LABELS = { num: '#', title: 'Title', slug: 'Slug', volume: 'Part',
+                          live: 'Live', has_easy: 'e_PDF', has_audio: 'Audio' };
+
+    function buildText(view) {
+      const dir     = sortDir === 1 ? '↑' : '↓';
+      const volDesc = filterVol === 'all' ? 'All parts' : 'Part ' + filterVol;
+      const parts   = [`Sorted by: ${SORT_LABELS[sortCol] || sortCol} ${dir}`, volDesc];
+      if (searchQ) parts.push(`Search: "${searchQ}"`);
+      const header  = `Fleet Street Heritage – ${view.length} of ${pages.length} items\n${parts.join(' | ')}`;
+      const yn      = v => v ? 'yes' : 'no';
+      const hdrs    = ['#', 'Title', 'Slug', 'Part', 'Live', 'PDF', 'e_PDF', 'Audio', 'H Wall'];
+      const data    = view.map(p => [String(p.num), p.title, p.slug, String(p.volume),
+                        yn(p.live !== false), yn(p.has_pdf), yn(p.has_easy), yn(p.has_audio), yn(p.h_wall)]);
+      const widths  = hdrs.map((h, ci) => Math.max(h.length, ...data.map(r => r[ci].length)));
+      const fmt     = row => row.map((v, ci) =>
+        ci < row.length - 1 ? (v + ',').padEnd(widths[ci] + 2) : v).join('');
+      return `${header}\n\n${fmt(hdrs)}\n${data.map(fmt).join('\n')}`;
+    }
+
+    function toggleTextOut() {
+      const wrap = document.getElementById('text-out-wrap');
+      const btn  = document.getElementById('btn-text-out');
+      wrap.hidden = !wrap.hidden;
+      btn.classList.toggle('active', !wrap.hidden);
+    }
+
+    function copyTextOut() {
+      const ta  = document.getElementById('text-out');
+      const btn = event.target;
+      navigator.clipboard.writeText(ta.value).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy to clipboard', 1500);
+      }).catch(() => { ta.select(); document.execCommand('copy'); });
+    }
+
+    // ── Helpers ────────────────────────────────────────────
+    function esc(s) {
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function markDirty() {
+      dirty = true;
+      document.getElementById('unsaved-badge').classList.add('visible');
+      document.getElementById('total-count').textContent = pages.length;
+    }
+
+    function tick(v)  { return v ? '<span class="tick"  aria-label="yes"></span>'
+                                 : '<span class="cross" aria-label="no">–</span>'; }
+    function pdfCell(p) {
+      // Story-type pages (prose, no PDF at all) never have one — show a
+      // neutral "n/a" rather than a cross, which would read as "missing".
+      return p.story ? '<span class="cross" aria-label="not applicable">n/a</span>' : tick(p.has_pdf);
+    }
+    function volBadge(v) {
+      return `<span class="vol-badge v${v}">${v}</span>`;
+    }
+
+    // ── Render ─────────────────────────────────────────────
+    function render() {
+      // Build filtered + sorted view (indices into pages[])
+      view = pages
+        .map((p, i) => ({...p, _i: i}))
+        .filter(p => {
+          if (filterVol !== 'all' && String(p.volume) !== filterVol) return false;
+          if (searchQ) {
+            const q = searchQ.toLowerCase();
+            if (!p.title.toLowerCase().includes(q) && !p.slug.includes(q)) return false;
+          }
+          return true;
+        });
+
+      view.sort((a, b) => {
+        let av = a[sortCol], bv = b[sortCol];
+        if (typeof av === 'boolean') av = av ? 1 : 0;
+        if (typeof bv === 'boolean') bv = bv ? 1 : 0;
+        if (typeof av === 'number') return (av - bv) * sortDir;
+        return String(av).localeCompare(String(bv)) * sortDir;
+      });
+
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = view.map(p => {
+        const i = p._i;
+        if (i === editingIdx) return editRow(p, i);
+        return viewRow(p, i);
+      }).join('');
+
+      document.getElementById('count').textContent = `showing ${view.length} of ${pages.length} items`;
+      document.getElementById('no-results').hidden = view.length > 0;
+      document.getElementById('text-out').value = buildText(view);
+      runSanityChecks();
+    }
+
+    // ── Sanity checks ──────────────────────────────────
+    function runSanityChecks() {
+      const checks = [
+        { label: 'missing PDF',   crit: () => true,            test: p => !p.has_pdf && !p.story },
+        { label: 'empty title',   crit: () => true,            test: p => !String(p.title||'').trim() },
+        { label: 'empty slug',    crit: () => true,            test: p => !String(p.slug||'').trim() },
+        { label: 'missing number',crit: () => true,            test: p => !String(p.num||'').trim() },
+      ];
+
+      const pageIssues = [];
+      pages.forEach(p => {
+        const failing = checks.filter(c => c.test(p)).map(c => ({ label: c.label, crit: c.crit(p) }));
+        (p.data_issues || []).forEach(msg =>
+          failing.push({ label: 'invalid data — ' + msg + ' (page skipped from generation)', crit: true }));
+        if (failing.length) pageIssues.push({ page: p, failing });
+      });
+
+      const panel = document.getElementById('sanity-panel');
+      if (pageIssues.length === 0) {
+        panel.className = 'sanity-panel ok';
+        panel.innerHTML = '✓ All pages pass sanity checks.';
+        return;
+      }
+
+      const total = pageIssues.reduce((n, pi) => n + pi.failing.length, 0);
+      const items = pageIssues.map(({ page, failing }) => {
+        const id   = page.num && page.title ? `${esc(page.num)} – ${esc(page.title)}` : `(num: ${esc(page.num||'?')})`;
+        const tags = failing.map(f => f.crit ? `<span class="crit">${f.label}</span>` : f.label).join(', ');
+        return `<li>${id}: ${tags}</li>`;
+      }).join('');
+
+      panel.className = 'sanity-panel warn';
+      panel.innerHTML = `<strong>⚠ ${total} issue${total !== 1 ? 's' : ''} on ${pageIssues.length} page${pageIssues.length !== 1 ? 's' : ''}:</strong><ul>${items}</ul>`;
+    }
+
+    function viewRow(p, i) {
+      const nl   = `../nl/${p.slug}.html`;
+      const qr   = `../qr/${p.num}.html`;
+      const easy = `../easy/${p.slug}.html`;
+      const dimClass = p.live === false ? ' class="dim"' : '';
+      return `<tr data-i="${i}"${dimClass}>
+        <td class="num">${esc(p.num)}</td>
+        <td>${esc(p.title)}</td>
+        <td class="slug">${esc(p.slug)}</td>
+        <td>${volBadge(p.volume)}</td>
+        <td><input type="checkbox" ${p.live !== false ? 'checked' : ''}
+              aria-label="Live" onchange="toggleLive(${i}, this.checked)"></td>
+        <td>${pdfCell(p)}</td>
+        <td>${tick(p.has_easy)}</td>
+        <td>${tick(p.has_audio)}</td>
+        <td><input type="checkbox" ${p.h_wall !== false ? 'checked' : ''}
+              aria-label="Heritage Wall" onchange="toggleHWall(${i}, this.checked)"></td>
+        <td class="links">
+          <a href="${nl}"   target="_blank">NL</a>
+          <a href="${qr}"   target="_blank">QR</a>
+          ${p.has_easy ? `<a href="${easy}" target="_blank">Easy</a>` : ''}
+        </td>
+        <td class="actions">
+          <a onclick="startEdit(${i})">Edit</a>
+          <a class="del" onclick="deletePage(${i})">Delete</a>
+        </td>
+      </tr>`;
+    }
+
+    function editRow(p, i) {
+      return `<tr data-i="${i}" class="editing">
+        <td><input class="edit-input" id="e-num"    value="${esc(p.num)}"></td>
+        <td><input class="edit-input" id="e-title"  value="${esc(p.title)}"></td>
+        <td><input class="edit-input mono" id="e-slug" value="${esc(p.slug)}"></td>
+        <td>
+          <select class="edit-input" id="e-volume">
+            <option value="1" ${p.volume==1?'selected':''}>1</option>
+            <option value="2" ${p.volume==2?'selected':''}>2</option>
+            <option value="3" ${p.volume==3?'selected':''}>3</option>
+            <option value="4" ${p.volume==4?'selected':''}>4</option>
+          </select>
+        </td>
+        <td><input type="checkbox" id="e-live" ${p.live !== false ? 'checked' : ''}></td>
+        <td>${pdfCell(p)}</td>
+        <td>${tick(p.has_easy)}</td>
+        <td>${tick(p.has_audio)}</td>
+        <td><input type="checkbox" id="e-h_wall" ${p.h_wall !== false ? 'checked' : ''}></td>
+        <td></td>
+        <td class="actions">
+          <button class="btn btn-save"   onclick="saveEdit(${i})">Save</button>
+          <button class="btn btn-cancel" onclick="cancelEdit()">Cancel</button>
+        </td>
+      </tr>`;
+    }
+
+    // ── Actions ────────────────────────────────────────────
+    function toggleLive(i, val) {
+      pages[i].live = val;
+      markDirty();
+      const tr = document.querySelector(`tr[data-i="${i}"]`);
+      if (tr) tr.outerHTML = viewRow(pages[i], i);
+    }
+
+    function toggleHWall(i, val) {
+      pages[i].h_wall = val;
+      markDirty();
+      const tr = document.querySelector(`tr[data-i="${i}"]`);
+      if (tr) tr.outerHTML = viewRow(pages[i], i);
+    }
+
+    function startEdit(i) {
+      if (editingIdx !== null && editingIdx !== i) cancelEdit();
+      editingIdx = i;
+      render();
+      document.getElementById('e-title')?.focus();
+    }
+
+    function saveEdit(i) {
+      const num    = document.getElementById('e-num').value.trim();
+      const title  = document.getElementById('e-title').value.trim();
+      const slug   = document.getElementById('e-slug').value.trim();
+      const volume = parseInt(document.getElementById('e-volume').value, 10);
+      const live   = document.getElementById('e-live').checked;
+
+      if (!num || !title || !slug) {
+        alert('Number, title and slug are all required.');
+        return;
+      }
+
+      // If num changed, has_pdf status is unknown until next regeneration
+      const has_pdf = (num === String(pages[i].num)) ? pages[i].has_pdf : false;
+      const h_wall  = document.getElementById('e-h_wall').checked;
+      pages[i] = { ...pages[i], num, title, slug, volume, live, has_pdf, h_wall };
+      editingIdx = null;
+      markDirty();
+      render();
+    }
+
+    function cancelEdit() {
+      // If this was a newly added blank row, remove it
+      if (editingIdx !== null && pages[editingIdx]._new) {
+        pages.splice(editingIdx, 1);
+      }
+      editingIdx = null;
+      render();
+    }
+
+    function deletePage(i) {
+      if (!confirm(`Delete "${pages[i].title}"?`)) return;
+      if (editingIdx === i) editingIdx = null;
+      pages.splice(i, 1);
+      markDirty();
+      render();
+    }
+
+    // ── Add page ───────────────────────────────────────────
+    document.getElementById('btn-add').addEventListener('click', () => {
+      const i = pages.length;
+      pages.push({ num: '', title: '', slug: '', volume: 1, live: true,
+                   has_pdf: false, has_easy: false, has_audio: false, _new: true });
+      editingIdx = i;
+      // Temporarily clear filters so the new row is visible
+      filterVol = 'all';
+      searchQ = '';
+      document.getElementById('search').value = '';
+      document.querySelectorAll('.filter-group button').forEach(b => {
+        b.classList.toggle('active', b.dataset.vol === 'all');
+      });
+      render();
+      document.getElementById('e-num')?.focus();
+    });
+
+    // ── Export ─────────────────────────────────────────────
+    document.getElementById('btn-export').addEventListener('click', () => {
+      // Strip computed/internal fields before export
+      const clean = pages.map(({ has_pdf, has_easy, has_audio, _new, ...rest }) => rest);
+      const out = JSON.stringify({ pages: clean }, null, 2);
+      const blob = new Blob([out], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'pages.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // ── Load ───────────────────────────────────────────────
+    document.getElementById('btn-load').addEventListener('click', () => {
+      document.getElementById('load-input').click();
+    });
+
+    document.getElementById('load-input').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (!data.pages || !Array.isArray(data.pages)) throw new Error('Invalid format');
+          // Preserve has_easy / has_audio from current data where num matches
+          const statusMap = {};
+          pages.forEach(p => { statusMap[p.num] = { has_pdf: p.has_pdf, has_easy: p.has_easy, has_audio: p.has_audio }; });
+          pages = data.pages.map(p => ({
+            has_pdf: false, has_easy: false, has_audio: false,
+            ...statusMap[p.num],
+            ...p,
+          }));
+          editingIdx = null;
+          dirty = false;
+          document.getElementById('unsaved-badge').classList.remove('visible');
+          render();
+        } catch (err) {
+          alert('Could not load JSON: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    // ── Sort ───────────────────────────────────────────────
+    document.querySelectorAll('thead th[data-col]').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.dataset.col;
+        sortDir = (sortCol === col) ? sortDir * -1 : 1;
+        sortCol = col;
+        document.querySelectorAll('thead th').forEach(t =>
+          t.classList.remove('sort-asc', 'sort-desc'));
+        th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+        render();
+      });
+    });
+
+    // ── Filter ─────────────────────────────────────────────
+    document.querySelectorAll('.filter-group button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterVol = btn.dataset.vol;
+        document.querySelectorAll('.filter-group button')
+          .forEach(b => b.classList.toggle('active', b === btn));
+        render();
+      });
+    });
+
+    // ── Search ─────────────────────────────────────────────
+    document.getElementById('search').addEventListener('input', e => {
+      searchQ = e.target.value.trim();
+      render();
+    });
+
+    // ── Keyboard esc to cancel edit ────────────────────────
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && editingIdx !== null) cancelEdit();
+    });
+
+    render();
+  </script>
+
+</body>
+</html>

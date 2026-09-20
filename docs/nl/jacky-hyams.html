@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jacky Hyams – Secretary to Sunday Mirror News Desk – The Heritage of Fleet Street</title>
+  <meta name="description" content="Jacky Hyams – Secretary to Sunday Mirror News Desk">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fsh-blue:   #254760;
+      --fsh-yellow: #FFFF66;
+      --fsh-white:  #ffffff;
+      --bar-full:   4rem;
+      --bar-compact: 2.75rem;
+      --transition: 0.3s ease;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      min-height: 100dvh;
+    }
+
+    /* ── Header bar (matches the PDF wrapper) ──────────────── */
+    #fsh-bar {
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1rem;
+      height: var(--bar-full);
+      transition: height var(--transition);
+      flex-shrink: 0;
+      overflow: hidden;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+    }
+
+    body.returning #fsh-bar {
+      height: var(--bar-compact);
+    }
+
+    #fsh-bar .site-title {
+      font-size: 1rem;
+      font-weight: bold;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    body.returning #fsh-bar .site-title {
+      font-size: 0.85rem;
+    }
+
+    #fsh-bar a.site-title,
+    #fsh-bar a.site-title:hover,
+    #fsh-bar a.site-title:focus {
+      border: none;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+    }
+
+    #fsh-bar .page-title {
+      font-size: 0.9rem;
+      color: var(--fsh-yellow);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    body.returning #fsh-bar .page-title {
+      font-size: 0.8rem;
+    }
+
+    #fsh-bar nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    #fsh-bar a, #fsh-bar button {
+      color: var(--fsh-white);
+      text-decoration: none;
+      font-size: 0.8rem;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 3px;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    #fsh-bar a:hover, #fsh-bar button:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.7);
+    }
+
+    #audio-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    audio {
+      height: 1.6rem;
+      max-width: 10rem;
+    }
+
+    .unavailable { display: none !important; }
+
+    /* ── Skip link (accessibility) ───────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* ── Story content ──────────────────────────────────── */
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .story h1 {
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      margin-bottom: 0.25rem;
+    }
+
+    .story h2 {
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--fsh-yellow);
+      margin-bottom: 1.5rem;
+    }
+
+    .story p {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1.1rem;
+    }
+
+    .story a {
+      color: var(--fsh-yellow);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .story hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.25);
+      margin: 1.75rem 0;
+    }
+
+    .story img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 1.5rem auto;
+      border-radius: 4px;
+    }
+
+    .story .small { font-size: 0.8rem; }
+    .story .muted { opacity: 0.65; }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#story-content">Skip to content</a>
+
+  <header id="fsh-bar" role="banner">
+
+    <a class="site-title" href="../index.html" aria-label="The Heritage of Fleet Street">The Heritage of Fleet Street</a>
+
+    <span class="page-title" aria-current="page">Jacky Hyams – Secretary to Sunday Mirror News Desk</span>
+
+    <nav aria-label="Page controls">
+
+      <!-- Audio player — hidden if no audio file for this page -->
+      <div id="audio-wrap" class="unavailable" aria-label="Audio narration">
+        <audio id="audio-player" controls preload="none" aria-label="Listen to narration">
+          <source src="../audio/401.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+      <!-- Prev / Next -->
+      <a id="nav-prev" href="reuters.html" aria-label="Previous page">&#8592; Prev</a>
+      <a id="nav-next" href="neil-murray.html" aria-label="Next page">Next &#8594;</a>
+
+      <!-- Home -->
+      <a href="../index.html" aria-label="Return to home page">Home</a>
+
+    </nav>
+  </header>
+
+  <main id="story-content">
+    <article class="story">
+<h1 class="col-title">Jacky Hyams</h1>
+<h2 class="col-title col-title-loud">Secretary to Sunday Mirror News Desk</h2>
+<p>I was born just after WW2 ended and inherited a strong passion for London's history from my father. Growing up in Hackney, a mere bus ride away from central London, meant my teens and twenties were spent in a series of secretarial jobs in and around Soho and the West End. Nothing seemed to stick. I job hopped for years. But in the early 1970s a brief, intense affair with a thirtyish Fleet Street reporter, a 'casual' working at the Daily Express Art Deco building in the heart of the Street and the Evening News, just off the Street in Carmelite Street, kickstarted my aspiration to actually work there. Trotting down those narrow, crowded streets to meet him after his shift fired my imagination as never before. Here was the very heart of the action, where everything of significance could be fed, day and night, into millions of homes.</p>
+<p>The relationship fizzled out. I remained determined to get into the fray, be part of the inky enterprise. 'I work in Fleet Street' seemed like an accolade, even a badge of honour. There were hundreds of Central London secretarial jobs around. But there were no secretarial jobs advertised in any of the big nationals. How come? An employment agency woman set me straight. All the best secretarial jobs in Fleet Street were advertised internally. The jobs were so good, the girls didn't leave. Back then, the mighty trade unions held sway. First I had to find a secretarial job within the print environment itself. That way I'd be required join the appropriate print union – Natsopa - and only then, as a union worker, would I be eligible to apply for my coveted Fleet Street job.</p>
+<p>I toiled in the boring planning section of the former IPC magazines in Covent Garden. After six months I scanned the advertised internal jobs, posted weekly outside the huge lifts on the ground floor. Secretary to the news editor of the Sunday Mirror, housed in the huge Mirror building on High Holborn, sounded perfect. I went to 33 Holborn and briefly met the news editor, Monty Court. I passed muster. I was in!</p>
+<p>What I didn't understand that very first September day when I nervously took the fourth floor lift into the open plan Sunday Mirror newsroom was that I was half of a two girl news desk secretarial setup. (Overmanning was the order of the day courtesy of union diktat.) Sitting opposite me, perfectly tanned from her sunshine holiday, greeted by all with obvious pleasure, sat a very slim, beautifully attired girl around my age: Jenny Best.</p>
+<p>We'd work in tandem. Hers was the senior role. Could this work? I'd been around offices, knew the importance of getting on well with close colleagues. It didn't always pan out.</p>
+<p>Even on that first strange day, Jenny and Monty, a very lively, outspoken individual, had clearly bonded long ago. How could the new girl fit in? Would Jenny stay aloof, overprotective of her territory? Not a bit of it. Within days I understood that editorial life of the Sunday Mirror, whose circulation ran to five million, carried two significant drivers: humour and camaraderie were very much to the fore. Women, i.e. secretaries and a handful of female reporters, were, at that time, in the minority: all were treated with an old fashioned courtesy. And Jenny, whose rapier-like wit matched Monty's and often surpassed most of the young newsroom journalists, did not behave as Queen Bee. She briefed me on whatever I needed to know, shared it all, including the incessant witty asides. We were a team. I stayed at the news desk for three and a half years, Tuesday to Saturday, 10-6. Everything about the job suited me: the laughter, the pub culture, the unusual hours.</p>
+<p>The work was routine: typing memos, running off documents with an ancient spirit duplicator, a Banda, handling innumerable calls to the news desk via a green metal desk top console, directing the traffic: reporters calling in from a job, readers ringing for a host of reasons, often turning up at the downstairs reception. Every single call was handled with discretion and professionalism: we were a national newspaper with a huge audience of ordinary people. They all mattered. A Fleet Street pub, back then, was virtually an extension of the office. Ours was the Stab sited at the rear of the building. Inside its door the office camaraderie, the incessant banter and the gossipy, steamy world of journalists everywhere ebbed and flowed, day and night in a consistent stream of words, wit – and laughter. I loved it all. Yet instinct told me this was not where I should linger. A chance invitation from an Australian friend led to a snap decision: Jenny was starting a family, I would take my chances in Sydney; we farewelled the desk on the same day in March 1976. Nearly half a century later we still meet up, once a year, to recall those times. I had schemed to get in but the Sunday Mirror newsdesk was a wise choice: it propelled me onwards into a life I'd never dared dream of.</p>
+<img src="../images/JackyHyams.gif" alt="Jacky Hyams" class="col-img">
+<div class="small muted">© Jacky Hyams, 2023</div>
+    </article>
+  </main>
+
+  <script>
+    // ── Config (set per page) ──────────────────────────────
+    const PAGE_ID   = 'jacky-hyams';
+    const PAGE_NUM  = '401';
+    const HAS_AUDIO = false;
+
+    // ── Source code → readable label (for GA) ──────────────
+    const params = new URLSearchParams(window.location.search);
+    const src    = params.get('s') || '';
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
+
+    // ── Returning visitor detection ────────────────────────
+    const VISITED_KEY = 'fsh_visited';
+    if (localStorage.getItem(VISITED_KEY)) {
+      document.body.classList.add('returning');
+    } else {
+      localStorage.setItem(VISITED_KEY, '1');
+    }
+
+    // ── Audio ──────────────────────────────────────────────
+    if (HAS_AUDIO) {
+      const wrap = document.getElementById('audio-wrap');
+      wrap.classList.remove('unavailable');
+
+      document.getElementById('audio-player').addEventListener('play', () => {
+        gtag('event', 'audio_play', {
+          page_id: PAGE_ID,
+          page_num: PAGE_NUM,
+          src_param: expandSrc(src)
+        });
+      });
+    }
+
+    // ── GA page view with content group + source ───────────
+    gtag('event', 'page_view', {
+      page_id:       PAGE_ID,
+      page_num:      PAGE_NUM,
+      content_group: PAGE_NUM.substring(0, 1) + 'xx',
+      view:          'story',
+      src_param:     expandSrc(src)
+    });
+  </script>
+
+</body>
+</html>

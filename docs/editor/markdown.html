@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Markdown reference</title>
+  G-E01B51HMZL
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      background: #254760;
+      color: #fff;
+      padding: 2rem 1.5rem 4rem;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.6rem;
+      color: #FFFF66;
+      margin-bottom: 0.25rem;
+    }
+    .meta {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2rem;
+    }
+    .meta a { color: rgba(255,255,255,0.6); }
+    .meta a:hover { color: #FFFF66; }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      display: inline-block;
+      padding: 0.55rem 1.2rem;
+      background: #1a3450;
+      color: #FFFF66;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .nav-links a:hover { background: #0f2030; }
+    .workflow h2 {
+      font-size: 1.1rem;
+      color: #FFFF66;
+      margin: 1.8rem 0 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .workflow h3 {
+      font-size: 1.1rem;
+      color: #FFFF66;
+      margin: 1.8rem 0 0.5rem;
+    }
+    .workflow p  { margin-bottom: 0.7rem; color: rgba(255,255,255,0.9); }
+    .workflow a  { color: #FFFF66; text-decoration: underline; }
+    .workflow a:hover { text-decoration: none; }
+    .workflow ul, .workflow ol {
+      padding-left: 1.4rem;
+      margin-bottom: 0.8rem;
+      color: rgba(255,255,255,0.9);
+    }
+    .workflow li { margin-bottom: 0.3rem; }
+    .workflow strong { color: #fff; }
+    .workflow em { color: rgba(255,255,255,0.75); font-style: italic; }
+    .workflow hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      margin: 1.8rem 0;
+    }
+    .workflow code {
+      background: rgba(0,0,0,0.3);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+      font-family: Menlo, monospace;
+      font-size: 0.88em;
+    }
+    .workflow pre {
+      background: rgba(0,0,0,0.35);
+      border-radius: 5px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.8rem;
+      overflow-x: auto;
+    }
+    .workflow pre code {
+      background: none;
+      padding: 0;
+      font-size: 0.85em;
+      color: #cfe8ff;
+    }
+  </style>
+</head>
+<body>
+
+  <p style="margin-bottom:1.5rem"><a href="index.html" style="color:#FFFF66">← Editor home</a></p>
+  <h1>Markdown reference</h1>
+  <p class="meta">Generated 2026-09-20 11:57 UTC &nbsp;·&nbsp; <a href="pages.html">Pages listing →</a></p>
+
+  <div class="nav-links">
+    <a href="index_draft.html">View draft homepage →</a>
+    <a href="pages.html">Pages listing →</a>
+    <a href="markdown.html">Markdown reference →</a>
+  </div>
+
+  <div class="workflow">
+    <h1 class="col-title">Markdown reference</h1>
+<p>Quick guide to the formatting supported in content files.</p>
+<hr>
+<h3 class="col-heading">Headings</h3>
+<pre><code># Large display heading
+## Large heading in yellow capitals
+### Small section heading</code></pre>
+<p>Use <code>#</code> for a large bold heading (e.g. a big number or title). Use <code>##</code> for a large heading rendered in yellow capitals (e.g. an announcement). Use <code>###</code> for a smaller uppercase section label.</p>
+<hr>
+<h3 class="col-heading">Paragraphs</h3>
+<p>Just write text. Leave a blank line between paragraphs.</p>
+<pre><code>This is the first paragraph.
+
+This is the second paragraph.</code></pre>
+<hr>
+<h3 class="col-heading">Bold and italic</h3>
+<pre><code>**this is bold**
+*this is italic*</code></pre>
+<hr>
+<h3 class="col-heading">Links</h3>
+<pre><code>[link text](https://example.com)</code></pre>
+<hr>
+<h3 class="col-heading">Bullet lists</h3>
+<pre><code>- First item
+- Second item
+- Third item</code></pre>
+<hr>
+<h3 class="col-heading">Images</h3>
+<pre><code>![description of image](filename.jpg)</code></pre>
+<p>The image file must exist in the images folder.</p>
+<p>Linked image (tapping opens a URL):</p>
+<pre><code>[![description](filename.jpg)](https://example.com)</code></pre>
+<hr>
+<h3 class="col-heading">Layout and style</h3>
+<p>Wrap content in <code>&lt;div class=&quot;...&quot;&gt;</code> and <code>&lt;/div&gt;</code> to apply a style. Available classes:</p>
+<ul class="col-list"><li><code>center</code> — centre-align the content</li><li><code>jumbo</code> — very large yellow text, for a big number or display word</li><li><code>small</code> — smaller text, useful for captions</li><li><code>accent</code> — yellow text for emphasis</li><li><code>muted</code> — dimmed text for secondary content</li><li><code>box</code> — draws a bordered box around the content</li></ul>
+<p>Classes can be combined, e.g. <code>&lt;div class=&quot;center small&quot;&gt;</code>.</p>
+<p>Example — a centred caption beneath an image:</p>
+<pre><code>![description](image.jpg)
+
+&lt;div class=&quot;center small&quot;&gt;
+Caption text here
+&lt;/div&gt;</code></pre>
+<p>Example — a callout box:</p>
+<pre><code>&lt;div class=&quot;box&quot;&gt;
+Tickets available now — see the events page for details
+&lt;/div&gt;</code></pre>
+<hr>
+<h3 class="col-heading">Notes</h3>
+<ul class="col-list"><li>Links will appear yellow and underlined, wherever they are used</li><li>Leave the file empty if you don't want that block to appear on the page</li></ul>
+  </div>
+
+</body>
+</html>

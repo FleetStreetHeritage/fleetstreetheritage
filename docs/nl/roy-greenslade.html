@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roy Greenslade – Sub-editor – The Heritage of Fleet Street</title>
+  <meta name="description" content="Roy Greenslade – Sub-editor">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E01B51HMZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E01B51HMZL');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fsh-blue:   #254760;
+      --fsh-yellow: #FFFF66;
+      --fsh-white:  #ffffff;
+      --bar-full:   4rem;
+      --bar-compact: 2.75rem;
+      --transition: 0.3s ease;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      min-height: 100dvh;
+    }
+
+    /* ── Header bar (matches the PDF wrapper) ──────────────── */
+    #fsh-bar {
+      background: var(--fsh-blue);
+      color: var(--fsh-white);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1rem;
+      height: var(--bar-full);
+      transition: height var(--transition);
+      flex-shrink: 0;
+      overflow: hidden;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+    }
+
+    body.returning #fsh-bar {
+      height: var(--bar-compact);
+    }
+
+    #fsh-bar .site-title {
+      font-size: 1rem;
+      font-weight: bold;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    body.returning #fsh-bar .site-title {
+      font-size: 0.85rem;
+    }
+
+    #fsh-bar a.site-title,
+    #fsh-bar a.site-title:hover,
+    #fsh-bar a.site-title:focus {
+      border: none;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+    }
+
+    #fsh-bar .page-title {
+      font-size: 0.9rem;
+      color: var(--fsh-yellow);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    body.returning #fsh-bar .page-title {
+      font-size: 0.8rem;
+    }
+
+    #fsh-bar nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    #fsh-bar a, #fsh-bar button {
+      color: var(--fsh-white);
+      text-decoration: none;
+      font-size: 0.8rem;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 3px;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    #fsh-bar a:hover, #fsh-bar button:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.7);
+    }
+
+    #audio-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    audio {
+      height: 1.6rem;
+      max-width: 10rem;
+    }
+
+    .unavailable { display: none !important; }
+
+    /* ── Skip link (accessibility) ───────────────────────── */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--fsh-yellow);
+      color: var(--fsh-blue);
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* ── Story content ──────────────────────────────────── */
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .story h1 {
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      margin-bottom: 0.25rem;
+    }
+
+    .story h2 {
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--fsh-yellow);
+      margin-bottom: 1.5rem;
+    }
+
+    .story p {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1.1rem;
+    }
+
+    .story a {
+      color: var(--fsh-yellow);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .story hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.25);
+      margin: 1.75rem 0;
+    }
+
+    .story img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 1.5rem auto;
+      border-radius: 4px;
+    }
+
+    .story .small { font-size: 0.8rem; }
+    .story .muted { opacity: 0.65; }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#story-content">Skip to content</a>
+
+  <header id="fsh-bar" role="banner">
+
+    <a class="site-title" href="../index.html" aria-label="The Heritage of Fleet Street">The Heritage of Fleet Street</a>
+
+    <span class="page-title" aria-current="page">Roy Greenslade – Sub-editor</span>
+
+    <nav aria-label="Page controls">
+
+      <!-- Audio player — hidden if no audio file for this page -->
+      <div id="audio-wrap" class="unavailable" aria-label="Audio narration">
+        <audio id="audio-player" controls preload="none" aria-label="Listen to narration">
+          <source src="../audio/405.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+      <!-- Prev / Next -->
+      <a id="nav-prev" href="paddy-ogara.html" aria-label="Previous page">&#8592; Prev</a>
+      <a id="nav-next" href="paul-duffett.html" aria-label="Next page">Next &#8594;</a>
+
+      <!-- Home -->
+      <a href="../index.html" aria-label="Return to home page">Home</a>
+
+    </nav>
+  </header>
+
+  <main id="story-content">
+    <article class="story">
+<h1 class="col-title">Roy Greenslade</h1>
+<h2 class="col-title col-title-loud">Sub-editor</h2>
+<p>In the mid-1960s, as a junior reporter on a weekly paper far into the East End, I wanted nothing more in life than to work in Fleet Street. I got my first taste when delivering photos to the Daily Express picture desk on behalf of a freelance agency. I was smitten straight away by the atmosphere, both in the bustling office and in the busy side-streets. I called in at a pub (which I later discovered was known as Aunties) and nursed a half pint while eavesdropping snatches of conversation. It was the beginning of a romance with the Street which lasted for the following 25 years.</p>
+<p>I didn't get to work there until the end of 1969, when, aged just 22, I landed a sub-editor's job on Rupert Murdoch's relaunched Sun. I was lucky. Murdoch had appointed Larry Lamb as his first editor and I happened to be working under Larry in the Daily Mail's northern office in Manchester. He knew what I could do, and transported me to Fleet Street. I had reached my goal. Everything about the area – the sights, the sounds and the smell – was intoxicating. No matter that the lorries delivering newsprint by day and collecting papers by night were filling the air with lead. No matter that thousands of ink-stained print-workers toiled night after night in conditions that Dickens would have deplored a century before. No matter that newspaper canteens were disgusting, as was the greasy Mick's Café. The romance eclipsed the reality.</p>
+<p>In this village within a city, with its ceaseless 24-hour production cycle, there was never a moment when the lanes of Fetter, Shoe and Chancery, and the streets of Bouverie, Whitefriars and Tudor, were not alive with people. Everyone seemed to know each other. Not only did every paper have its preferred pub, so did each section within each paper, reporters drinking in one and sub-editors in another. Journalists from rival titles often mixed together, swapping gossip, telling tales, bellyaching about their bosses. At The Sun, the Tipperary was the most popular choice. When I joined the Daily Mirror, the White Hart – always known by its nickname, the Stab, short for 'stab in the back' – was the regular haunt. After the pubs closed, there was the Press Club, then in Salisbury Court, which was reliably open until at least 3am.</p>
+<p>However, it was not drink that made Fleet Street unique; it was ink. Untold gallons of it flowed across the metal plates on the printing presses. Plenty was used in the compositing room. Lots of it ended up on the fingers of subs designated to work 'on the stone', where the pages were assembled from hot metal slugs of copy straight off the Linotype machines. There were thousands of us – a highly specialised, skilled, segmented work-force – engaged in inner London's last manufacturing industry. Seven days a week we produced millions of newspapers, a unique enterprise that imbued us with a sense of specialness. And, given that newspaper production in Fleet Street had a history stretching back to the early 18th century, we couldn't imagine it changing.</p>
+<p>But, by the late 1970s, it was clear that change was not only possible, it was necessary. Across Britain, weekly local and daily regional papers were being produced more cheaply and more efficiently with the use of computers. There was no need for each paper to have a huge workforce. Just as importantly, proprietors and editors were eager to improve profitability by curbing the power of the print unions which had, over the years, used their muscle to ensure their members' earnings were the highest in the land.</p>
+<p>At the personal level, as with all love affairs, mine gradually faded as the years passed. In getting used to the place, I saw its flaws, most obviously in the filthy and hopelessly out-dated print works. I visited newspaper offices where 'new technology', as it was then called, had transformed production for the better. It was cleaner and more streamlined. Although I understood the reasons for the unions' intransigence, because their crafts and skills were eliminated by the new processes, they were standing in the way of progress. It was also the case, at The Sun, that print-workers had twice ignored picket lines during strikes by the National Union of Journalists. Without their support, the NUJ's cause was lost. Unsurprising then that when it came to decide whether we should decamp from Bouverie Street to Murdoch's 'fortress' in Wapping, the NUJ vote was overwhelmingly in favour. So, in January 1986, I said farewell to Fleet Street, to the Tipperary, the Printer's Pie, the Cheshire Cheese, El Vino, the Press Club, the restaurants, the alleyways, and that familiar smell of ink. The end of my dreaming on the Street of a Thousand Dreams.</p>
+<hr>
+<p>Roy was later Managing Editor (News) at the Sunday Times (1987-89); editor of the Daily Mirror (1990-91); and media commentator for The Guardian (1992-2020). He is the author of four books, including a history of national newspapers, <em>Press Gang</em>.</p>
+<div class="small muted">© Roy Greenslade, 2023</div>
+    </article>
+  </main>
+
+  <script>
+    // ── Config (set per page) ──────────────────────────────
+    const PAGE_ID   = 'roy-greenslade';
+    const PAGE_NUM  = '405';
+    const HAS_AUDIO = false;
+
+    // ── Source code → readable label (for GA) ──────────────
+    const params = new URLSearchParams(window.location.search);
+    const src    = params.get('s') || '';
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
+
+    // ── Returning visitor detection ────────────────────────
+    const VISITED_KEY = 'fsh_visited';
+    if (localStorage.getItem(VISITED_KEY)) {
+      document.body.classList.add('returning');
+    } else {
+      localStorage.setItem(VISITED_KEY, '1');
+    }
+
+    // ── Audio ──────────────────────────────────────────────
+    if (HAS_AUDIO) {
+      const wrap = document.getElementById('audio-wrap');
+      wrap.classList.remove('unavailable');
+
+      document.getElementById('audio-player').addEventListener('play', () => {
+        gtag('event', 'audio_play', {
+          page_id: PAGE_ID,
+          page_num: PAGE_NUM,
+          src_param: expandSrc(src)
+        });
+      });
+    }
+
+    // ── GA page view with content group + source ───────────
+    gtag('event', 'page_view', {
+      page_id:       PAGE_ID,
+      page_num:      PAGE_NUM,
+      content_group: PAGE_NUM.substring(0, 1) + 'xx',
+      view:          'story',
+      src_param:     expandSrc(src)
+    });
+  </script>
+
+</body>
+</html>
