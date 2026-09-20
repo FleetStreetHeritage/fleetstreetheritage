@@ -12,7 +12,8 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-ZP7L32M9GB');
+    // send_page_view off: the enriched page_view below is the only one
+    gtag('config', 'G-ZP7L32M9GB', { send_page_view: false });
   </script>
 
   <style>

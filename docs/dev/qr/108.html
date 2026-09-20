@@ -11,7 +11,8 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-ZP7L32M9GB');
+    // send_page_view off: a scan is counted by qr_scan, not as a page view
+    gtag('config', 'G-ZP7L32M9GB', { send_page_view: false });
   </script>
 </head>
 <body>

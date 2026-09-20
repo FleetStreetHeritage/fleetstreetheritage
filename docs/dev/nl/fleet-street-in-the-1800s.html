@@ -12,7 +12,8 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-ZP7L32M9GB');
+    // send_page_view off: the enriched page_view below is the only one
+    gtag('config', 'G-ZP7L32M9GB', { send_page_view: false });
   </script>
 
   <style>
@@ -430,13 +431,16 @@
     }
 
     // ── GA page view with content group + source ───────────
-    gtag('event', 'page_view', {
-      page_id:       PAGE_ID,
-      page_num:      PAGE_NUM,
-      content_group: PAGE_NUM.substring(0, 1) + 'xx',
-      view:          targetView,
-      src_param:     expandSrc(src)
-    });
+    // Skipped when redirecting to Easy Read above — that page logs its own
+    if (!(targetView === 'easy' && HAS_EASY)) {
+      gtag('event', 'page_view', {
+        page_id:       PAGE_ID,
+        page_num:      PAGE_NUM,
+        content_group: PAGE_NUM.substring(0, 1) + 'xx',
+        view:          targetView,
+        src_param:     expandSrc(src)
+      });
+    }
   </script>
 
 </body>
