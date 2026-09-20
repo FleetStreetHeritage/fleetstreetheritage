@@ -12,7 +12,8 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', '<!-- GA_ID -->');
+    // send_page_view off: the enriched page_view below is the only one
+    gtag('config', '<!-- GA_ID -->', { send_page_view: false });
   </script>
 
   <style>
