@@ -35,6 +35,9 @@ QR_DIR     = OUTPUT_DIR / 'qr'
 PDFS_DIR   = OUTPUT_DIR / 'pdfs'
 AUDIO_DIR  = OUTPUT_DIR / 'audio'
 DEV_PDFS_DIR = REPO_ROOT / 'docs' / 'dev' / 'pdfs'  # source for sync_prod_pdfs()
+IMAGES_DIR     = OUTPUT_DIR / 'images'
+DEV_IMAGES_DIR = REPO_ROOT / 'docs' / 'dev' / 'images'  # source for sync_prod_images()
+IMAGE_EXTENSIONS = ('*.jpg', '*.jpeg', '*.png', '*.gif', '*.svg', '*.webp')
 STORIES_DIR  = SCRIPT_DIR.parent / 'content' / 'stories'  # markdown source for story-type pages
 ADMIN_DIR  = OUTPUT_DIR / 'admin'
 EDITOR_DIR = OUTPUT_DIR / 'editor'
@@ -255,6 +258,30 @@ def sync_prod_pdfs():
     print(msg + (f", removed {removed} stale)" if removed else ")"))
 
 
+def sync_prod_images():
+    """In prod mode, mirror docs/dev/images/ into the prod IMAGES_DIR — same
+    reasoning as sync_prod_pdfs(): homepage content and story pages reference
+    images/<file>, which needs to resolve at the prod path too."""
+    if not PROD_MODE:
+        return
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    src_names = {f.name for ext in IMAGE_EXTENSIONS for f in DEV_IMAGES_DIR.glob(ext)}
+    for name in src_names:
+        shutil.copy2(DEV_IMAGES_DIR / name, IMAGES_DIR / name)
+    removed = 0
+    for ext in IMAGE_EXTENSIONS:
+        for f in IMAGES_DIR.glob(ext):
+            if f.name not in src_names:
+                f.unlink()
+                removed += 1
+    try:
+        images_label = IMAGES_DIR.relative_to(REPO_ROOT)
+    except ValueError:
+        images_label = IMAGES_DIR
+    msg = f"  synced {images_label}/ from docs/dev/images/ ({len(src_names)} files"
+    print(msg + (f", removed {removed} stale)" if removed else ")"))
+
+
 def generate_index(pages):
     """Generate the homepage from published content/ blocks."""
     archive_existing_index()
@@ -451,6 +478,7 @@ def main():
         d.mkdir(parents=True, exist_ok=True)
 
     sync_prod_pdfs()
+    sync_prod_images()
 
     counts = {'nl': 0, 'easy': 0, 'qr': 0}
 
