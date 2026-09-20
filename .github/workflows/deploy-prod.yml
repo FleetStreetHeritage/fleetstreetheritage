@@ -50,7 +50,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/index.html docs/nl/ docs/easy/ docs/qr/ docs/admin/ docs/editor/ docs/pdfs/ archived_index_pages/
+          git add docs/index.html docs/nl/ docs/easy/ docs/qr/ docs/admin/ docs/editor/ docs/pdfs/ docs/images/ archived_index_pages/
           if git diff --cached --quiet; then
             echo "Nothing to commit — production is already up to date"
           else
