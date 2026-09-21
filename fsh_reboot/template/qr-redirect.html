@@ -11,8 +11,11 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+    // Source code → readable label, and → GA's own traffic source, so a QR
+    // arrival is attributed to Wall/Leaflet/… for the whole visit
+    <!-- SRC_MAP_JS -->
     // send_page_view off: a scan is counted by qr_scan, not as a page view
-    gtag('config', '<!-- GA_ID -->', { send_page_view: false });
+    gtag('config', '<!-- GA_ID -->', Object.assign({ send_page_view: false }, srcCampaign()));
   </script>
 </head>
 <body>
@@ -34,8 +37,6 @@
     const vParam = params.get('v') || '';
     const fParam = parseInt(params.get('f') ?? '0', 10);
 
-    // ── Source code → readable label (for GA) ──────────────
-    <!-- SRC_MAP_JS -->
 
     // ── Resolve view ───────────────────────────────────────
     const STORAGE_KEY = 'fsh_view';

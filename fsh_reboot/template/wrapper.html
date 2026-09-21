@@ -12,8 +12,11 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+    // Source code → readable label, and → GA's own traffic source, so a QR
+    // arrival is attributed to Wall/Leaflet/… for the whole visit
+    <!-- SRC_MAP_JS -->
     // send_page_view off: the enriched page_view below is the only one
-    gtag('config', '<!-- GA_ID -->', { send_page_view: false });
+    gtag('config', '<!-- GA_ID -->', Object.assign({ send_page_view: false }, srcCampaign()));
   </script>
 
   <style>
@@ -232,8 +235,6 @@
     const vParam      = params.get('v') || '';
     const fParam      = parseInt(params.get('f') ?? '0', 10);
 
-    // ── Source code → readable label (for GA) ──────────────
-    <!-- SRC_MAP_JS -->
 
     function getStoredView() {
       return localStorage.getItem(STORAGE_KEY) || '';

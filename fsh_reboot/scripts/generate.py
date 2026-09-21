@@ -87,13 +87,27 @@ SRC_LABELS = {
     'bk': 'Book',
 }
 
+# Codes that must NOT become GA's traffic source: 'in' would overwrite the
+# visitor's real arrival route mid-visit, and for 'wb' GA's own record of the
+# referring site is more useful than a generic "web". Both still reach GA as
+# src_param. Every other code (including unrecognised ones) is passed to GA
+# as campaign_source, so first-arrival and per-visit source reports work.
+SRC_NOT_A_CAMPAIGN = {'in', 'wb'}
+
 def src_map_js():
-    """JS snippet: SRC_LABELS lookup + expandSrc() helper. Any unrecognised
+    """JS snippet: SRC_LABELS lookup + expandSrc() + srcCampaign() helpers
+    (injected in the GA head script, before gtag config). Any unrecognised
     code passes through as-is, so a typo stays visible in GA instead of
     vanishing silently."""
     labels = json.dumps(SRC_LABELS, separators=(',', ':'))
+    skip   = json.dumps(sorted(SRC_NOT_A_CAMPAIGN))
     return (f"const SRC_LABELS = {labels};\n"
-            f"    function expandSrc(code) {{ return code ? (SRC_LABELS[code] || code) : ''; }}")
+            f"    function expandSrc(code) {{ return code ? (SRC_LABELS[code] || code) : ''; }}\n"
+            f"    function srcCampaign() {{\n"
+            f"      const code = new URLSearchParams(window.location.search).get('s');\n"
+            f"      if (!code || {skip}.includes(code)) return {{}};\n"
+            f"      return {{ campaign_source: expandSrc(code).toLowerCase(), campaign_medium: 'qr' }};\n"
+            f"    }}")
 
 def easy_pdf_filename(page):
     """Easy Read PDF filename: E_ + the main PDF filename (override with an
