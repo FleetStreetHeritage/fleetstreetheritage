@@ -12,8 +12,17 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+    // Source code → readable label, and → GA's own traffic source, so a QR
+    // arrival is attributed to Wall/Leaflet/… for the whole visit
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
+    function srcCampaign() {
+      const code = new URLSearchParams(window.location.search).get('s');
+      if (!code || ["in", "wb"].includes(code)) return {};
+      return { campaign_source: expandSrc(code).toLowerCase(), campaign_medium: 'qr' };
+    }
     // send_page_view off: the enriched page_view below is the only one
-    gtag('config', 'G-ZP7L32M9GB', { send_page_view: false });
+    gtag('config', 'G-ZP7L32M9GB', Object.assign({ send_page_view: false }, srcCampaign()));
   </script>
 
   <style>
@@ -247,8 +256,6 @@
     // ── Source code → readable label (for GA) ──────────────
     const params = new URLSearchParams(window.location.search);
     const src    = params.get('s') || '';
-    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
-    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
 
     // ── Returning visitor detection ────────────────────────
     const VISITED_KEY = 'fsh_visited';
