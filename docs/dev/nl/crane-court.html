@@ -165,6 +165,7 @@
       -webkit-overflow-scrolling: touch;
       touch-action: pan-x pan-y;   /* panel handles pinch itself */
     }
+    #pdf-pages { width: max-content; margin: 0 auto; }   /* centred when narrower than the view */
     .pdf-canvas { display: block; background: #B3B3B3; }
     .pdf-canvas + .pdf-canvas { margin-top: 0.4rem; }
     #pdf-msg { padding: 2rem; color: var(--fsh-blue); font-size: 0.9rem; }
@@ -349,10 +350,21 @@
       const canvases = [];
       let pdfDoc = null, userScale = 1, zoomed = false;
 
-      // Renders are serialised so a caller can await the one it asked for
+      // Scale 1 = fit the panel to the width of the view. On a wide screen
+      // the panel may be zoomed out (or opened) narrower than that, but
+      // never narrower than a comfortable reading width.
+      const READ_WIDTH = 760, OPEN_WIDTH = 1000;
+      const minScale   = () => Math.min(1, READ_WIDTH / wrap.clientWidth);
+      const openScale  = () => Math.max(minScale(), Math.min(1, OPEN_WIDTH / wrap.clientWidth));
+      const clampScale = s  => Math.min(4, Math.max(minScale(), s));
+
+      // Renders are serialised so a caller can await the one it asked for;
+      // a failed render is reported and must not block later ones
       let renderChain = Promise.resolve();
       function renderPage() {
-        renderChain = renderChain.then(renderAllPages);
+        renderChain = renderChain.then(renderAllPages).catch(err => {
+          console.error('PDF render failed', err);
+        });
         return renderChain;
       }
 
@@ -395,11 +407,11 @@
       // re-rendering, scroll so that point stays under the user's fingers.
       async function applyScale(scale, view, doc) {
         const prev = userScale;
-        userScale  = Math.min(4, Math.max(1, scale));   // never smaller than fit-width
-        zoomed     = userScale > 1.05;
-        zoomBtn.textContent = zoomed ? 'Fit width' : 'Zoom in';
+        userScale  = clampScale(scale);
+        zoomed     = userScale > openScale() * 1.05;
+        zoomBtn.textContent = zoomed ? 'Reset zoom' : 'Zoom in';
         zoomBtn.setAttribute('aria-label',
-          zoomed ? 'Fit PDF to screen width' : 'Zoom in on PDF');
+          zoomed ? 'Reset PDF to its opening size' : 'Zoom in on PDF');
         // Until the new render lands, show the old one scaled about the
         // anchor so the picture never disappears
         const f = userScale / prev;
@@ -420,7 +432,7 @@
 
       zoomBtn.addEventListener('click', () => {
         const view = viewCentre();
-        applyScale(zoomed ? 1 : 1.75, view, toDoc(view));
+        applyScale(zoomed ? openScale() : openScale() * 1.75, view, toDoc(view));
       });
 
       let pinchActive = false, pinchStartDist = 0, pinchBaseScale = 1;
@@ -452,8 +464,7 @@
         if (!pinchActive || e.touches.length !== 2) return;
         // Preview obeys the same limits as the final zoom, so it never
         // shrinks below fit-width and then snaps back on release
-        const ratio = Math.min(4 / pinchBaseScale,
-                      Math.max(1 / pinchBaseScale, touchDist(e) / pinchStartDist));
+        const ratio = clampScale(pinchBaseScale * touchDist(e) / pinchStartDist) / pinchBaseScale;
         pages.style.transform = `scale(${ratio})`;
       }, { passive: false });
       for (const t of ['gesturestart', 'gesturechange', 'gestureend']) {
@@ -473,7 +484,7 @@
           liveDoc  = toDoc(view);
           pages.style.transformOrigin = `${liveDoc.x}px ${liveDoc.y}px`;
         }
-        liveScale = Math.min(4, Math.max(1, target));
+        liveScale = clampScale(target);
         pages.style.transform = `scale(${liveScale / userScale})`;
         clearTimeout(liveTimer);
         liveTimer = setTimeout(() => {
@@ -482,6 +493,7 @@
         }, 150);
       }
       const pointIn = e => {
+        if (!Number.isFinite(e.clientX)) return viewCentre();
         const r = wrap.getBoundingClientRect();
         return { x: e.clientX - r.left, y: e.clientY - r.top };
       };
@@ -491,11 +503,17 @@
         const step = Math.max(-0.3, Math.min(0.3, -e.deltaY * 0.01));
         previewZoom((liveScale ?? userScale) * Math.exp(step), pointIn(e));
       }, { passive: false });
-      if (!('ontouchstart' in window)) {
-        let gestureBase = 1, gestureView;
-        wrap.addEventListener('gesturestart',  e => { gestureBase = userScale; gestureView = pointIn(e); });
-        wrap.addEventListener('gesturechange', e => previewZoom(gestureBase * e.scale, gestureView));
-      }
+      // iOS fires gesture events alongside the touch pinch above, which
+      // takes precedence; pinchActive tells the two apart.
+      let gestureBase = 1, gestureView;
+      wrap.addEventListener('gesturestart', e => {
+        if (pinchActive) return;
+        gestureBase = liveScale ?? userScale; gestureView = pointIn(e);
+      });
+      wrap.addEventListener('gesturechange', e => {
+        if (pinchActive || !Number.isFinite(e.scale)) return;
+        previewZoom(gestureBase * e.scale, gestureView);
+      });
       wrap.addEventListener('touchend', e => {
         if (!pinchActive || e.touches.length >= 2) return;
         pinchActive = false;
@@ -506,7 +524,9 @@
       let resizeTimer;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => { if (!zoomed) renderPage(); }, 200);
+        resizeTimer = setTimeout(() => {
+          if (!zoomed) { userScale = openScale(); renderPage(); }
+        }, 200);
       });
 
       const pdfjs = document.createElement('script');
@@ -516,6 +536,7 @@
           'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         try {
           pdfDoc = await pdfjsLib.getDocument(PDF_SRC).promise;
+          userScale = openScale();
           await renderPage();
           pages.hidden  = false;
           pdfMsg.hidden = true;
