@@ -39,7 +39,7 @@
 
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #f0f0f0;
+      background: #555;   /* shows below the panel on phones until there is a real footer */
       display: flex;
       flex-direction: column;
       height: 100dvh;
@@ -161,14 +161,14 @@
     /* Touch: PDF.js canvas */
     #pdf-wrap.touch {
       overflow: auto;
-      background: #555;
+      background: #B3B3B3;
       -webkit-overflow-scrolling: touch;
       touch-action: pan-x pan-y;   /* panel handles pinch itself */
     }
-    .pdf-canvas { display: block; }
+    .pdf-canvas { display: block; background: #B3B3B3; }
     .pdf-canvas + .pdf-canvas { margin-top: 0.4rem; }
-    #pdf-msg { padding: 2rem; color: #fff; font-size: 0.9rem; }
-    #pdf-msg a { color: var(--fsh-yellow); }
+    #pdf-msg { padding: 2rem; color: var(--fsh-blue); font-size: 0.9rem; }
+    #pdf-msg a { color: var(--fsh-blue); text-decoration: underline; }
 
     /* ── Skip link (accessibility) ───────────────────────── */
     .skip-link {
@@ -370,14 +370,23 @@
           }
           const baseVP   = page.getViewport({ scale: 1 });
           const fitScale = wrap.clientWidth / baseVP.width;
-          const viewport = page.getViewport({ scale: fitScale * userScale * dpr });
-          canvas.width        = Math.floor(viewport.width);
-          canvas.height       = Math.floor(viewport.height);
-          canvas.style.width  = Math.floor(viewport.width  / dpr) + 'px';
-          canvas.style.height = Math.floor(viewport.height / dpr) + 'px';
-          const ctx = canvas.getContext('2d');
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          await page.render({ canvasContext: ctx, viewport }).promise;
+          // iOS silently blanks a canvas above ~16.7M pixels; at full zoom
+          // on a 3x phone a panel would exceed that, so trade sharpness
+          // for a canvas that renders.
+          const cssW = baseVP.width * fitScale * userScale, cssH = baseVP.height * fitScale * userScale;
+          const res  = Math.min(dpr, Math.sqrt(16e6 / (cssW * cssH)));
+          const viewport = page.getViewport({ scale: fitScale * userScale * res });
+          // Render off-screen, then copy in one step, so the visible canvas
+          // keeps showing the old image instead of going blank mid-render
+          const off  = document.createElement('canvas');
+          off.width  = Math.floor(viewport.width);
+          off.height = Math.floor(viewport.height);
+          await page.render({ canvasContext: off.getContext('2d'), viewport }).promise;
+          canvas.width        = off.width;
+          canvas.height       = off.height;
+          canvas.style.width  = Math.floor(off.width  / res) + 'px';
+          canvas.style.height = Math.floor(off.height / res) + 'px';
+          canvas.getContext('2d').drawImage(off, 0, 0);
         }
       }
 
@@ -391,8 +400,13 @@
         zoomBtn.textContent = zoomed ? 'Fit width' : 'Zoom in';
         zoomBtn.setAttribute('aria-label',
           zoomed ? 'Fit PDF to screen width' : 'Zoom in on PDF');
-        await renderPage();
+        // Until the new render lands, show the old one scaled about the
+        // anchor so the picture never disappears
         const f = userScale / prev;
+        pages.style.transformOrigin = `${doc.x}px ${doc.y}px`;
+        pages.style.transform       = `scale(${f})`;
+        await renderPage();
+        pages.style.transform = '';
         wrap.scrollLeft = doc.x * f - view.x;
         wrap.scrollTop  = doc.y * f - view.y;
       }
@@ -436,7 +450,11 @@
       wrap.addEventListener('touchmove', e => {
         if (e.touches.length === 2) e.preventDefault();
         if (!pinchActive || e.touches.length !== 2) return;
-        pages.style.transform = `scale(${touchDist(e) / pinchStartDist})`;
+        // Preview obeys the same limits as the final zoom, so it never
+        // shrinks below fit-width and then snaps back on release
+        const ratio = Math.min(4 / pinchBaseScale,
+                      Math.max(1 / pinchBaseScale, touchDist(e) / pinchStartDist));
+        pages.style.transform = `scale(${ratio})`;
       }, { passive: false });
       for (const t of ['gesturestart', 'gesturechange', 'gestureend']) {
         wrap.addEventListener(t, e => e.preventDefault());
@@ -445,7 +463,6 @@
         if (!pinchActive || e.touches.length >= 2) return;
         pinchActive = false;
         const match = pages.style.transform.match(/scale\(([^)]+)\)/);
-        pages.style.transform = '';
         applyScale(pinchBaseScale * (match ? parseFloat(match[1]) : 1), pinchView, pinchDoc);
       }, { passive: true });
 
