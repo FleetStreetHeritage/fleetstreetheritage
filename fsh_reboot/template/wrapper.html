@@ -370,13 +370,17 @@
           const cssW = baseVP.width * fitScale * userScale, cssH = baseVP.height * fitScale * userScale;
           const res  = Math.min(dpr, Math.sqrt(16e6 / (cssW * cssH)));
           const viewport = page.getViewport({ scale: fitScale * userScale * res });
-          canvas.width        = Math.floor(viewport.width);
-          canvas.height       = Math.floor(viewport.height);
-          canvas.style.width  = Math.floor(viewport.width  / res) + 'px';
-          canvas.style.height = Math.floor(viewport.height / res) + 'px';
-          const ctx = canvas.getContext('2d');
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          await page.render({ canvasContext: ctx, viewport }).promise;
+          // Render off-screen, then copy in one step, so the visible canvas
+          // keeps showing the old image instead of going blank mid-render
+          const off  = document.createElement('canvas');
+          off.width  = Math.floor(viewport.width);
+          off.height = Math.floor(viewport.height);
+          await page.render({ canvasContext: off.getContext('2d'), viewport }).promise;
+          canvas.width        = off.width;
+          canvas.height       = off.height;
+          canvas.style.width  = Math.floor(off.width  / res) + 'px';
+          canvas.style.height = Math.floor(off.height / res) + 'px';
+          canvas.getContext('2d').drawImage(off, 0, 0);
         }
       }
 
@@ -390,8 +394,13 @@
         zoomBtn.textContent = zoomed ? 'Fit width' : 'Zoom in';
         zoomBtn.setAttribute('aria-label',
           zoomed ? 'Fit PDF to screen width' : 'Zoom in on PDF');
-        await renderPage();
+        // Until the new render lands, show the old one scaled about the
+        // anchor so the picture never disappears
         const f = userScale / prev;
+        pages.style.transformOrigin = `${doc.x}px ${doc.y}px`;
+        pages.style.transform       = `scale(${f})`;
+        await renderPage();
+        pages.style.transform = '';
         wrap.scrollLeft = doc.x * f - view.x;
         wrap.scrollTop  = doc.y * f - view.y;
       }
@@ -448,7 +457,6 @@
         if (!pinchActive || e.touches.length >= 2) return;
         pinchActive = false;
         const match = pages.style.transform.match(/scale\(([^)]+)\)/);
-        pages.style.transform = '';
         applyScale(pinchBaseScale * (match ? parseFloat(match[1]) : 1), pinchView, pinchDoc);
       }, { passive: true });
 
