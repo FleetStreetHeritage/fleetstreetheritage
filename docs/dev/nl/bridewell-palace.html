@@ -164,7 +164,8 @@
       background: #555;
       -webkit-overflow-scrolling: touch;
     }
-    #pdf-canvas { display: block; }
+    .pdf-canvas { display: block; }
+    .pdf-canvas + .pdf-canvas { margin-top: 0.4rem; }
     #pdf-msg { padding: 2rem; color: #fff; font-size: 0.9rem; }
     #pdf-msg a { color: var(--fsh-yellow); }
 
@@ -319,45 +320,59 @@
       });
     }
 
-    // ── PDF rendering (touch = PDF.js canvas; desktop = iframe) ──
+    // ── PDF rendering (PDF.js canvas on every device) ──────
+    // The native iframe is not used by default: browsers set to download
+    // PDFs (a Chrome option, often forced on managed Windows PCs) download
+    // the file instead of displaying it. ?pdf=native restores the iframe.
     const PDF_SRC = '../pdfs/158_BridewellPalace.pdf';
     const wrap    = document.getElementById('pdf-wrap');
     const zoomBtn = document.getElementById('zoom-toggle');
 
-    if ('ontouchstart' in window) {
-      // ── Touch: PDF.js canvas ───────────────────────────────
+    if (params.get('pdf') !== 'native') {
+      // ── PDF.js: one canvas per page, stacked ──────────────
       wrap.classList.add('touch');
+      wrap.tabIndex = 0;   // keyboard scrolling of the panel
 
       const pdfMsg = document.createElement('p');
       pdfMsg.id = 'pdf-msg';
       pdfMsg.textContent = 'Loading…';
       wrap.appendChild(pdfMsg);
 
-      const canvas = document.createElement('canvas');
-      canvas.id = 'pdf-canvas';
-      canvas.tabIndex = 0;
-      canvas.setAttribute('aria-label', 'Bridewell Palace – information panel');
-      canvas.hidden = true;
-      wrap.appendChild(canvas);
+      const pages = document.createElement('div');
+      pages.id = 'pdf-pages';
+      pages.setAttribute('role', 'img');
+      pages.setAttribute('aria-label', 'Bridewell Palace – information panel');
+      pages.hidden = true;
+      wrap.appendChild(pages);
 
-      const pdfCtx = canvas.getContext('2d');
+      const canvases = [];
       let pdfDoc = null, userScale = 1, zoomed = false, busy = false, queued = false;
 
       async function renderPage() {
         if (!pdfDoc) return;
         if (busy) { queued = true; return; }
         busy = true;
-        const page     = await pdfDoc.getPage(1);
-        const dpr      = window.devicePixelRatio || 1;
-        const baseVP   = page.getViewport({ scale: 1 });
-        const fitScale = wrap.clientWidth / baseVP.width;
-        const viewport = page.getViewport({ scale: fitScale * userScale * dpr });
-        canvas.width        = Math.floor(viewport.width);
-        canvas.height       = Math.floor(viewport.height);
-        canvas.style.width  = Math.floor(viewport.width  / dpr) + 'px';
-        canvas.style.height = Math.floor(viewport.height / dpr) + 'px';
-        pdfCtx.clearRect(0, 0, canvas.width, canvas.height);
-        await page.render({ canvasContext: pdfCtx, viewport }).promise;
+        const dpr = window.devicePixelRatio || 1;
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+          const page = await pdfDoc.getPage(i);
+          let canvas = canvases[i - 1];
+          if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.className = 'pdf-canvas';
+            pages.appendChild(canvas);
+            canvases.push(canvas);
+          }
+          const baseVP   = page.getViewport({ scale: 1 });
+          const fitScale = wrap.clientWidth / baseVP.width;
+          const viewport = page.getViewport({ scale: fitScale * userScale * dpr });
+          canvas.width        = Math.floor(viewport.width);
+          canvas.height       = Math.floor(viewport.height);
+          canvas.style.width  = Math.floor(viewport.width  / dpr) + 'px';
+          canvas.style.height = Math.floor(viewport.height / dpr) + 'px';
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          await page.render({ canvasContext: ctx, viewport }).promise;
+        }
         busy = false;
         if (queued) { queued = false; renderPage(); }
       }
@@ -391,14 +406,14 @@
         const dist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY);
-        canvas.style.transform       = `scale(${dist / pinchStartDist})`;
-        canvas.style.transformOrigin = 'top left';
+        pages.style.transform       = `scale(${dist / pinchStartDist})`;
+        pages.style.transformOrigin = 'top left';
       }, { passive: true });
       wrap.addEventListener('touchend', e => {
         if (!pinchActive || e.touches.length >= 2) return;
         pinchActive = false;
-        const match = canvas.style.transform.match(/scale\(([^)]+)\)/);
-        canvas.style.transform = '';
+        const match = pages.style.transform.match(/scale\(([^)]+)\)/);
+        pages.style.transform = '';
         applyScale(pinchBaseScale * (match ? parseFloat(match[1]) : 1));
       }, { passive: true });
 
@@ -416,17 +431,21 @@
         try {
           pdfDoc = await pdfjsLib.getDocument(PDF_SRC).promise;
           await renderPage();
-          canvas.hidden = false;
+          pages.hidden  = false;
           pdfMsg.hidden = true;
         } catch {
           pdfMsg.innerHTML =
             `Could not load PDF. <a href="${PDF_SRC}">Download it here</a>.`;
         }
       };
+      pdfjs.onerror = () => {
+        pdfMsg.innerHTML =
+          `Could not load the PDF viewer. <a href="${PDF_SRC}">Open the PDF directly</a>.`;
+      };
       document.head.appendChild(pdfjs);
 
     } else {
-      // ── Desktop: native iframe ─────────────────────────────
+      // ── Native iframe (?pdf=native) ───────────────────────
       zoomBtn.classList.add('unavailable');
       const frame = document.createElement('iframe');
       frame.id       = 'pdf-frame';
