@@ -459,6 +459,43 @@
       for (const t of ['gesturestart', 'gesturechange', 'gestureend']) {
         wrap.addEventListener(t, e => e.preventDefault());
       }
+
+      // ── Desktop zoom: trackpad pinch and ctrl + mouse wheel ──
+      // Chrome/Firefox/Edge deliver a trackpad pinch as a wheel event with
+      // ctrlKey set; Mac Safari delivers gesture events (cancelled above,
+      // so handled here on non-touch devices only — iOS fires both).
+      // Events arrive continuously, so preview with a transform and
+      // commit one render when they stop.
+      let liveScale = null, liveView, liveDoc, liveTimer;
+      function previewZoom(target, view) {
+        if (liveScale === null) {
+          liveView = view;
+          liveDoc  = toDoc(view);
+          pages.style.transformOrigin = `${liveDoc.x}px ${liveDoc.y}px`;
+        }
+        liveScale = Math.min(4, Math.max(1, target));
+        pages.style.transform = `scale(${liveScale / userScale})`;
+        clearTimeout(liveTimer);
+        liveTimer = setTimeout(() => {
+          const s = liveScale; liveScale = null;
+          applyScale(s, liveView, liveDoc);
+        }, 150);
+      }
+      const pointIn = e => {
+        const r = wrap.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+      };
+      wrap.addEventListener('wheel', e => {
+        if (!e.ctrlKey) return;            // plain wheel scrolls as normal
+        e.preventDefault();                // ctrl+wheel: ours, not page zoom
+        const step = Math.max(-0.3, Math.min(0.3, -e.deltaY * 0.01));
+        previewZoom((liveScale ?? userScale) * Math.exp(step), pointIn(e));
+      }, { passive: false });
+      if (!('ontouchstart' in window)) {
+        let gestureBase = 1, gestureView;
+        wrap.addEventListener('gesturestart',  e => { gestureBase = userScale; gestureView = pointIn(e); });
+        wrap.addEventListener('gesturechange', e => previewZoom(gestureBase * e.scale, gestureView));
+      }
       wrap.addEventListener('touchend', e => {
         if (!pinchActive || e.touches.length >= 2) return;
         pinchActive = false;
