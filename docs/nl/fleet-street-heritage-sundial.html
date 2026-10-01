@@ -12,7 +12,17 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-E01B51HMZL');
+    // Source code → readable label, and → GA's own traffic source, so a QR
+    // arrival is attributed to Wall/Leaflet/… for the whole visit
+    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
+    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
+    function srcCampaign() {
+      const code = new URLSearchParams(window.location.search).get('s');
+      if (!code || ["in", "wb"].includes(code)) return {};
+      return { campaign_source: expandSrc(code).toLowerCase(), campaign_medium: 'qr' };
+    }
+    // send_page_view off: the enriched page_view below is the only one
+    gtag('config', 'G-E01B51HMZL', Object.assign({ send_page_view: false }, srcCampaign()));
   </script>
 
   <style>
@@ -29,7 +39,7 @@
 
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #f0f0f0;
+      background: #555;   /* shows below the panel on phones until there is a real footer */
       display: flex;
       flex-direction: column;
       height: 100dvh;
@@ -151,12 +161,14 @@
     /* Touch: PDF.js canvas */
     #pdf-wrap.touch {
       overflow: auto;
-      background: #555;
+      background: #B3B3B3;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-x pan-y;   /* panel handles pinch itself */
     }
-    #pdf-canvas { display: block; }
-    #pdf-msg { padding: 2rem; color: #fff; font-size: 0.9rem; }
-    #pdf-msg a { color: var(--fsh-yellow); }
+    .pdf-canvas { display: block; background: #B3B3B3; }
+    .pdf-canvas + .pdf-canvas { margin-top: 0.4rem; }
+    #pdf-msg { padding: 2rem; color: var(--fsh-blue); font-size: 0.9rem; }
+    #pdf-msg a { color: var(--fsh-blue); text-decoration: underline; }
 
     /* ── Skip link (accessibility) ───────────────────────── */
     .skip-link {
@@ -231,9 +243,6 @@
     const vParam      = params.get('v') || '';
     const fParam      = parseInt(params.get('f') ?? '0', 10);
 
-    // ── Source code → readable label (for GA) ──────────────
-    const SRC_LABELS = {"wl":"Wall","lf":"Leaflet","po":"Poster","wb":"Web","in":"Internal","bk":"Book"};
-    function expandSrc(code) { return code ? (SRC_LABELS[code] || code) : ''; }
 
     function getStoredView() {
       return localStorage.getItem(STORAGE_KEY) || '';
@@ -312,87 +321,149 @@
       });
     }
 
-    // ── PDF rendering (touch = PDF.js canvas; desktop = iframe) ──
+    // ── PDF rendering (PDF.js canvas on every device) ──────
+    // The native iframe is not used by default: browsers set to download
+    // PDFs (a Chrome option, often forced on managed Windows PCs) download
+    // the file instead of displaying it. ?pdf=native restores the iframe.
     const PDF_SRC = '../pdfs/108_HeritageSundial.pdf';
     const wrap    = document.getElementById('pdf-wrap');
     const zoomBtn = document.getElementById('zoom-toggle');
 
-    if ('ontouchstart' in window) {
-      // ── Touch: PDF.js canvas ───────────────────────────────
+    if (params.get('pdf') !== 'native') {
+      // ── PDF.js: one canvas per page, stacked ──────────────
       wrap.classList.add('touch');
+      wrap.tabIndex = 0;   // keyboard scrolling of the panel
 
       const pdfMsg = document.createElement('p');
       pdfMsg.id = 'pdf-msg';
       pdfMsg.textContent = 'Loading…';
       wrap.appendChild(pdfMsg);
 
-      const canvas = document.createElement('canvas');
-      canvas.id = 'pdf-canvas';
-      canvas.tabIndex = 0;
-      canvas.setAttribute('aria-label', 'Fleet Street Heritage Sundial – information panel');
-      canvas.hidden = true;
-      wrap.appendChild(canvas);
+      const pages = document.createElement('div');
+      pages.id = 'pdf-pages';
+      pages.setAttribute('role', 'img');
+      pages.setAttribute('aria-label', 'Fleet Street Heritage Sundial – information panel');
+      pages.hidden = true;
+      wrap.appendChild(pages);
 
-      const pdfCtx = canvas.getContext('2d');
-      let pdfDoc = null, userScale = 1, zoomed = false, busy = false, queued = false;
+      const canvases = [];
+      let pdfDoc = null, userScale = 1, zoomed = false;
 
-      async function renderPage() {
-        if (!pdfDoc) return;
-        if (busy) { queued = true; return; }
-        busy = true;
-        const page     = await pdfDoc.getPage(1);
-        const dpr      = window.devicePixelRatio || 1;
-        const baseVP   = page.getViewport({ scale: 1 });
-        const fitScale = wrap.clientWidth / baseVP.width;
-        const viewport = page.getViewport({ scale: fitScale * userScale * dpr });
-        canvas.width        = Math.floor(viewport.width);
-        canvas.height       = Math.floor(viewport.height);
-        canvas.style.width  = Math.floor(viewport.width  / dpr) + 'px';
-        canvas.style.height = Math.floor(viewport.height / dpr) + 'px';
-        pdfCtx.clearRect(0, 0, canvas.width, canvas.height);
-        await page.render({ canvasContext: pdfCtx, viewport }).promise;
-        busy = false;
-        if (queued) { queued = false; renderPage(); }
+      // Renders are serialised so a caller can await the one it asked for
+      let renderChain = Promise.resolve();
+      function renderPage() {
+        renderChain = renderChain.then(renderAllPages);
+        return renderChain;
       }
 
-      function applyScale(scale) {
-        userScale = Math.min(4, Math.max(0.5, scale));
-        zoomed    = userScale > 1.05;
+      async function renderAllPages() {
+        if (!pdfDoc) return;
+        const dpr = window.devicePixelRatio || 1;
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+          const page = await pdfDoc.getPage(i);
+          let canvas = canvases[i - 1];
+          if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.className = 'pdf-canvas';
+            pages.appendChild(canvas);
+            canvases.push(canvas);
+          }
+          const baseVP   = page.getViewport({ scale: 1 });
+          const fitScale = wrap.clientWidth / baseVP.width;
+          // iOS silently blanks a canvas above ~16.7M pixels; at full zoom
+          // on a 3x phone a panel would exceed that, so trade sharpness
+          // for a canvas that renders.
+          const cssW = baseVP.width * fitScale * userScale, cssH = baseVP.height * fitScale * userScale;
+          const res  = Math.min(dpr, Math.sqrt(16e6 / (cssW * cssH)));
+          const viewport = page.getViewport({ scale: fitScale * userScale * res });
+          // Render off-screen, then copy in one step, so the visible canvas
+          // keeps showing the old image instead of going blank mid-render
+          const off  = document.createElement('canvas');
+          off.width  = Math.floor(viewport.width);
+          off.height = Math.floor(viewport.height);
+          await page.render({ canvasContext: off.getContext('2d'), viewport }).promise;
+          canvas.width        = off.width;
+          canvas.height       = off.height;
+          canvas.style.width  = Math.floor(off.width  / res) + 'px';
+          canvas.style.height = Math.floor(off.height / res) + 'px';
+          canvas.getContext('2d').drawImage(off, 0, 0);
+        }
+      }
+
+      // Zoom about an anchor: `view` is a point in the visible area of the
+      // panel, `doc` the same point in scrolled content coordinates. After
+      // re-rendering, scroll so that point stays under the user's fingers.
+      async function applyScale(scale, view, doc) {
+        const prev = userScale;
+        userScale  = Math.min(4, Math.max(1, scale));   // never smaller than fit-width
+        zoomed     = userScale > 1.05;
         zoomBtn.textContent = zoomed ? 'Fit width' : 'Zoom in';
         zoomBtn.setAttribute('aria-label',
           zoomed ? 'Fit PDF to screen width' : 'Zoom in on PDF');
-        renderPage();
+        // Until the new render lands, show the old one scaled about the
+        // anchor so the picture never disappears
+        const f = userScale / prev;
+        pages.style.transformOrigin = `${doc.x}px ${doc.y}px`;
+        pages.style.transform       = `scale(${f})`;
+        await renderPage();
+        pages.style.transform = '';
+        wrap.scrollLeft = doc.x * f - view.x;
+        wrap.scrollTop  = doc.y * f - view.y;
+      }
+
+      function viewCentre() {
+        return { x: wrap.clientWidth / 2, y: wrap.clientHeight / 2 };
+      }
+      function toDoc(view) {
+        return { x: view.x + wrap.scrollLeft, y: view.y + wrap.scrollTop };
       }
 
       zoomBtn.addEventListener('click', () => {
-        if (zoomed) { applyScale(1); wrap.scrollLeft = 0; wrap.scrollTop = 0; }
-        else        { applyScale(1.75); }
+        const view = viewCentre();
+        applyScale(zoomed ? 1 : 1.75, view, toDoc(view));
       });
 
       let pinchActive = false, pinchStartDist = 0, pinchBaseScale = 1;
+      let pinchView = { x: 0, y: 0 }, pinchDoc = { x: 0, y: 0 };
+      const touchDist = e => Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY);
+
       wrap.addEventListener('touchstart', e => {
         if (e.touches.length === 2) {
           pinchActive    = true;
-          pinchStartDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY);
+          pinchStartDist = touchDist(e);
           pinchBaseScale = userScale;
+          const r = wrap.getBoundingClientRect();
+          pinchView = {
+            x: (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left,
+            y: (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top };
+          pinchDoc = toDoc(pinchView);
+          // Live preview scales about the point between the fingers
+          pages.style.transformOrigin = `${pinchDoc.x}px ${pinchDoc.y}px`;
         }
       }, { passive: true });
+      // Non-passive so a two-finger pinch inside the panel is ours alone:
+      // otherwise iOS Safari also zooms the whole page, or, when the page
+      // is already at minimum zoom, pinches out to the tab overview. The
+      // header stays browser-zoomable for accessibility.
       wrap.addEventListener('touchmove', e => {
+        if (e.touches.length === 2) e.preventDefault();
         if (!pinchActive || e.touches.length !== 2) return;
-        const dist = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY);
-        canvas.style.transform       = `scale(${dist / pinchStartDist})`;
-        canvas.style.transformOrigin = 'top left';
-      }, { passive: true });
+        // Preview obeys the same limits as the final zoom, so it never
+        // shrinks below fit-width and then snaps back on release
+        const ratio = Math.min(4 / pinchBaseScale,
+                      Math.max(1 / pinchBaseScale, touchDist(e) / pinchStartDist));
+        pages.style.transform = `scale(${ratio})`;
+      }, { passive: false });
+      for (const t of ['gesturestart', 'gesturechange', 'gestureend']) {
+        wrap.addEventListener(t, e => e.preventDefault());
+      }
       wrap.addEventListener('touchend', e => {
         if (!pinchActive || e.touches.length >= 2) return;
         pinchActive = false;
-        const match = canvas.style.transform.match(/scale\(([^)]+)\)/);
-        canvas.style.transform = '';
-        applyScale(pinchBaseScale * (match ? parseFloat(match[1]) : 1));
+        const match = pages.style.transform.match(/scale\(([^)]+)\)/);
+        applyScale(pinchBaseScale * (match ? parseFloat(match[1]) : 1), pinchView, pinchDoc);
       }, { passive: true });
 
       let resizeTimer;
@@ -409,17 +480,21 @@
         try {
           pdfDoc = await pdfjsLib.getDocument(PDF_SRC).promise;
           await renderPage();
-          canvas.hidden = false;
+          pages.hidden  = false;
           pdfMsg.hidden = true;
         } catch {
           pdfMsg.innerHTML =
             `Could not load PDF. <a href="${PDF_SRC}">Download it here</a>.`;
         }
       };
+      pdfjs.onerror = () => {
+        pdfMsg.innerHTML =
+          `Could not load the PDF viewer. <a href="${PDF_SRC}">Open the PDF directly</a>.`;
+      };
       document.head.appendChild(pdfjs);
 
     } else {
-      // ── Desktop: native iframe ─────────────────────────────
+      // ── Native iframe (?pdf=native) ───────────────────────
       zoomBtn.classList.add('unavailable');
       const frame = document.createElement('iframe');
       frame.id       = 'pdf-frame';
@@ -430,13 +505,16 @@
     }
 
     // ── GA page view with content group + source ───────────
-    gtag('event', 'page_view', {
-      page_id:       PAGE_ID,
-      page_num:      PAGE_NUM,
-      content_group: PAGE_NUM.substring(0, 1) + 'xx',
-      view:          targetView,
-      src_param:     expandSrc(src)
-    });
+    // Skipped when redirecting to Easy Read above — that page logs its own
+    if (!(targetView === 'easy' && HAS_EASY)) {
+      gtag('event', 'page_view', {
+        page_id:       PAGE_ID,
+        page_num:      PAGE_NUM,
+        content_group: PAGE_NUM.substring(0, 1) + 'xx',
+        view:          targetView,
+        src_param:     expandSrc(src)
+      });
+    }
   </script>
 
 </body>
