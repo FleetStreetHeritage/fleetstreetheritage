@@ -386,7 +386,7 @@
       // re-rendering, scroll so that point stays under the user's fingers.
       async function applyScale(scale, view, doc) {
         const prev = userScale;
-        userScale  = Math.min(4, Math.max(0.5, scale));
+        userScale  = Math.min(4, Math.max(1, scale));   // never smaller than fit-width
         zoomed     = userScale > 1.05;
         zoomBtn.textContent = zoomed ? 'Fit width' : 'Zoom in';
         zoomBtn.setAttribute('aria-label',
