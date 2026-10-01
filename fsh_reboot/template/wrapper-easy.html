@@ -281,11 +281,16 @@
           }
           const baseVP   = page.getViewport({ scale: 1 });
           const fitScale = wrap.clientWidth / baseVP.width;
-          const viewport = page.getViewport({ scale: fitScale * userScale * dpr });
+          // iOS silently blanks a canvas above ~16.7M pixels; at full zoom
+          // on a 3x phone a panel would exceed that, so trade sharpness
+          // for a canvas that renders.
+          const cssW = baseVP.width * fitScale * userScale, cssH = baseVP.height * fitScale * userScale;
+          const res  = Math.min(dpr, Math.sqrt(16e6 / (cssW * cssH)));
+          const viewport = page.getViewport({ scale: fitScale * userScale * res });
           canvas.width        = Math.floor(viewport.width);
           canvas.height       = Math.floor(viewport.height);
-          canvas.style.width  = Math.floor(viewport.width  / dpr) + 'px';
-          canvas.style.height = Math.floor(viewport.height / dpr) + 'px';
+          canvas.style.width  = Math.floor(viewport.width  / res) + 'px';
+          canvas.style.height = Math.floor(viewport.height / res) + 'px';
           const ctx = canvas.getContext('2d');
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           await page.render({ canvasContext: ctx, viewport }).promise;
@@ -347,7 +352,11 @@
       wrap.addEventListener('touchmove', e => {
         if (e.touches.length === 2) e.preventDefault();
         if (!pinchActive || e.touches.length !== 2) return;
-        pages.style.transform = `scale(${touchDist(e) / pinchStartDist})`;
+        // Preview obeys the same limits as the final zoom, so it never
+        // shrinks below fit-width and then snaps back on release
+        const ratio = Math.min(4 / pinchBaseScale,
+                      Math.max(1 / pinchBaseScale, touchDist(e) / pinchStartDist));
+        pages.style.transform = `scale(${ratio})`;
       }, { passive: false });
       for (const t of ['gesturestart', 'gesturechange', 'gestureend']) {
         wrap.addEventListener(t, e => e.preventDefault());
