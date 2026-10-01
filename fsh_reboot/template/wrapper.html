@@ -33,7 +33,7 @@
 
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #555;   /* same as the panel: anything that shows through mid-zoom is grey, not white */
+      background: #B3B3B3;   /* 30% black, print-style; same as the panel so nothing white shows through mid-zoom */
       display: flex;
       flex-direction: column;
       height: 100dvh;
@@ -155,14 +155,14 @@
     /* Touch: PDF.js canvas */
     #pdf-wrap.touch {
       overflow: auto;
-      background: #555;
+      background: #B3B3B3;
       -webkit-overflow-scrolling: touch;
       touch-action: pan-x pan-y;   /* panel handles pinch itself */
     }
-    .pdf-canvas { display: block; background: #555; }
+    .pdf-canvas { display: block; background: #B3B3B3; }
     .pdf-canvas + .pdf-canvas { margin-top: 0.4rem; }
-    #pdf-msg { padding: 2rem; color: #fff; font-size: 0.9rem; }
-    #pdf-msg a { color: var(--fsh-yellow); }
+    #pdf-msg { padding: 2rem; color: var(--fsh-blue); font-size: 0.9rem; }
+    #pdf-msg a { color: var(--fsh-blue); text-decoration: underline; }
 
     /* ── Skip link (accessibility) ───────────────────────── */
     .skip-link {
