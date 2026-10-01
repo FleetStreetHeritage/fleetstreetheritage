@@ -346,12 +346,17 @@
       wrap.appendChild(pages);
 
       const canvases = [];
-      let pdfDoc = null, userScale = 1, zoomed = false, busy = false, queued = false;
+      let pdfDoc = null, userScale = 1, zoomed = false;
 
-      async function renderPage() {
+      // Renders are serialised so a caller can await the one it asked for
+      let renderChain = Promise.resolve();
+      function renderPage() {
+        renderChain = renderChain.then(renderAllPages);
+        return renderChain;
+      }
+
+      async function renderAllPages() {
         if (!pdfDoc) return;
-        if (busy) { queued = true; return; }
-        busy = true;
         const dpr = window.devicePixelRatio || 1;
         for (let i = 1; i <= pdfDoc.numPages; i++) {
           const page = await pdfDoc.getPage(i);
@@ -373,48 +378,66 @@
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           await page.render({ canvasContext: ctx, viewport }).promise;
         }
-        busy = false;
-        if (queued) { queued = false; renderPage(); }
       }
 
-      function applyScale(scale) {
-        userScale = Math.min(4, Math.max(0.5, scale));
-        zoomed    = userScale > 1.05;
+      // Zoom about an anchor: `view` is a point in the visible area of the
+      // panel, `doc` the same point in scrolled content coordinates. After
+      // re-rendering, scroll so that point stays under the user's fingers.
+      async function applyScale(scale, view, doc) {
+        const prev = userScale;
+        userScale  = Math.min(4, Math.max(0.5, scale));
+        zoomed     = userScale > 1.05;
         zoomBtn.textContent = zoomed ? 'Fit width' : 'Zoom in';
         zoomBtn.setAttribute('aria-label',
           zoomed ? 'Fit PDF to screen width' : 'Zoom in on PDF');
-        renderPage();
+        await renderPage();
+        const f = userScale / prev;
+        wrap.scrollLeft = doc.x * f - view.x;
+        wrap.scrollTop  = doc.y * f - view.y;
+      }
+
+      function viewCentre() {
+        return { x: wrap.clientWidth / 2, y: wrap.clientHeight / 2 };
+      }
+      function toDoc(view) {
+        return { x: view.x + wrap.scrollLeft, y: view.y + wrap.scrollTop };
       }
 
       zoomBtn.addEventListener('click', () => {
-        if (zoomed) { applyScale(1); wrap.scrollLeft = 0; wrap.scrollTop = 0; }
-        else        { applyScale(1.75); }
+        const view = viewCentre();
+        applyScale(zoomed ? 1 : 1.75, view, toDoc(view));
       });
 
       let pinchActive = false, pinchStartDist = 0, pinchBaseScale = 1;
+      let pinchView = { x: 0, y: 0 }, pinchDoc = { x: 0, y: 0 };
+      const touchDist = e => Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY);
+
       wrap.addEventListener('touchstart', e => {
         if (e.touches.length === 2) {
           pinchActive    = true;
-          pinchStartDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY);
+          pinchStartDist = touchDist(e);
           pinchBaseScale = userScale;
+          const r = wrap.getBoundingClientRect();
+          pinchView = {
+            x: (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left,
+            y: (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top };
+          pinchDoc = toDoc(pinchView);
+          // Live preview scales about the point between the fingers
+          pages.style.transformOrigin = `${pinchDoc.x}px ${pinchDoc.y}px`;
         }
       }, { passive: true });
       wrap.addEventListener('touchmove', e => {
         if (!pinchActive || e.touches.length !== 2) return;
-        const dist = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY);
-        pages.style.transform       = `scale(${dist / pinchStartDist})`;
-        pages.style.transformOrigin = 'top left';
+        pages.style.transform = `scale(${touchDist(e) / pinchStartDist})`;
       }, { passive: true });
       wrap.addEventListener('touchend', e => {
         if (!pinchActive || e.touches.length >= 2) return;
         pinchActive = false;
         const match = pages.style.transform.match(/scale\(([^)]+)\)/);
         pages.style.transform = '';
-        applyScale(pinchBaseScale * (match ? parseFloat(match[1]) : 1));
+        applyScale(pinchBaseScale * (match ? parseFloat(match[1]) : 1), pinchView, pinchDoc);
       }, { passive: true });
 
       let resizeTimer;
