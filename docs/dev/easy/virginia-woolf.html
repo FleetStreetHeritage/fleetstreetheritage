@@ -140,7 +140,7 @@
 
     #pdf-wrap { flex: 1; overflow: hidden; min-height: 0; }
     #pdf-frame { width: 100%; height: 100%; border: none; display: block; }
-    #pdf-wrap.touch { overflow: auto; background: #555; -webkit-overflow-scrolling: touch; }
+    #pdf-wrap.touch { overflow: auto; background: #555; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
     .pdf-canvas { display: block; }
     .pdf-canvas + .pdf-canvas { margin-top: 0.4rem; }
     #pdf-msg { padding: 2rem; color: #fff; font-size: 0.9rem; }
@@ -346,10 +346,18 @@
           pages.style.transformOrigin = `${pinchDoc.x}px ${pinchDoc.y}px`;
         }
       }, { passive: true });
+      // Non-passive so a two-finger pinch inside the panel is ours alone:
+      // otherwise iOS Safari also zooms the whole page, or, when the page
+      // is already at minimum zoom, pinches out to the tab overview. The
+      // header stays browser-zoomable for accessibility.
       wrap.addEventListener('touchmove', e => {
+        if (e.touches.length === 2) e.preventDefault();
         if (!pinchActive || e.touches.length !== 2) return;
         pages.style.transform = `scale(${touchDist(e) / pinchStartDist})`;
-      }, { passive: true });
+      }, { passive: false });
+      for (const t of ['gesturestart', 'gesturechange', 'gestureend']) {
+        wrap.addEventListener(t, e => e.preventDefault());
+      }
       wrap.addEventListener('touchend', e => {
         if (!pinchActive || e.touches.length >= 2) return;
         pinchActive = false;
